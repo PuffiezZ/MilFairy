@@ -19,7 +19,7 @@ public class Player : CharacterBase,IPickupable
 
     private void Update()
     {
-        if (!photonView.IsMine) return;
+        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Scrap.ToString(),photonView);
@@ -28,7 +28,18 @@ public class Player : CharacterBase,IPickupable
         {
             NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Stick.ToString(), photonView);
         }
-
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Electronic.ToString(), photonView);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Oil.ToString(), photonView);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Clothes.ToString(), photonView);
+        }
     }
 
     [PunRPC]

@@ -6,6 +6,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject playerObject; // ต้องอยู่ในโฟลเดอร์ Resources เท่านั้น
     [SerializeField] private Transform[] spawnPoints; // ใช้ array เพื่อสุ่มจุดเกิด
 
+    private void Awake()
+    {
+        if (!PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.OfflineMode = true;
+        }
+    }
     void Start()
     {
         // ถ้าเราเปลี่ยน Scene มาโดยที่ยังอยู่ในห้อง (Joined Room แล้ว)

@@ -20,6 +20,7 @@ public class NetworkPrefabSpawner : MonoBehaviour
         // 1. ถ้าออนไลน์อยู่ ให้เช็ค MasterClient เท่านั้น
         if (PhotonNetwork.InRoom)
         {
+            if (!photonView.IsMine) return;
             // ถ้าไม่ใช่ Master ให้หยุดทำงานทันที ไม่ต้องไปทำ else
             if (!PhotonNetwork.IsMasterClient) return;
 
