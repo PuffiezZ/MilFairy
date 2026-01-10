@@ -1,9 +1,10 @@
+using Photon.Pun;
 using Sausagecat.PlayerControlSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAnimation : MonoBehaviour
+public class PlayerAnimation : MonoBehaviourPun
 {
     [SerializeField] private Animator animator;
     [SerializeField] private float simepleBlendSpeed = 20f;
@@ -30,6 +31,8 @@ public class PlayerAnimation : MonoBehaviour
 
     private void UpdateAnimationState()
     {
+        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
+
         Vector3 velocity = playerMovement.CurrentVelocity;
         velocity.y = 0;
         locomotionMagnitude = Vector3.Lerp(locomotionMagnitude, velocity, simepleBlendSpeed * Time.deltaTime);
