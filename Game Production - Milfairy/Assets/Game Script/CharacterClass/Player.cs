@@ -1,0 +1,90 @@
+using Photon.Pun;
+using Photon.Realtime;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
+using static UtilityDev;
+using static UtilityDev.ResourceType;
+
+public class Player : CharacterBase,IPickupable
+{
+    // ใช้ Event ที่เราคุยกันก่อนหน้าเพื่ออัปเดต UI
+    public static event Action<float, float> OnPlayerHealthChanged;
+    public static event Action<UtilityDev.ResourceType, float, int> OnResourceValueChanged;
+
+    private float[] percentageProgressResource = new float[6];
+    private int[] amountResource = new int[6];
+
+    private void Update()
+    {
+        if (!photonView.IsMine) return;
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Scrap.ToString(),photonView);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Stick.ToString(), photonView);
+        }
+
+    }
+
+    [PunRPC]
+    protected override void RPC_ApplyDamage(float damage)
+    {
+        base.RPC_ApplyDamage(damage); // เรียกใช้ Logic ลดเลือดจากตัวแม่
+
+        // ถ้าเป็นตัวละครของเรา ให้บอก UI Manager ด้วย
+        if (photonView.IsMine)
+        {
+            OnPlayerHealthChanged?.Invoke(currentHealth, maxHealth);
+        }
+    }
+
+    protected override void Die()
+    {
+        Debug.Log("Player Died! Show GameOver UI");
+        // Logic การเกิดใหม่ หรือกลายเป็นศพ
+    }
+    #region Pick Up Resource Handle
+    public void OnPickResourceInvoke(UtilityDev.ResourceType resourceType, float percentage)
+    {
+        if (photonView.IsMine && PhotonNetwork.InRoom)
+        {
+            photonView.RPC(nameof(RPC_ApplyPickResource), RpcTarget.All, resourceType, percentage);
+        }
+        else
+        {
+            ChangeResourceAmount(resourceType, percentage);
+        }
+    }
+
+    [PunRPC]
+    private void RPC_ApplyPickResource(UtilityDev.ResourceType resourceType, float percentage)
+    {
+        if (!photonView.IsMine && PhotonNetwork.InRoom) return;
+        ChangeResourceAmount(resourceType, percentage);
+    }
+
+    private void ChangeResourceAmount(UtilityDev.ResourceType resourceType, float percentage)
+    {
+        // ล็อคไว้เลยว่า "เฉพาะเจ้าของตัวละครนี้เท่านั้น" ที่จะเปลี่ยนค่าในตัวแปรและอัปเดต UI
+        if (!photonView.IsMine && PhotonNetwork.InRoom) return;
+
+        percentageProgressResource[(int)resourceType] += percentage;
+
+        if (percentageProgressResource[(int)resourceType] >= 1.00f)
+        {
+            percentageProgressResource[(int)resourceType] -= 1f;
+            amountResource[(int)resourceType]++;
+        }
+
+        // ตอนนี้ไม่ต้องแยก if-else สำหรับ InRoom แล้ว เพราะ IsMine ครอบคลุมหมด
+        OnResourceValueChanged?.Invoke(resourceType, percentageProgressResource[(int)resourceType], amountResource[(int)resourceType]);
+
+        Debug.Log($"Resource Updated for {gameObject.name}: {resourceType}, Amount: {amountResource[(int)resourceType]}");
+    }
+    #endregion
+}

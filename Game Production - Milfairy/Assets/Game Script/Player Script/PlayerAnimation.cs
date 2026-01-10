@@ -33,10 +33,12 @@ public class PlayerAnimation : MonoBehaviour
         Vector3 velocity = playerMovement.CurrentVelocity;
         velocity.y = 0;
         locomotionMagnitude = Vector3.Lerp(locomotionMagnitude, velocity, simepleBlendSpeed * Time.deltaTime);
-        float speedRatio = locomotionMagnitude.magnitude / playerMovement.runSpeed;
+        float speedRatio = locomotionMagnitude.magnitude / playerMovement.maxSpeed;
         animator.SetFloat(magnitudeHash, Mathf.Clamp01(speedRatio));
 
         Vector3 targetInput = playerLocomotion.MovementInput;
         currentBlendInput = Vector3.Lerp(currentBlendInput, targetInput, locomotionBlendSpeed * Time.deltaTime);
+        animator.SetFloat(inputXHash,currentBlendInput.x);
+        animator.SetFloat(inputYHash, currentBlendInput.y);
     }
 }

@@ -39,6 +39,13 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
+  - EveryoneLeaveRoom
+  - RPC_ApplyDamage
+  - RPC_ApplyPickResource
+  - RPC_OnPickedUp
+  - OnGameObjectSpawn
+  - RPC_OnPlayerSpawnObject
+  - RPC_HideObject
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
