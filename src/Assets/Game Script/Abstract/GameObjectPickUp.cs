@@ -23,11 +23,13 @@ public abstract class GameObjectPickUp : MonoBehaviour,IInteractable
 
     public void HideWorldInterectUI()
     {
+        if (intereactWorldUI == null) return;
         intereactWorldUI.SetActive(false);
     }
 
     public void ShowWorldInterectUI()
     {
+        if (intereactWorldUI == null) return;
         intereactWorldUI.SetActive(true);
     }
 
@@ -36,25 +38,25 @@ public abstract class GameObjectPickUp : MonoBehaviour,IInteractable
         if (PhotonNetwork.InRoom)
         {
             // ส่ง RPC ไปบอกทุกคนว่าไอเทมนี้ถูกเก็บแล้ว
-            GetComponent<PhotonView>().RPC(nameof(RPC_OnPickedUp), RpcTarget.MasterClient, player.GetComponent<PhotonView>().ViewID);
+            GetComponent<PhotonView>().RPC(nameof(RPC_OnPickedUp), RpcTarget.MasterClient, player.GetComponent<PhotonView>().ViewID,player);
         }
         else
         {
-            OnInterected();
+            OnInterected(player);
         }
     }
 
     [PunRPC]
-    public void RPC_OnPickedUp(int playerViewID)
+    public void RPC_OnPickedUp(int playerViewID,GameObject player)
     {
         // MasterClient ตรวจสอบความถูกต้องและสั่งลบ
         if (PhotonNetwork.IsMasterClient)
         {
-            OnInterected();
+            OnInterected(player);
         }
     }
 
-    public void OnInterected()
+    public virtual void OnInterected(GameObject player)
     {
         HideWorldInterectUI();
         if (PhotonNetwork.InRoom)

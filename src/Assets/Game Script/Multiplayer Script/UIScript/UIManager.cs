@@ -10,6 +10,9 @@ public class UIManager : MonoBehaviour
     [BoxGroup("Resource UI")]
     [SerializeField] private RectTransform[] rectResource;
 
+    [BoxGroup("Weapon Slot")]
+    [SerializeField] private WeaponSlotUI[] weaponsSlot;
+
     [SerializeField] private Slider healthSlider;
 
     private void OnEnable()
@@ -17,6 +20,8 @@ public class UIManager : MonoBehaviour
         // เริ่มติดตาม (Subscribe) เมื่อสคริปต์ทำงาน
         Player.OnPlayerHealthChanged += UpdateHealthBar;
         Player.OnResourceValueChanged += UpdateResource;
+
+        PlayerEquipment.OnSetNewWeapon += UpdateWeaponSlot;
     }
 
     private void OnDisable()
@@ -24,6 +29,8 @@ public class UIManager : MonoBehaviour
         // ยกเลิกการติดตาม (Unsubscribe) เมื่อปิดสคริปต์ เพื่อป้องกัน Memory Leak
         Player.OnPlayerHealthChanged -= UpdateHealthBar;
         Player.OnResourceValueChanged -= UpdateResource;
+
+        PlayerEquipment.OnSetNewWeapon -= UpdateWeaponSlot;
     }
 
     private void UpdateHealthBar(float current, float max)
@@ -49,5 +56,10 @@ public class UIManager : MonoBehaviour
 
         circleSlider.value = percentage / 1;
         textValue.text = amountOfResource.ToString();
+    }
+
+    public void UpdateWeaponSlot(int indexSlot,WeaponData weaponData)
+    {
+        weaponsSlot[indexSlot].SetWeaponSlotUI(weaponData);
     }
 }
