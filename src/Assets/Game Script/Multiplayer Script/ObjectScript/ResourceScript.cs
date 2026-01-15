@@ -7,7 +7,7 @@ public class ResourceScript : GameObjectPickUp
 {
     [SerializeField] private ResourceData resourceData;
     public ResourceData GetResourceData {  get { return resourceData; } }
-    public override void Interact(GameObject player)
+    public override void OnBeginIntereact(GameObject player)
     {
         Player getPlayerComponent = player.GetComponent<Player>();
 
@@ -17,7 +17,7 @@ public class ResourceScript : GameObjectPickUp
         float persentOfresource = resourceData.getPercent;
         getPlayerComponent.OnPickResourceInvoke(resourceData.resourceType, persentOfresource);
 
-        base.Interact(player);
+        base.OnBeginIntereact(player);
     }
 
     public override void OnGameObjectSpawn()

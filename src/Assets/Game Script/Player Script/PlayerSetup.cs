@@ -35,5 +35,12 @@ public class PlayerSetup : MonoBehaviourPun
         {
             nameTextTMP.gameObject.SetActive(false);
         }
+       HideCursorOnSpawn();
+    }
+
+    private void HideCursorOnSpawn()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }

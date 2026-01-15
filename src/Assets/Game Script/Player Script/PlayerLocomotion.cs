@@ -13,6 +13,9 @@ namespace Sausagecat.PlayerControlSystem
         public Vector2 LookInput { get; private set; }
         public bool OnSprinting { get; private set; }
         public bool OnJumping { get; set; }
+
+        public bool EnableToAttack { get; set; }
+
         private void OnEnable()
         {
             PlayerControls = new PlayerControl();
@@ -27,6 +30,7 @@ namespace Sausagecat.PlayerControlSystem
             PlayerControls.PlayerLocomotion.Disable();
             PlayerControls.PlayerLocomotion.RemoveCallbacks(this);
         }
+
         public void OnMovement(InputAction.CallbackContext context)
         {
             MovementInput = context.ReadValue<Vector2>();
@@ -56,6 +60,20 @@ namespace Sausagecat.PlayerControlSystem
             if(context.performed && !OnJumping && isGround)
             {
                 OnJumping = true;
+            }
+        }
+
+        public void OnAttack(InputAction.CallbackContext context)
+        {
+            // ใช้เฉพาะ context.performed เพื่อให้โค้ดทำงานแค่ 1 ครั้งต่อการกด 1 รอบ
+            if (context.performed)
+            {
+                Debug.Log("On Attack Locomotion Invoke (Performed Only)");
+                EnableToAttack = true;
+            }
+            else
+            {
+                EnableToAttack = false;
             }
         }
     }

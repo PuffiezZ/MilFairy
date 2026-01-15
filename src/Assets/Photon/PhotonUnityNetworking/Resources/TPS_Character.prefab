@@ -5629,13 +5629,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4581505426903645113}
+  - component: {fileID: 4914690698565031803}
   - component: {fileID: 5202229221434022749}
   - component: {fileID: 2505050765525561763}
   - component: {fileID: 3310473656372117739}
   - component: {fileID: 6844314849817764730}
   - component: {fileID: 4629303127956484378}
   - component: {fileID: 5183618769346361892}
-  - component: {fileID: 4914690698565031803}
   - component: {fileID: 8024135504926004342}
   - component: {fileID: 8750774201261472505}
   - component: {fileID: 8818599535427960526}
@@ -5670,6 +5670,27 @@ Transform:
   - {fileID: 6510197135983364162}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4914690698565031803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8673411036968960318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34b1f3243e398b04382a700655def726, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dashDistance: 2
+  snapDistance: 4
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  equipment: {fileID: 2505050765525561763}
+  playerAnimation: {fileID: 4629303127956484378}
+  playerLocomotion: {fileID: 8750774201261472505}
+  startingNode: {fileID: 0}
 --- !u!114 &5202229221434022749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5769,7 +5790,7 @@ MonoBehaviour:
   runAcceleration: 50
   maxSpeed: 10
   drag: 28
-  turnSmoothTime: 0.1
+  turnSmoothTime: 0.05
   jumpingForce: 4
   gravity: 28
   _cameraPivot: {fileID: 2675814382783412865}
@@ -5777,20 +5798,6 @@ MonoBehaviour:
   lookSenseH: 0.2
   lookSenseV: 0.2
   lookLimitV: 70
---- !u!114 &4914690698565031803
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8673411036968960318}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b1f3243e398b04382a700655def726, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  equipment: {fileID: 2505050765525561763}
-  playerAnimation: {fileID: 4629303127956484378}
 --- !u!114 &8024135504926004342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5829,7 +5836,7 @@ Animator:
   m_GameObject: {fileID: 8673411036968960318}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: de13a7420582ded45a8d7d3f96889aca, type: 3}
-  m_Controller: {fileID: 9100000, guid: 824c70cda20d77246bb8428a63cd0809, type: 2}
+  m_Controller: {fileID: 22100000, guid: 9ec114eed8c12174fae6c0b2064cf119, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -5937,20 +5944,48 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: isGrounded
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: isJump
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: isFalling
   - Type: 1
     SynchronizeType: 2
     Name: VerticalMagnitude
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: invokeAttack
+  - Type: 4
+    SynchronizeType: 1
+    Name: isUsingOneHanded
+  - Type: 9
+    SynchronizeType: 1
+    Name: isDrawOneHanded
+  - Type: 9
+    SynchronizeType: 1
+    Name: isSheathedOneHanded
+  - Type: 1
+    SynchronizeType: 2
+    Name: animationFloatState
+  - Type: 9
+    SynchronizeType: 1
+    Name: lightAttackTrigger
+  - Type: 9
+    SynchronizeType: 1
+    Name: heavyAttackTrigger
+  - Type: 9
+    SynchronizeType: 1
+    Name: timeOutAttackTrigger
+  - Type: 1
+    SynchronizeType: 2
+    Name: AnimationAttackSpeed
   m_SynchronizeLayers:
-  - SynchronizeType: 1
+  - SynchronizeType: 2
     LayerIndex: 0
+  - SynchronizeType: 2
+    LayerIndex: 1
+  - SynchronizeType: 2
+    LayerIndex: 2
 --- !u!1 &8677650211849453601
 GameObject:
   m_ObjectHideFlags: 0

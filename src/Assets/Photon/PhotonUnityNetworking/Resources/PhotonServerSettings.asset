@@ -46,6 +46,11 @@ MonoBehaviour:
   - OnGameObjectSpawn
   - RPC_OnPlayerSpawnObject
   - RPC_HideObject
+  - RPC_EquipToPlayer
+  - RPC_ExecuteAttack
+  - RPC_SyncSheathVisuals
+  - RPC_StartDrawWeapon
+  - RPC_SyncDrawVisuals
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

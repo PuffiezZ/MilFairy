@@ -22,3 +22,7 @@ MonoBehaviour:
   animationSetIndex: 0
   weaponSprite: {fileID: 21300000, guid: 3980167bf14b659488f8b3faa4b4a049, type: 3}
   weaponType: 0
+  ComboList:
+  - {fileID: 11400000, guid: 5bad76d6a25495a4a84a6b0f8f6e631a, type: 2}
+  - {fileID: 11400000, guid: 5e48b2d92900f0a428798e6d594c8d61, type: 2}
+  - {fileID: 11400000, guid: f5b6bb428a20de1439a660755d561f2c, type: 2}

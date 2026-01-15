@@ -16,4 +16,5 @@ public class WeaponData : ItemData
     public Sprite weaponSprite;
 
     public UtilityDev.WeaponType weaponType;
+    public List<ComboNode> ComboList;
 }

@@ -129,6 +129,15 @@ namespace Sausagecat.PlayerControlSystem
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""b576858d-3415-4cb4-a412-23a24df0b59d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -351,6 +360,17 @@ namespace Sausagecat.PlayerControlSystem
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a0af2ac2-0c64-49ac-bcf0-9757f465e7ab"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -363,6 +383,7 @@ namespace Sausagecat.PlayerControlSystem
             m_PlayerLocomotion_Look = m_PlayerLocomotion.FindAction("Look", throwIfNotFound: true);
             m_PlayerLocomotion_Sprint = m_PlayerLocomotion.FindAction("Sprint", throwIfNotFound: true);
             m_PlayerLocomotion_Jump = m_PlayerLocomotion.FindAction("Jump", throwIfNotFound: true);
+            m_PlayerLocomotion_Attack = m_PlayerLocomotion.FindAction("Attack", throwIfNotFound: true);
         }
 
         ~@PlayerControl()
@@ -447,6 +468,7 @@ namespace Sausagecat.PlayerControlSystem
         private readonly InputAction m_PlayerLocomotion_Look;
         private readonly InputAction m_PlayerLocomotion_Sprint;
         private readonly InputAction m_PlayerLocomotion_Jump;
+        private readonly InputAction m_PlayerLocomotion_Attack;
         /// <summary>
         /// Provides access to input actions defined in input action map "PlayerLocomotion".
         /// </summary>
@@ -474,6 +496,10 @@ namespace Sausagecat.PlayerControlSystem
             /// Provides access to the underlying input action "PlayerLocomotion/Jump".
             /// </summary>
             public InputAction @Jump => m_Wrapper.m_PlayerLocomotion_Jump;
+            /// <summary>
+            /// Provides access to the underlying input action "PlayerLocomotion/Attack".
+            /// </summary>
+            public InputAction @Attack => m_Wrapper.m_PlayerLocomotion_Attack;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -512,6 +538,9 @@ namespace Sausagecat.PlayerControlSystem
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
             }
 
             /// <summary>
@@ -535,6 +564,9 @@ namespace Sausagecat.PlayerControlSystem
                 @Jump.started -= instance.OnJump;
                 @Jump.performed -= instance.OnJump;
                 @Jump.canceled -= instance.OnJump;
+                @Attack.started -= instance.OnAttack;
+                @Attack.performed -= instance.OnAttack;
+                @Attack.canceled -= instance.OnAttack;
             }
 
             /// <summary>
@@ -603,6 +635,13 @@ namespace Sausagecat.PlayerControlSystem
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnJump(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnAttack(InputAction.CallbackContext context);
         }
     }
 }

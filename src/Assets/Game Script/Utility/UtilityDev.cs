@@ -46,4 +46,9 @@ public static class UtilityDev
         Sheath = 1,
     }
 
+    public enum AttackType
+    {
+        Light = 0,
+        Heavy = 1
+    }
 }

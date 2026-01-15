@@ -2,11 +2,13 @@ using Photon.Pun;
 using Sausagecat.PlayerControlSystem;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviourPun
 {
     [SerializeField] private Animator animator;
+
     [SerializeField] private float simepleBlendSpeed = 20f;
     [SerializeField] private float locomotionBlendSpeed = 0.25f;
 
@@ -25,6 +27,8 @@ public class PlayerAnimation : MonoBehaviourPun
     private static int isDrawOneHandedHash = Animator.StringToHash("isDrawOneHanded");
     private static int isSheathedOneHandedHash = Animator.StringToHash("isSheathedOneHanded");
     private static int animationFloatStateHash = Animator.StringToHash("animationFloatState");
+    private static int lightAttackTriggerHash = Animator.StringToHash("lightAttackTrigger");
+    private static int heavyAttackTriggerHash = Animator.StringToHash("heavyAttackTrigger");
 
     Vector3 locomotionMagnitude = Vector3.zero;
     Vector3 currentBlendInput = Vector3.zero;
@@ -80,10 +84,48 @@ public class PlayerAnimation : MonoBehaviourPun
         if(drawOrSheath == UtilityDev.DrawOrSheath.Draw)
         {
             animator.SetTrigger(isDrawOneHandedHash);
+            animator.ResetTrigger(isSheathedOneHandedHash);
+            Debug.Log("Draw Animation Triggered");
         }
         else
         {
             animator.SetTrigger(isSheathedOneHandedHash);
+            animator.ResetTrigger(isDrawOneHandedHash);
+            Debug.Log("Sheathed Animation Triggered");
         }
+    }
+
+    public void PerformAttackAnimation(AnimatorOverrideController aoc)
+    {
+        // สมมติว่าใน Animator ของคุณ ท่าตีเบาใช้คลิปชื่อ "LightAttack_Base"
+        animator.runtimeAnimatorController = aoc;
+        animator.SetTrigger(lightAttackTriggerHash);
+    }
+
+    public float GetNormalizedTime(string nameTag, int layerIndex = 2)
+    {
+
+        if (animator.IsInTransition(layerIndex))
+        {
+            AnimatorStateInfo nextState = animator.GetNextAnimatorStateInfo(layerIndex);
+            if (nextState.IsTag(nameTag)) return 0f;
+            return -1f;
+        }
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
+
+        if (stateInfo.IsTag(nameTag))
+        {
+            // แม้แอนิเมชันจะเร็วขึ้น แต่ normalizedTime จะยังคงวิ่งจาก 0 ไป 1 เสมอ
+            return Mathf.Clamp01(stateInfo.normalizedTime);
+        }
+
+        return -1f;
+    }
+
+    public void SetAttackSpeed(float speed)
+    {
+        // ส่งค่าความเร็วที่ต้องการเข้าไปใน Parameter
+        animator.SetFloat("AnimationAttackSpeed", speed);
     }
 }

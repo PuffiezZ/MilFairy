@@ -35,12 +35,9 @@ public class PlayerInterector : MonoBehaviourPun
 
         if (currentTarget != null && Input.GetKeyDown(KeyCode.E))
         {
-            if (currentTarget != null && Input.GetKeyDown(KeyCode.E))
-            {
-                IInteractable itemToPick = currentTarget; // เก็บ reference ไว้ก่อน
-                currentTarget = null; // ล้างค่าทิ้งทันทีป้องกันการกดซ้ำในเฟรมถัดไป
-                itemToPick.Interact(this.gameObject);
-            }
+            IInteractable itemToPick = currentTarget;
+            itemToPick.OnBeginIntereact(this.gameObject); //มีปัญหาตรงนี้
+            currentTarget = null;
         }
     }
 

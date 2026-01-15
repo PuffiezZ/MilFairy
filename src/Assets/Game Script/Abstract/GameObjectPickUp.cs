@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public abstract class GameObjectPickUp : MonoBehaviour,IInteractable
+public abstract class GameObjectPickUp : MonoBehaviourPun,IInteractable
 {
     [SerializeField] protected GameObject intereactWorldUI;
     private void Start()
@@ -33,12 +33,12 @@ public abstract class GameObjectPickUp : MonoBehaviour,IInteractable
         intereactWorldUI.SetActive(true);
     }
 
-    public virtual void Interact(GameObject player)
+    public virtual void OnBeginIntereact(GameObject player)
     {
         if (PhotonNetwork.InRoom)
         {
-            // ส่ง RPC ไปบอกทุกคนว่าไอเทมนี้ถูกเก็บแล้ว
-            GetComponent<PhotonView>().RPC(nameof(RPC_OnPickedUp), RpcTarget.MasterClient, player.GetComponent<PhotonView>().ViewID,player);
+            int getViewID = player.GetComponent<PhotonView>().ViewID;
+            photonView.RPC(nameof(RPC_OnPickedUp), RpcTarget.AllBuffered, getViewID);
         }
         else
         {
@@ -47,27 +47,26 @@ public abstract class GameObjectPickUp : MonoBehaviour,IInteractable
     }
 
     [PunRPC]
-    public void RPC_OnPickedUp(int playerViewID,GameObject player)
+    public void RPC_OnPickedUp(int playerViewID)
     {
-        // MasterClient ตรวจสอบความถูกต้องและสั่งลบ
-        if (PhotonNetwork.IsMasterClient)
+        PhotonView targetPv = PhotonView.Find(playerViewID);
+        if (targetPv != null)
         {
+            GameObject player = targetPv.gameObject;
+
+            // 1. ซ่อนวัตถุในทุกเครื่องทันที
+            LocalHide();
+
+            // 2. สั่ง OnInterected (ซึ่งจะไปเรียก OnPlayerEquipped ในคลาสลูก)
             OnInterected(player);
         }
     }
 
     public virtual void OnInterected(GameObject player)
     {
-        HideWorldInterectUI();
-        if (PhotonNetwork.InRoom)
+        if (!PhotonNetwork.InRoom)
         {
-            // ส่ง RPC บอกทุกคนให้ซ่อนวัตถุนี้ (ใช้ Buffered เพื่อให้คนที่มาทีหลังไม่เห็นของที่เก็บไปแล้ว)
-            GetComponent<PhotonView>().RPC(nameof(RPC_HideObject), RpcTarget.AllBuffered);
-        }
-        else
-        {
-            // ใช้ Destroy ปกติสำหรับโหมด Offline
-            Destroy(gameObject);
+            LocalHide();
         }
     }
 
