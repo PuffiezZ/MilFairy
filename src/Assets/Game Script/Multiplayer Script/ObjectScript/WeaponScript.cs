@@ -6,9 +6,9 @@ using Photon.Pun;
 public class WeaponScript : EquipmentScript
 {
     public WeaponData WeaponData;
-    public bool IsShethed;
-    public int IndexSlotNumber;
 
+    public int IndexSlotNumber { get; set; }
+    public bool IsShethed { get; set; }
     public void OnSheathedWeapon()
     {
         IsShethed = true;

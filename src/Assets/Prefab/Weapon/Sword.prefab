@@ -92,12 +92,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5276815127601475794}
-  - component: {fileID: 6552742635045766843}
+  - component: {fileID: 5853515943434863502}
   - component: {fileID: 8882462548380624506}
   - component: {fileID: 324070872157194903}
   - component: {fileID: 6780515614185159705}
   - component: {fileID: 6316359483966538828}
   - component: {fileID: 2641370175416346262}
+  - component: {fileID: 3799613638257667527}
   m_Layer: 7
   m_Name: Sword
   m_TagString: Untagged
@@ -121,7 +122,7 @@ Transform:
   - {fileID: 4332185346455898424}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6552742635045766843
+--- !u!114 &5853515943434863502
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,7 +131,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7197992888256433340}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d5cad6f55ecef545a69be6c3073dbd8, type: 3}
+  m_Script: {fileID: 11500000, guid: 0f7d62b4d103e6047a38ebbe6a980409, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   intereactWorldUI: {fileID: 0}
@@ -241,3 +242,19 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!114 &3799613638257667527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7197992888256433340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d5cad6f55ecef545a69be6c3073dbd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  intereactWorldUI: {fileID: 0}
+  WeaponData: {fileID: 11400000, guid: 6eaa7284fe6d2fd43964471aba812067, type: 2}
+  IsShethed: 0
+  IndexSlotNumber: 0

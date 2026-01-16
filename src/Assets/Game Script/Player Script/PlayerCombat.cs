@@ -167,6 +167,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     {
         return currentComboTime > 0;
     }
+    #region Attack Functions
     public void OnInvokeAttack()
     {
         WeaponScript weapon = equipment.CurrentCarriedWeapons[currentIndexWeaponSlotNumber];
@@ -178,17 +179,33 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
 
         if (weapon.IsShethed)
         {
-            OnStartDrawedWeapon();
+            OnStartDrawedWeapon(); // Fixed Bug
         }
         else
         {
-            ExecuteAttack();
+            ExecuteAttack(); // Current Fix!
         }
 
     }
     void ExecuteAttack()
     {
-        if(comboIndex >= comboNodes.Count)
+        if(photonView.IsMine && PhotonNetwork.InRoom)
+        {
+            photonView.RPC(nameof(RPC_ExecuteAttack), RpcTarget.All);
+        }
+        else if (!PhotonNetwork.InRoom)
+        {
+            LocalExcuteAttack();
+        }
+    }
+    [PunRPC]
+    private void RPC_ExecuteAttack()
+    {
+        LocalExcuteAttack();
+    }
+    private void LocalExcuteAttack()
+    {
+        if (comboIndex >= comboNodes.Count)
         {
             comboIndex = 0;
         }
@@ -208,7 +225,8 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         comboIndex++;
         Debug.Log("Perform Light Attack");
     }
-
+    #endregion
+    #region Draw Weapon Functions   
     public void OnInvokeDrawed()
     {
         playerAnimation.SetOnUsingWeaponAnimation(true);
@@ -216,12 +234,38 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         comboNodes = equipment.CurrentWeaponOnHanded.WeaponData.ComboList;
         //Play Animation Sheathed
     }
+
     public void OnStartDrawedWeapon()
+    {
+        if (PhotonNetwork.InRoom && photonView.IsMine)
+        {
+            // บอกทุกคนให้เล่นแอนิเมชันชักดาบ
+            photonView.RPC(nameof(RPC_StartDrawWeapon), RpcTarget.All);
+        }
+        else if (!PhotonNetwork.InRoom)
+        {
+            LocalStartDraw();
+        }
+    }
+    [PunRPC]
+    private void RPC_StartDrawWeapon()
+    {
+        LocalStartDraw();
+    }
+
+    private void LocalStartDraw()
     {
         playerAnimation.OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath.Draw);
         playerLocomotion.EnableToAttack = false;
     }
 
+    public void WeaponIsDrawed()
+    {
+        WeaponScript weapon = equipment.CurrentCarriedWeapons[currentIndexWeaponSlotNumber];
+        weapon.IsShethed = false;
+    }
+    #endregion
+    #region Sheath Weapon Functions
     public void OnInvokeSheathed()
     {
         equipment.SetSheathEquipmentPOS(currentIndexWeaponSlotNumber);
@@ -229,6 +273,23 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     }
 
     public void OnStartSheath()
+    {
+        if (PhotonNetwork.InRoom && photonView.IsMine)
+        {
+            // บอกทุกคนให้เล่นแอนิเมชันชักดาบ
+            photonView.RPC(nameof(RPC_StartSheathWeapon), RpcTarget.All);
+        }
+        else if (!PhotonNetwork.InRoom)
+        {
+            LocalStartSheath();
+        }
+    }
+    [PunRPC]
+    private void RPC_StartSheathWeapon()
+    {
+        LocalStartSheath();
+    }
+    private void LocalStartSheath()
     {
         isSheathing = true;
         playerAnimation.OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath.Sheath);
@@ -240,11 +301,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         weapon.IsShethed = true;
         isSheathing = false;
     }
-    public void WeaponIsDrawed()
-    {
-        WeaponScript weapon = equipment.CurrentCarriedWeapons[currentIndexWeaponSlotNumber];
-        weapon.IsShethed = false;
-    }
+    #endregion
 
     private void OnDrawGizmos()
     {
