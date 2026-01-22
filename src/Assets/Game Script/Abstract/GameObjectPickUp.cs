@@ -33,21 +33,21 @@ public abstract class GameObjectPickUp : MonoBehaviourPun,IInteractable
         intereactWorldUI.SetActive(true);
     }
 
-    public virtual void OnBeginIntereact(GameObject player)
+    public virtual void OnBeginIntereact(GameObject player,bool setActive = false)
     {
         if (PhotonNetwork.InRoom)
         {
             int getViewID = player.GetComponent<PhotonView>().ViewID;
-            photonView.RPC(nameof(RPC_OnPickedUp), RpcTarget.AllBuffered, getViewID);
+            photonView.RPC(nameof(RPC_OnPickedUp), RpcTarget.AllBuffered, getViewID, setActive);
         }
         else
         {
-            OnInterected(player);
+            OnInterected(player,setActive);
         }
     }
 
     [PunRPC]
-    public void RPC_OnPickedUp(int playerViewID)
+    public void RPC_OnPickedUp(int playerViewID, bool getBoolean)
     {
         PhotonView targetPv = PhotonView.Find(playerViewID);
         if (targetPv != null)
@@ -55,30 +55,24 @@ public abstract class GameObjectPickUp : MonoBehaviourPun,IInteractable
             GameObject player = targetPv.gameObject;
 
             // 1. ซ่อนวัตถุในทุกเครื่องทันที
-            LocalHide();
+            LocalSetGameObjectActive(getBoolean);
 
             // 2. สั่ง OnInterected (ซึ่งจะไปเรียก OnPlayerEquipped ในคลาสลูก)
-            OnInterected(player);
+            OnInterected(player, getBoolean);
         }
     }
 
-    public virtual void OnInterected(GameObject player)
+    public virtual void OnInterected(GameObject player, bool getBoolean)
     {
         if (!PhotonNetwork.InRoom)
         {
-            LocalHide();
+            LocalSetGameObjectActive(getBoolean);
         }
     }
 
-    [PunRPC]
-    public void RPC_HideObject()
-    {
-        LocalHide();
-    }
-
-    private void LocalHide()
+    private void LocalSetGameObjectActive(bool getBoolean)
     {
         HideWorldInterectUI();
-        gameObject.SetActive(false); // ซ่อนวัตถุแทนการ Destroy
+        gameObject.SetActive(getBoolean);
     }
 }

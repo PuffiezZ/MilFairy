@@ -6,9 +6,10 @@ using Photon.Pun;
 public class WeaponScript : EquipmentScript
 {
     public WeaponData WeaponData;
-
+    public Transform PlayerTransform { get; set; }
     public int IndexSlotNumber { get; set; }
     public bool IsShethed { get; set; }
+
     public void OnSheathedWeapon()
     {
         IsShethed = true;
@@ -27,9 +28,23 @@ public class WeaponScript : EquipmentScript
             bc.enabled = false; // ปิด Collider ของดาบ (ไปใช้ Raycast หรือ Trigger แยกแทนตอนโจมตี)
         }
     }
-
+    public override void OnBeginIntereact(GameObject player, bool setActive = false)
+    {
+        PlayerTransform = player.transform;
+        base.OnBeginIntereact(player, setActive);
+    }
     public void OnDrawedWeapon()
     {
         IsShethed = false;
+    }
+
+    public virtual void WeaponTrigger()
+    {
+
+    }
+
+    public virtual void WeaponAnimationEventTrigger()
+    {
+
     }
 }

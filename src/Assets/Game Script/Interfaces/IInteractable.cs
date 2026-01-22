@@ -6,5 +6,5 @@ public interface IInteractable
 {
     void ShowWorldInterectUI();
     void HideWorldInterectUI();
-    void OnBeginIntereact(GameObject player);
+    void OnBeginIntereact(GameObject player, bool getBoolean = false);
 }

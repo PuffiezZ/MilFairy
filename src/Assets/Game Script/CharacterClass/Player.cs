@@ -20,43 +20,60 @@ public class Player : CharacterBase,IPickupable
     private void Update()
     {
         if (PhotonNetwork.InRoom && !photonView.IsMine) return;
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Scrap.ToString(), photonView);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Stick.ToString(), photonView);
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha1))
+        //{
+        //    NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Scrap.ToString(), photonView);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha2))
+        //{
+        //    NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Stick.ToString(), photonView);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Electronic.ToString(), photonView);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha4))
+        //{
+        //    NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Oil.ToString(), photonView);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha5))
+        //{
+        //    NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Clothes.ToString(), photonView);
+        //}
         if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Electronic.ToString(), photonView);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Oil.ToString(), photonView);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Clothes.ToString(), photonView);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha6))
         {
             NetworkPrefabSpawner.Instance.SpawnResource("Sword", photonView);
         }
 
     }
 
-    [PunRPC]
-    protected override void RPC_ApplyDamage(float damage)
+    public override void TakeDamage(float damage)
     {
-        base.RPC_ApplyDamage(damage); // เรียกใช้ Logic ลดเลือดจากตัวแม่
+        base.TakeDamage(damage); // เรียกใช้ Logic ลดเลือดจากตัวแม่
+        CallUpdatePlayerUIHealth();
 
+
+    }
+    private void CallUpdatePlayerUIHealth()
+    {
         // ถ้าเป็นตัวละครของเรา ให้บอก UI Manager ด้วย
-        if (photonView.IsMine)
+        if (photonView.IsMine && PhotonNetwork.InRoom)
         {
-            OnPlayerHealthChanged?.Invoke(currentHealth, maxHealth);
+            photonView.RPC(nameof(RPC_UpdatePlayerHealthUI), RpcTarget.All, currentHealth, maxHealth);
         }
+        else
+        {
+            LocalUpdatePlayerHealthUI(currentHealth, maxHealth);
+        }
+    }
+    [PunRPC]
+    public void RPC_UpdatePlayerHealthUI(float currentHealthValue, float maxHealthValue)
+    {
+        LocalUpdatePlayerHealthUI(currentHealthValue, maxHealth);
+    }
+    private void LocalUpdatePlayerHealthUI(float currentHealthValue, float maxHealthValue)
+    {
+        OnPlayerHealthChanged?.Invoke(currentHealthValue, maxHealthValue);
     }
 
     protected override void Die()

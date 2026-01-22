@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
+using UnityEngine.InputSystem.XR;
 public class PlayerCombat : MonoBehaviourPunCallbacks
 {
     [Header("Movement Settings")]
@@ -19,22 +20,30 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     [SerializeField] private PlayerLocomotion playerLocomotion;
     private List<ComboNode> comboNodes = new List<ComboNode>();
     private bool isAttacking = false;
-    private bool isSheathing = false;
+    public bool isSheathing { get; set; }
     private bool enableToSheath = false;
-    private int currentIndexWeaponSlotNumber = 0;
     private int comboIndex = 0;
 
     private float currentComboTime = 0f;
     private float resetComboTime = 1.8f;
     private float currentResetComboTime = 0f;
     private float nTime;
+
+    public int currentIndexWeaponSlotNumber { get; set; }
     #region Combo Section
     [Foldout("Combo")]
     public ComboNode startingNode; 
     [Foldout("Combo")]
     private ComboNode currentComboNode;
-    #endregion
 
+    private CharacterController controller;
+    private Vector3 impact = Vector3.zero;
+    private float verticalVelocity = 0f;
+    #endregion
+    private void Start()
+    {
+        controller = GetComponent<CharacterController>();
+    }
     private void Update()
     {
         if (!PhotonNetwork.OfflineMode)
@@ -59,7 +68,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         if (isAttacking == true)
         {
             // ปลดล็อคเมื่อเล่นจบจริง หรือ หา Tag ไม่เจอ (-1)
-            if (nTime >= currentComboNode.normalizedTimeToNext && !IsOnCooldown())
+            if (nTime >= currentComboNode.NormalizedTimeToNext && !IsOnCooldown())
             {
                 isAttacking = false;
             }
@@ -85,7 +94,6 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
 
         if (Input.GetKeyDown(KeyCode.LeftAlt) && enableToSheath && !isSheathing)
         {
-            currentIndexWeaponSlotNumber = 0;
             WeaponScript currentWeapon = equipment.CurrentWeaponOnHanded;
 
             if (currentWeapon == null) return;
@@ -94,73 +102,46 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
                 OnStartSheath();
             }
         }
-
+        if (impact.magnitude > 0.2f)
+        {
+            // ระบบจะหยุดอัตโนมัติเมื่อชนกำแพง เพราะ CharacterController.Move มีระบบตรวจจับการชนในตัวอยู่แล้ว
+            controller.Move(impact * Time.deltaTime);
+        }
+        // ค่อยๆ ลดแรงพุ่งลง (Friction)
+        impact = Vector3.Lerp(impact, Vector3.zero, 10 * Time.deltaTime);
     }
     private IEnumerator DashTowardsTarget()
     {
-        Vector3 startPos = transform.position + Vector3.up; // ยิงจากระดับอก
-        Vector3 dashDirection = transform.forward;
-        float finalDistance = dashDistance;
+        Vector3 startPos = transform.position + Vector3.up;
 
-        // --- ส่วนการยิง Ray หลายเส้น ---
-        int rayCount = 8; // จำนวนเส้นที่จะยิง
-        float fanAngle = 50f; // องศาที่กระจายออก (ซ้าย 15 ขวา 15)
-        RaycastHit closestHit;
-        bool hasHit = false;
+        // 1. ระบบ Snap (หาศัตรูเพื่อหันหน้า) - ใช้ Code เดิมของคุณ
+        int rayCount = 8;
+        float fanAngle = 50f;
         float minDistance = snapDistance;
 
         for (int i = 0; i < rayCount; i++)
         {
-            // คำนวณองศาของแต่ละเส้น
             float angle = (i - (rayCount - 1) / 2f) * (fanAngle / (rayCount - 1));
             Vector3 dir = Quaternion.Euler(0, angle, 0) * transform.forward;
-
-            // วาด Ray ใน Console เพื่อ Debug (สีแดง)
-            Debug.DrawRay(startPos, dir * snapDistance, Color.red, 1f);
 
             if (Physics.Raycast(startPos, dir, out RaycastHit hit, snapDistance, enemyLayer))
             {
                 if (hit.distance < minDistance)
                 {
                     minDistance = hit.distance;
-                    closestHit = hit;
-                    hasHit = true;
-
-                    // หันหน้าหาตัวที่ใกล้ที่สุด
+                    // หันหน้าหาศัตรู
                     Vector3 dirToEnemy = (hit.collider.transform.position - transform.position);
                     dirToEnemy.y = 0;
                     transform.rotation = Quaternion.LookRotation(dirToEnemy);
-                    dashDirection = transform.forward;
                 }
             }
         }
 
-        if (hasHit)
-        {
-            // คำนวณระยะหยุด: ระยะชนลบออก 0.7f (กันทะลุ)
-            finalDistance = Mathf.Max(0, minDistance - 0.7f);
-        }
+        // 2. สั่งพุ่งด้วยระบบ Impact (เหมือน Knockback)
+        // ใช้ทิศทางที่ตัวละครหันอยู่ (transform.forward)
+        impact = transform.forward * 10f;
 
-        // --- ส่วนการเคลื่อนที่ ---
-        Vector3 targetPos = transform.position + (dashDirection * finalDistance);
-
-        // Check กำแพงกันวาร์ปทะลุฉาก
-        if (Physics.Raycast(startPos, dashDirection, out RaycastHit wallHit, finalDistance, LayerMask.GetMask("Environment")))
-        {
-            targetPos = wallHit.point - (dashDirection * 0.5f);
-        }
-
-        float elapsed = 0;
-        float duration = 0.1f;
-        Vector3 initialPos = transform.position;
-
-        while (elapsed < duration)
-        {
-            transform.position = Vector3.Lerp(initialPos, targetPos, elapsed / duration);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        transform.position = targetPos;
+        yield return null;
     }
 
     private bool IsOnCooldown()
@@ -212,15 +193,17 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         currentComboNode = comboNodes[comboIndex];
 
         if (currentComboNode == null) return;
-        playerAnimation.SetAttackSpeed(currentComboNode.attackSpeedCombo);
-        playerAnimation.PerformAttackAnimation(currentComboNode.AnimationOverrideCtrl);
+
+        currentComboNode.PlayerCombat = this;
+        playerAnimation.SetAttackSpeed(currentComboNode.AttackSpeedCombo);
+        playerAnimation.PerformAttackAnimation(currentComboNode);
         StartCoroutine(DashTowardsTarget());
 
         isAttacking = true;
         enableToSheath = false;
 
         currentResetComboTime = resetComboTime;
-        currentComboTime = currentComboNode.delayToNextCombo;
+        currentComboTime = currentComboNode.DelayToNextCombo;
 
         comboIndex++;
         Debug.Log("Perform Light Attack");
@@ -303,6 +286,30 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     }
     #endregion
 
+    #region Hit Detection Functions
+
+    public void TriggerHitboxFromWeaponAnimationEvent()
+    {
+        if(PhotonNetwork.InRoom && photonView.IsMine)
+        {
+            photonView.RPC(nameof(RPC_TriggerHitboxFromWeaponAnimationEvent), RpcTarget.All);
+        }
+        else if (!PhotonNetwork.InRoom)
+        {
+            LocalTriggerHitboxFromWeaponAnimationEvent();
+        }
+    }
+    [PunRPC]
+    private void RPC_TriggerHitboxFromWeaponAnimationEvent()
+    {
+        LocalTriggerHitboxFromWeaponAnimationEvent();
+    }
+    private void LocalTriggerHitboxFromWeaponAnimationEvent()
+    {
+        WeaponScript weapon = equipment.CurrentWeaponOnHanded;
+        weapon.WeaponTrigger();
+    }
+    #endregion
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;

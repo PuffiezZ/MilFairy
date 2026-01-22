@@ -95,9 +95,10 @@ public class PlayerAnimation : MonoBehaviourPun
         }
     }
 
-    public void PerformAttackAnimation(AnimatorOverrideController aoc)
+    public void PerformAttackAnimation(ComboNode getComboNode)
     {
         // สมมติว่าใน Animator ของคุณ ท่าตีเบาใช้คลิปชื่อ "LightAttack_Base"
+        AnimatorOverrideController aoc = getComboNode.AnimationOverrideCtrl;
         animator.runtimeAnimatorController = aoc;
         animator.SetTrigger(lightAttackTriggerHash);
     }

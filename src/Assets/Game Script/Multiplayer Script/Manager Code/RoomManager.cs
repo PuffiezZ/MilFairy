@@ -6,12 +6,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject playerObject; // ต้องอยู่ในโฟลเดอร์ Resources เท่านั้น
     [SerializeField] private Transform[] spawnPoints; // ใช้ array เพื่อสุ่มจุดเกิด
 
+    private PayloadSetup payloadSetup;
     private void Awake()
     {
         if (!PhotonNetwork.IsConnected)
         {
             PhotonNetwork.OfflineMode = true;
         }
+        payloadSetup = GetComponent<PayloadSetup>();
     }
     void Start()
     {
@@ -19,14 +21,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.InRoom)
         {
             SpawnPlayer();
+            payloadSetup.OnInstancePayload();
         }
         else
         {
             Transform selectedPoint = spawnPoints[0];
-
             GameObject player = Instantiate(playerObject, selectedPoint.position, Quaternion.identity);
-
             player.GetComponent<PlayerSetup>().IsLocalPlayer();
+            payloadSetup.OnInstancePayload();
         }
     }
 

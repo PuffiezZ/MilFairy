@@ -35,9 +35,6 @@ namespace Sausagecat.PlayerControlSystem
         private float _targetRotationX; // เก็บค่าก้ม-เงย
         private float _targetRotationY; // เก็บค่าซ้าย-ขวา
         private PlayerLocomotion playerLocomotion;
-        private Vector2 cameraRotation = Vector2.zero;
-        private Vector2 playerTargetRotation = Vector2.zero;
-        private float _lastTargetAngle;
         private float verticalVelocity = 0f;
 
         public bool lockRotating { get; private set; } = false;

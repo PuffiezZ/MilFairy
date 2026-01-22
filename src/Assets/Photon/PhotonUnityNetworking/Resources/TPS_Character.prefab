@@ -222,6 +222,37 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.49471617, y: -0.02985686, z: -0.000000014901161}
     m_Extent: {x: 0.5068611, y: 0.16479233, z: 0.23511632}
   m_DirtyAABB: 0
+--- !u!1 &442287599595925539
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6451754577576453469}
+  m_Layer: 0
+  m_Name: One-Handed2nd Sheath
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6451754577576453469
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 442287599595925539}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7510341, y: -0.05365632, z: -0.076715514, w: 0.6535929}
+  m_LocalPosition: {x: 0.054, y: -0.143, z: -0.12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5551749708639370603}
+  m_LocalEulerAnglesHint: {x: 76.782, y: -125.834, z: -127.715}
 --- !u!1 &486023382318090307
 GameObject:
   m_ObjectHideFlags: 0
@@ -1880,6 +1911,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2143663013302836374}
+  - {fileID: 6451754577576453469}
   - {fileID: 346382863429047350}
   m_Father: {fileID: 8707202730883157615}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5643,9 +5675,9 @@ GameObject:
   - component: {fileID: 7399517720477527420}
   - component: {fileID: 7280755416245366038}
   - component: {fileID: -7890431487719940415}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TPS_Character
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5720,6 +5752,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OneMeleeHanded_POS: {fileID: 2197116430764516780}
   OneMeleeSheath_POS: {fileID: 2143663013302836374}
+  OneMeleeSheath2nd_POS: {fileID: 6451754577576453469}
   playerCombat: {fileID: 4914690698565031803}
   playerAnimation: {fileID: 4629303127956484378}
 --- !u!114 &3310473656372117739

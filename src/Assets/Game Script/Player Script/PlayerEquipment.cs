@@ -1,6 +1,7 @@
 using NaughtyAttributes;
 using Photon.Pun;
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerEquipment : MonoBehaviourPun
@@ -10,6 +11,8 @@ public class PlayerEquipment : MonoBehaviourPun
     [SerializeField] private Transform OneMeleeHanded_POS;
     [BoxGroup("Socket Weapon Attach (One-Handed Melee)")]
     [SerializeField] private Transform OneMeleeSheath_POS;
+    [BoxGroup("Socket Weapon Attach (One-Handed Melee)")]
+    [SerializeField] private Transform OneMeleeSheath2nd_POS;
 
     private WeaponScript currentWeaponOnHanded;
     private WeaponScript[] currentCarriedWeapons = new WeaponScript[2];
@@ -43,7 +46,8 @@ public class PlayerEquipment : MonoBehaviourPun
             if (currentCarriedWeapons[i] == null)
             {
                 SetNewWeaponSlot(i, getWeapon);
-                SwapWeapon(i);
+                playerCombat.currentIndexWeaponSlotNumber = i;
+                playerCombat.OnInvokeAttack();
                 slotIsFree = true;
                 break;
             }
@@ -51,22 +55,32 @@ public class PlayerEquipment : MonoBehaviourPun
 
         if (slotIsFree) return;
         SetNewWeaponSlot(indexCarriedWeapon, getWeapon);
-        SwapWeapon(indexCarriedWeapon);
-    }
-    private void HandleEquippedArmor()
-    {
-
+        playerCombat.currentIndexWeaponSlotNumber = indexCarriedWeapon;
+        playerCombat.OnInvokeAttack();
     }
 
-    private void SwapWeapon(int index)
+    public IEnumerator SwapWeapon(int index)
     {
+        if (playerCombat.currentIndexWeaponSlotNumber == index && !currentWeaponOnHanded.IsShethed) yield break;
         WeaponScript newWeapon = currentCarriedWeapons[index];
+        if (newWeapon == null) yield break;
+
         currentWeaponOnHanded = newWeapon;
 
+        if (!currentWeaponOnHanded.IsShethed)
+        {
+            playerCombat.OnStartSheath();
+            while (playerCombat.isSheathing)
+            {
+                yield return null;
+            }
+        }
+        playerCombat.currentIndexWeaponSlotNumber = index;
         playerCombat.OnInvokeAttack();
 
         string nameWeapon = currentWeaponOnHanded.WeaponData.Name;
         Debug.Log($"Current Holding Weapon {nameWeapon} at index[{index}]");
+        yield return null;
     }
 
     public void SetNewWeaponSlot(int indexSlot, WeaponScript getWeapon)
@@ -79,25 +93,16 @@ public class PlayerEquipment : MonoBehaviourPun
         switch (getWeapon.WeaponData.weaponType)
         {
             case UtilityDev.WeaponType.OneHandedMelee:
-                SetOneHandedSheathedPosition(indexSlot, getWeapon);
+                SetWeaponSheathedPosition(indexSlot, getWeapon);
                 break;
         }
     }
 
 
-    public void SetOneHandedSheathedPosition(int indexSlot, WeaponScript getWeapon)
+    public void SetWeaponSheathedPosition(int indexSlot, WeaponScript getWeapon)
     {
         // 1. เสก Visual ครั้งเดียวและเก็บไว้ใน Array
-        GameObject instanceWeapon = null;
-
-        if (!PhotonNetwork.InRoom)
-        {
-            instanceWeapon = Instantiate(getWeapon.WeaponData.weaponPrefab, OneMeleeSheath_POS);
-        }
-        else
-        {
-            instanceWeapon = PhotonNetwork.Instantiate(getWeapon.WeaponData.weaponPrefab.name, OneMeleeSheath_POS.position, OneMeleeSheath_POS.rotation);
-        }
+        GameObject instanceWeapon = getWeapon.gameObject;
         if (instanceWeapon == null) return;
         currentWeaponVisualActive[indexSlot] = instanceWeapon;
 

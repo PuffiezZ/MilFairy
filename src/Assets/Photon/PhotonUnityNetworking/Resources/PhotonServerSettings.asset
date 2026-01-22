@@ -52,6 +52,16 @@ MonoBehaviour:
   - RPC_StartDrawWeapon
   - RPC_SyncDrawVisuals
   - RPC_StartSheathWeapon
+  - RPC_UpdatePlayerHealthUI
+  - RPC_TakeDamage
+  - RPC_TriggerHitboxFromWeaponAnimationEvent
+  - RPC_SyncWeaponParent
+  - RPC_SyncWeaponSetup
+  - RPC_HandleEquipment
+  - RPC_Knockback
+  - RPC_SyncInteraction
+  - RPC_SyncPayloadSpeed
+  - RPC_SyncPayloadSplineContainer
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

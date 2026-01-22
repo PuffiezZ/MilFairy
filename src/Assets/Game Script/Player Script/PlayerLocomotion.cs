@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,15 +10,18 @@ namespace Sausagecat.PlayerControlSystem
     public class PlayerLocomotion : MonoBehaviour, PlayerControl.IPlayerLocomotionActions
     {
         public PlayerControl PlayerControls {  get; private set; }
+        public PlayerEquipment PlayerEquipment { get; private set; }
         public Vector2 MovementInput { get; private set; }
         public Vector2 LookInput { get; private set; }
         public bool OnSprinting { get; private set; }
         public bool OnJumping { get; set; }
 
         public bool EnableToAttack { get; set; }
+        private Coroutine weaponSwapCoroutine;
 
         private void OnEnable()
         {
+            PlayerEquipment = GetComponent<PlayerEquipment>();
             PlayerControls = new PlayerControl();
             PlayerControls.Enable();
 
@@ -74,6 +78,22 @@ namespace Sausagecat.PlayerControlSystem
             else
             {
                 EnableToAttack = false;
+            }
+        }
+
+        public void OnWeaponToggle(InputAction.CallbackContext context)
+        {
+            // ใช้ performed เพื่อให้รันแค่ครั้งเดียวเมื่อกดปุ่มลง
+            if (context.performed)
+            {
+                int weaponValue = Mathf.Abs(Mathf.RoundToInt(context.ReadValue<float>()));
+                int finalValue = weaponValue - 1;
+
+                // หยุดการสลับอาวุธครั้งก่อนหน้า (ถ้ามี) เพื่อไม่ให้ Logic ตีกัน
+                if (weaponSwapCoroutine != null) StopCoroutine(weaponSwapCoroutine);
+
+                // เริ่มต้นการสลับอาวุธครั้งใหม่
+                weaponSwapCoroutine = StartCoroutine(PlayerEquipment.SwapWeapon(finalValue));
             }
         }
     }

@@ -138,6 +138,15 @@ namespace Sausagecat.PlayerControlSystem
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""WeaponToggle"",
+                    ""type"": ""Button"",
+                    ""id"": ""211ac0a7-10a6-4aa4-a2f5-2790e9f411e4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -371,6 +380,39 @@ namespace Sausagecat.PlayerControlSystem
                     ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d0527c36-2934-4ed6-a91f-ec8e47e2d985"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""74c6f7b5-cf8d-4fe3-ad21-519a552d679e"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale"",
+                    ""groups"": """",
+                    ""action"": ""WeaponToggle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d55aefe6-3e2c-4c43-a90c-6d20cac18335"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": ""Scale(factor=2)"",
+                    ""groups"": """",
+                    ""action"": ""WeaponToggle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -384,6 +426,7 @@ namespace Sausagecat.PlayerControlSystem
             m_PlayerLocomotion_Sprint = m_PlayerLocomotion.FindAction("Sprint", throwIfNotFound: true);
             m_PlayerLocomotion_Jump = m_PlayerLocomotion.FindAction("Jump", throwIfNotFound: true);
             m_PlayerLocomotion_Attack = m_PlayerLocomotion.FindAction("Attack", throwIfNotFound: true);
+            m_PlayerLocomotion_WeaponToggle = m_PlayerLocomotion.FindAction("WeaponToggle", throwIfNotFound: true);
         }
 
         ~@PlayerControl()
@@ -469,6 +512,7 @@ namespace Sausagecat.PlayerControlSystem
         private readonly InputAction m_PlayerLocomotion_Sprint;
         private readonly InputAction m_PlayerLocomotion_Jump;
         private readonly InputAction m_PlayerLocomotion_Attack;
+        private readonly InputAction m_PlayerLocomotion_WeaponToggle;
         /// <summary>
         /// Provides access to input actions defined in input action map "PlayerLocomotion".
         /// </summary>
@@ -500,6 +544,10 @@ namespace Sausagecat.PlayerControlSystem
             /// Provides access to the underlying input action "PlayerLocomotion/Attack".
             /// </summary>
             public InputAction @Attack => m_Wrapper.m_PlayerLocomotion_Attack;
+            /// <summary>
+            /// Provides access to the underlying input action "PlayerLocomotion/WeaponToggle".
+            /// </summary>
+            public InputAction @WeaponToggle => m_Wrapper.m_PlayerLocomotion_WeaponToggle;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -541,6 +589,9 @@ namespace Sausagecat.PlayerControlSystem
                 @Attack.started += instance.OnAttack;
                 @Attack.performed += instance.OnAttack;
                 @Attack.canceled += instance.OnAttack;
+                @WeaponToggle.started += instance.OnWeaponToggle;
+                @WeaponToggle.performed += instance.OnWeaponToggle;
+                @WeaponToggle.canceled += instance.OnWeaponToggle;
             }
 
             /// <summary>
@@ -567,6 +618,9 @@ namespace Sausagecat.PlayerControlSystem
                 @Attack.started -= instance.OnAttack;
                 @Attack.performed -= instance.OnAttack;
                 @Attack.canceled -= instance.OnAttack;
+                @WeaponToggle.started -= instance.OnWeaponToggle;
+                @WeaponToggle.performed -= instance.OnWeaponToggle;
+                @WeaponToggle.canceled -= instance.OnWeaponToggle;
             }
 
             /// <summary>
@@ -642,6 +696,13 @@ namespace Sausagecat.PlayerControlSystem
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnAttack(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "WeaponToggle" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnWeaponToggle(InputAction.CallbackContext context);
         }
     }
 }
