@@ -7,6 +7,7 @@ public class WeaponScript : EquipmentScript
 {
     public WeaponData WeaponData;
     public Transform PlayerTransform { get; set; }
+    public SheathedWeaponSocket SheathedSocket { get; set; }
     public int IndexSlotNumber { get; set; }
     public bool IsShethed { get; set; }
 

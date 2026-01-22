@@ -9,10 +9,10 @@ public class PlayerEquipment : MonoBehaviourPun
     public static Action<int, WeaponData> OnSetNewWeapon;
     [BoxGroup("Socket Weapon Attach (One-Handed Melee)")]
     [SerializeField] private Transform OneMeleeHanded_POS;
-    [BoxGroup("Socket Weapon Attach (One-Handed Melee)")]
-    [SerializeField] private Transform OneMeleeSheath_POS;
-    [BoxGroup("Socket Weapon Attach (One-Handed Melee)")]
-    [SerializeField] private Transform OneMeleeSheath2nd_POS;
+    [BoxGroup("Socket Weapon Attach (One-Handed)")]
+    [SerializeField] private SheathedWeaponSocket[] OneMeleeSheathSocket;
+    [BoxGroup("Socket Weapon Attach (Two-Handed)")]
+    [SerializeField] private SheathedWeaponSocket[] TwoMeleeSheathSocket;
 
     private WeaponScript currentWeaponOnHanded;
     private WeaponScript[] currentCarriedWeapons = new WeaponScript[2];
@@ -58,14 +58,13 @@ public class PlayerEquipment : MonoBehaviourPun
         playerCombat.currentIndexWeaponSlotNumber = indexCarriedWeapon;
         playerCombat.OnInvokeAttack();
     }
-
+    public void SetNewHandedWeapon(WeaponScript weapon = null)
+    {
+        currentWeaponOnHanded = weapon;
+    }
     public IEnumerator SwapWeapon(int index)
     {
-        if (playerCombat.currentIndexWeaponSlotNumber == index && !currentWeaponOnHanded.IsShethed) yield break;
-        WeaponScript newWeapon = currentCarriedWeapons[index];
-        if (newWeapon == null) yield break;
-
-        currentWeaponOnHanded = newWeapon;
+        if (currentWeaponOnHanded.IndexSlotNumber == index) yield break;
 
         if (!currentWeaponOnHanded.IsShethed)
         {
@@ -93,6 +92,21 @@ public class PlayerEquipment : MonoBehaviourPun
         switch (getWeapon.WeaponData.weaponType)
         {
             case UtilityDev.WeaponType.OneHandedMelee:
+                SheathedWeaponSocket sheathSocket;
+                if (OneMeleeSheathSocket[0].CheckSocketIsFree())
+                {
+                    sheathSocket = OneMeleeSheathSocket[0];
+                }
+                else if(OneMeleeSheathSocket[1].CheckSocketIsFree())
+                {
+                    sheathSocket = OneMeleeSheathSocket[1];
+                }
+                else
+                {
+                    Debug.LogWarning("All One-Handed Melee Sheath Sockets are occupied!");
+                    return;
+                }
+                sheathSocket.SetWeaponInSocket(getWeapon);
                 SetWeaponSheathedPosition(indexSlot, getWeapon);
                 break;
         }
@@ -113,9 +127,10 @@ public class PlayerEquipment : MonoBehaviourPun
         OnSetNewWeapon?.Invoke(indexSlot, weaponData);
 
         // 3. ตั้งค่าตำแหน่งให้ติดกับฝัก
-        instanceWeapon.transform.SetParent(OneMeleeSheath_POS, false);
+        instanceWeapon.transform.SetParent(weaponInSlot.SheathedSocket.SocketTransform, false);
         instanceWeapon.transform.localPosition = Vector3.zero;
         instanceWeapon.transform.localRotation = Quaternion.identity;
+        instanceWeapon.transform.localScale = instanceWeapon.transform.localScale;
 
         if (weaponInSlot != null)
         {
@@ -147,10 +162,28 @@ public class PlayerEquipment : MonoBehaviourPun
         if (weapon == null) return;
 
         // แทนที่จะ Instantiate ใหม่ ให้ย้าย Parent ไปที่มือแทน
-        weapon.transform.SetParent(OneMeleeSheath_POS, false);
+        weapon.transform.SetParent(weapon.SheathedSocket.SocketTransform, false);
         weapon.transform.localPosition = Vector3.zero;
         weapon.transform.localRotation = Quaternion.identity;
 
         weapon.OnSheathedWeapon(); // เปลี่ยนสถานะ IsShethed เป็น false
+    }
+}
+
+[System.Serializable]
+public class SheathedWeaponSocket
+{
+    public WeaponScript CurrentWeaponInSocket { get; private set; }
+    public Transform SocketTransform;
+
+    public bool CheckSocketIsFree()
+    {
+        return CurrentWeaponInSocket == null;
+    }
+
+    public void SetWeaponInSocket(WeaponScript weapon)
+    {
+        weapon.SheathedSocket = this;
+        CurrentWeaponInSocket = weapon;
     }
 }
