@@ -245,6 +245,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     public void WeaponIsDrawed()
     {
         WeaponScript weapon = equipment.CurrentCarriedWeapons[currentIndexWeaponSlotNumber];
+        equipment.SetNewHandedWeapon(weapon);
         weapon.IsShethed = false;
     }
     #endregion
