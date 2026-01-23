@@ -6,7 +6,6 @@ using UnityEngine;
 public class NetworkPrefabSpawner : MonoBehaviour
 {
     public static NetworkPrefabSpawner Instance;
-    public GameObject spawnerPosition;
 
     private void Awake()
     {
@@ -24,8 +23,10 @@ public class NetworkPrefabSpawner : MonoBehaviour
             // ถ้าไม่ใช่ Master ให้หยุดทำงานทันที ไม่ต้องไปทำ else
             if (!PhotonNetwork.IsMasterClient) return;
 
+            Vector3 spawnPosition = photonView.transform.position + (photonView.transform.forward * 2f) + (photonView.transform.up * 2f);
+            Quaternion spawnRotation = photonView.transform.rotation;
             // เฉพาะ MasterClient เท่านั้นที่รันบรรทัดนี้
-            PhotonNetwork.InstantiateRoomObject(namePrefab, spawnerPosition.transform.position, Quaternion.identity);
+            PhotonNetwork.InstantiateRoomObject(namePrefab, spawnPosition, Quaternion.identity);
             Debug.Log($"<color=cyan>[NetworkSpawner]</color> Master Spawned {namePrefab}");
         }
         else
@@ -34,7 +35,8 @@ public class NetworkPrefabSpawner : MonoBehaviour
             DefaultPool pool = PhotonNetwork.PrefabPool as DefaultPool;
             if (pool.ResourceCache.TryGetValue(namePrefab, out GameObject prefab))
             {
-                Instantiate(prefab, spawnerPosition.transform.position, Quaternion.identity);
+                Vector3 spawnPosition = photonView.transform.position + (photonView.transform.forward * 2f) + (photonView.transform.up * 2f);
+                Instantiate(prefab, spawnPosition, Quaternion.identity);
                 Debug.Log($"<color=yellow>[NetworkSpawner]</color> Offline Spawned {prefab.name}");
             }
         }

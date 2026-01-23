@@ -4894,7 +4894,7 @@ MonoBehaviour:
   contentParent: {fileID: 1977821820}
   playerEntryPrefab: {fileID: 2817943452754857435, guid: 726a632bb7739b047a91b5b9ee430b4b,
     type: 3}
-  sceneName: RoomP2P - Prototype
+  sceneName: BPS map
 --- !u!114 &1274574333
 MonoBehaviour:
   m_ObjectHideFlags: 0
