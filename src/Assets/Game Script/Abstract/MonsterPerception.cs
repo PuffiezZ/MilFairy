@@ -28,6 +28,7 @@ public class MonsterPerception : MonoBehaviour
     }
     private void Update()
     {
+        visibleTargets.Clear();
         FindVisibleTargets();
         if (visibleTargets.Count > 0)
         {
@@ -35,23 +36,20 @@ public class MonsterPerception : MonoBehaviour
 
             if (target == null || monster == null)
             {
-                monsterState.FSMblackboard.SetVariableValue("PlayerInVision", null);
                 return;
             }
             // เช็คว่าเป็นผู้เล่น และยังไม่ได้อยู่ในสเตท Chase
             if (target.GetComponent<Player>())
             {
+                monsterState.FSMblackboard.SetVariableValue("PlayerInVision", target);
+                GameObject currentPlayerInVision = monsterState.FSMblackboard.GetVariableValue<GameObject>("PlayerInVision");
 
-
-
-                if (monsterState.FSMblackboard.GetVariableValue<GameObject>("FirstSeenPlayer") == null ||
-                    monsterState.FSMblackboard.GetVariableValue<GameObject>("FirstSeenPlayer") != target)
+                if (monsterState.FSMblackboard.GetVariableValue<GameObject>("FirstSeenPlayer") != currentPlayerInVision)
                 {
-                    monsterState.FSMblackboard.SetVariableValue("FirstSeenPlayer", target);
+                    monsterState.FSMblackboard.SetVariableValue("FirstSeenPlayer", currentPlayerInVision);
+                    monsterState.FSMblackboard.SetVariableValue("TargetObject", currentPlayerInVision);
                 }
-
-                //monsterState.FSMblackboard.SetVariableValue("TargetObject", target);
-                monsterState.CallChangeStateFunc(EnemyState.Chase);
+                //monsterState.CallChangeStateFunc(EnemyState.Chase);
             }
             //else
             //{
@@ -65,6 +63,10 @@ public class MonsterPerception : MonoBehaviour
             //        monsterState.CallChangeStateFunc(EnemyState.ChasePayload);
             //    }
             //}
+        }
+        else
+        {
+            monsterState.FSMblackboard.SetVariableValue("PlayerInVision", null);
         }
         //else
         //{

@@ -21,6 +21,7 @@ public class MonsterState : MonoBehaviourPunCallbacks
     [ShowIf(nameof(stateControllerType), StateControllerType.FSM)]
     [BoxGroup("FSM")]
     [SerializeField] private Blackboard fsmBlackboard;
+    private FSM fsm;
 
     [ShowIf(nameof(stateControllerType), StateControllerType.BehaviourTree)]
     [BoxGroup("Behaviour Tree")]
@@ -37,29 +38,15 @@ public class MonsterState : MonoBehaviourPunCallbacks
     private void Start()
     {
         monsterBase = GetComponent<MonsterBase>();
-        CallChangeStateFunc(EnemyState.ChasePayload);
+        fsm = GetComponent<FSM>();
 
-        stateOverheadsUI.UpdateStateText(CurrentState.ToString());
-
-        if(stateControllerType == StateControllerType.BehaviourTree)
+        fsm.onStateEnter += CallUpdateStateFunc_FSM;
+        if (stateControllerType == StateControllerType.BehaviourTree)
         {
             behaviorTree.StartBehavior();
         }
-
-
     }
-    private void Update()
-    {
-        if(stateControllerType == StateControllerType.BehaviourTree)
-        {
-            // ตัวอย่าง: สั่งให้ทำงานเฉพาะเฟรมที่ต้องการ เพื่อประหยัด CPU
-            if (Time.frameCount % framerateUpdate == 0) // ทำงานทุกๆ 5 เฟรม
-            {
-                behaviorTree.Tick();
-            }
-        }
 
-    }
     public void CallEventState(string nameEvent,object arg1 = null)
     {
         EventHandler.ExecuteEvent(behaviorTree, nameEvent);
@@ -97,29 +84,48 @@ public class MonsterState : MonoBehaviourPunCallbacks
     }
     #endregion
     #region Change State Region
-    public void CallChangeStateFunc(EnemyState newState)
+    public void CallUpdateStateFunc_FSM(IState state)
     {
-        int stateInt = (int)newState;
         if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC(nameof(RPC_ChangeState), RpcTarget.AllBuffered, stateInt);
+            photonView.RPC(nameof(RPC_UpdateStateFSM), RpcTarget.AllBuffered);
         }
         else
         {
-            ChangeState(stateInt);
+            UpdateStateFSM();
         }
 
     }
     [PunRPC]
-    private void RPC_ChangeState(int newStateNumber)
+    private void RPC_UpdateStateFSM()
     {
-        ChangeState(newStateNumber);
+        UpdateStateFSM();
     }
-    private void ChangeState(int newStateNumber)
+    private void UpdateStateFSM()
     {
-        currentState = (EnemyState)newStateNumber;
-        stateOverheadsUI.UpdateStateText(CurrentState.ToString());
+        //currentState = (EnemyState)newStateNumber;
+
         //behaviorTree.RestartBehavior();
+        finiteStateMachine.graph.UpdateGraph();
+        stateOverheadsUI.UpdateStateText(finiteStateMachine.GetCurrentState().FSM.currentStateName);
+    }
+    public void UpdateFSMVariable<T>(string varName, T value)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // Photon RPC รองรับการส่ง object ที่เป็นประเภทพื้นฐานได้เลย
+            photonView.RPC(nameof(RPC_SyncFSMVariable), RpcTarget.AllBuffered, name, (object)value);
+        }
+    }
+
+    [PunRPC]
+    private void RPC_SyncFSMVariable(string varName, object value)
+    {
+        // อัปเดตค่าลงใน Blackboard
+        fsmBlackboard.SetVariableValue(varName, value);
+
+        // อัปเดต UI เพื่อให้สอดคล้องกับงานวิจัยของคุณ
+        stateOverheadsUI.UpdateStateText(((EnemyState)value).ToString());
     }
     #endregion
 }

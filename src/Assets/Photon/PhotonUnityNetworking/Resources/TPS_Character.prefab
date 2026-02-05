@@ -3658,7 +3658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34b1f3243e398b04382a700655def726, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dashDistance: 2
+  dashDistance: 1
   snapDistance: 4
   enemyLayer:
     serializedVersion: 2

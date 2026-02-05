@@ -43,17 +43,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
             aiAgent.speed = monsterData.GetStatValue("MoveSpeed");
         }
     }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            EnemyState currentState = GetComponent<MonsterState>().CurrentState;
-            if (currentState == EnemyState.Idle)
-                monsterState.CallChangeStateFunc(EnemyState.ChasePayload);
-            else if (currentState == EnemyState.ChasePayload)
-                monsterState.CallChangeStateFunc(EnemyState.Idle);
-        }
-    }
+
     public void OnDefaultSetData(MonsterData mData)
     {
         MaxHP = mData.GetStatValue("MaxHP");

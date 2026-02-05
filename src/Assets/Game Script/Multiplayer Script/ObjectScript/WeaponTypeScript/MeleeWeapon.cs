@@ -121,9 +121,6 @@ public class MeleeWeapon : WeaponScript
                     // ตรวจสอบกำแพงกั้นก่อนทำดาเมจ
                     if (!IsWallBlocking(hit.transform.position))
                     {
-                        damagedTargets.Add(damageable);
-                        damageable.TakeDamage(WeaponData.damage);
-
                         // ระบบ Knockback
                         if (hit.TryGetComponent<IKnockback>(out IKnockback knockback))
                         {
@@ -131,6 +128,8 @@ public class MeleeWeapon : WeaponScript
                             dir.y = 0;
                             knockback.Knockback(dir, WeaponData.knockbackForce);
                         }
+                        damagedTargets.Add(damageable);
+                        damageable.TakeDamage(WeaponData.damage);    
                     }
                 }
             }
@@ -191,7 +190,9 @@ public class MeleeWeapon : WeaponScript
                 Gizmos.DrawLine(bladeBase.position + Vector3.right * swordRadius, bladeTip.position + Vector3.right * swordRadius);
                 Gizmos.DrawLine(bladeBase.position - Vector3.right * swordRadius, bladeTip.position - Vector3.right * swordRadius);
                 break;
+
             case HitboxTriggerType.BoxCollider:
+                if ((PlayerTransform) == null) return;
                 Gizmos.color = EnableHitbox ? Color.green : Color.red;
 
                 // คำนวณ Matrix ให้ Gizmos วาดตามตำแหน่งและมุมหมุนของตัวละคร

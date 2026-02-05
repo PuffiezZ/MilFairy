@@ -18,7 +18,7 @@ public class SwitchAIState : Action
         if (monsterState == null) return TaskStatus.Failure;
 
         // สั่งเปลี่ยนสถานะผ่านสคริปต์ที่คุณเขียน
-        monsterState.CallChangeStateFunc(newState);
+        //monsterState.CallChangeStateFunc(newState);
         //GetComponent<BehaviorTree>().RestartBehavior();
         return TaskStatus.Success;
     }

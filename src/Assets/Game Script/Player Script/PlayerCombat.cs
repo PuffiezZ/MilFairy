@@ -140,7 +140,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
 
         // 2. สั่งพุ่งด้วยระบบ Impact (เหมือน Knockback)
         // ใช้ทิศทางที่ตัวละครหันอยู่ (transform.forward)
-        impact = transform.forward * 10f;
+        impact = transform.forward * dashDistance;
 
         yield return null;
     }

@@ -25,13 +25,6 @@ public class FSM_MoveTo : ActionTask
             UpdatePath();
             EndAction();
         }
-        else
-        {
-            aiAgentNav.isStopped = true;
-            isInRange = true;
-            OnReachToTarget();
-            EndAction();
-        }
     }
     protected override void OnStop()
     {
@@ -44,24 +37,6 @@ public class FSM_MoveTo : ActionTask
         {
             aiAgentNav.SetDestination(targetGO.value.transform.position);
         }
-    }
-
-    private void OnReachToTarget()
-    {
-        MonsterState mState = agent.GetComponent<MonsterState>();
-        if (mState == null) return;
-
-        bool monsterIsStop = aiAgentNav.isStopped;
-        Debug.Log($"Monster Check State Var: monsterIsStop == {monsterIsStop},IsInRange {isInRange}");
-        if (monsterIsStop && isInRange)
-        {
-            mState.CallChangeStateFunc(UtilityDev.EnemyState.Attack);
-        }
-        else
-        {
-            mState.CallChangeStateFunc(UtilityDev.EnemyState.Idle);
-        }
-
     }
 }
 
