@@ -9,6 +9,7 @@ public class WeaponData : ItemData
     public float damage;
     public float attackRange = 2f;
     public float attackSpeed = 1f; // คูลดาวน์ระหว่างการโจมตี
+    public float knockbackForce = 5f;
 
     [Header("Visuals & Animation")]
     public GameObject weaponPrefab; // ตัว Model ที่จะเอาไปติดที่มือ

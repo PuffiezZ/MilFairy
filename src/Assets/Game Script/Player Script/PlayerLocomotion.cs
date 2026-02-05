@@ -75,10 +75,6 @@ namespace Sausagecat.PlayerControlSystem
                 Debug.Log("On Attack Locomotion Invoke (Performed Only)");
                 EnableToAttack = true;
             }
-            else
-            {
-                EnableToAttack = false;
-            }
         }
 
         public void OnWeaponToggle(InputAction.CallbackContext context)

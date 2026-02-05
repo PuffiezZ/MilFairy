@@ -89,6 +89,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
             if (playerLocomotion.EnableToAttack && isSheathing == false)
             {
                 OnInvokeAttack();
+                playerLocomotion.EnableToAttack = false;
             }
         }
 

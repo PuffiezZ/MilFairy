@@ -1,24 +1,74 @@
+using NaughtyAttributes;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UtilityDev;
 
 public class MeleeWeapon : WeaponScript
 {
-    [Header("Melee Weapon Raycast")]
+    [BoxGroup("Capsule Colldier Hitbox")]
+    [ShowIf(nameof(hitboxType), HitboxTriggerType.CapsuleCollider)]
     [SerializeField] private Transform bladeBase;
+    [BoxGroup("Capsule Colldier Hitbox")]
+    [ShowIf(nameof(hitboxType), HitboxTriggerType.CapsuleCollider)]
     [SerializeField] private Transform bladeTip;
+    [BoxGroup("Capsule Colldier Hitbox")]
+    [ShowIf(nameof(hitboxType), HitboxTriggerType.CapsuleCollider)]
     [SerializeField] private float swordRadius = 0.3f;
-    public bool EnableHitbox { get; private set; } = false;
 
+    [BoxGroup("Box Collider Hitbox")]
+    [ShowIf(nameof(hitboxType), HitboxTriggerType.BoxCollider)]
+    [SerializeField] private Vector3 boxOffset = new Vector3(0, 1f, 1.5f); // ระยะห่างจากตัวละคร (X, Y, Z forward)
+    [BoxGroup("Box Collider Hitbox")]
+    [ShowIf(nameof(hitboxType), HitboxTriggerType.BoxCollider)]
+    [SerializeField] private Vector3 boxHalfExtents = new Vector3(1f, 1f, 1f); // ขนาดความกว้าง/สูง/ลึก ของกล่อง
+
+    public bool EnableHitbox { get; private set; } = false;
     public Transform BladeBase { get { return bladeBase; } }
     public Transform BladeTip { get { return bladeTip; } }
 
     private List<IDamageable> damagedTargets = new List<IDamageable>();
-
+    [SerializeField] private HitboxTriggerType hitboxType;
+    private Action hitActionEventUpdate;
+    private void OnEnable()
+    {
+        hitActionEventUpdate = null;
+        switch (hitboxType)
+        {
+            case HitboxTriggerType.CapsuleCollider:
+                hitActionEventUpdate += CapsuleColliderHitboxTrigger;
+                break;
+            case HitboxTriggerType.BoxCollider:
+                hitActionEventUpdate += HitboxColliderTrigger;
+                break;
+        }
+    }
+    private void OnDisable()
+    {
+        hitActionEventUpdate -= CapsuleColliderHitboxTrigger;
+        hitActionEventUpdate -= HitboxColliderTrigger;
+    }
     private void Update()
     {
         if (EnableHitbox == false)
             return;
+
+        hitActionEventUpdate?.Invoke();
+    }
+
+    public override void WeaponTrigger()
+    {
+        EnableHitbox = !EnableHitbox;
+        if (EnableHitbox == false)
+        {
+            damagedTargets.Clear();
+        }
+    }
+
+    #region Hitbox Function
+    private void CapsuleColliderHitboxTrigger()
+    {
         Collider[] hitCollision = null;
         hitCollision = Physics.OverlapCapsule(bladeBase.position, bladeTip.position, swordRadius);
 
@@ -40,25 +90,53 @@ public class MeleeWeapon : WeaponScript
 
                 // 2. ปรับค่า Y เป็น 0 เพื่อให้กระเด็นในแนวราบเท่านั้น (กันมอนสเตอร์มุดดินหรือลอยฟ้าแบบแปลกๆ)
                 knockbackDir.y = 0;
-                knockback.Knockback(knockbackDir.normalized, 5f);
+                knockback.Knockback(knockbackDir.normalized, WeaponData.knockbackForce);
             }
         }
 
     }
-
-    public override void WeaponTrigger()
+    private void HitboxColliderTrigger()
     {
-        EnableHitbox = !EnableHitbox;
-        if (EnableHitbox == false)
+        // 1. คำนวณตำแหน่งกลางกล่องให้อยู่ด้านหน้าตัวละครเสมอ
+        // ใช้ transform.TransformPoint เพื่อให้ตำแหน่งขยับและหมุนตามตัวละครอัตโนมัติ
+        Vector3 centerPosition = PlayerTransform.TransformPoint(boxOffset);
+
+        // 2. ยิง BoxCast
+        RaycastHit[] hits = Physics.BoxCastAll(
+            centerPosition,
+            boxHalfExtents,
+            PlayerTransform.forward,
+            PlayerTransform.rotation,
+            0.1f, // ระยะ cast สั้นๆ เพื่อเช็คพื้นที่ ณ จุดนั้น
+            LayerMask.GetMask("Enemy") // แนะนำให้ใส่ LayerMask เพื่อ Performance AI 32 ตัว
+        );
+
+        foreach (RaycastHit hitInfo in hits)
         {
-            damagedTargets.Clear();
+            Collider hit = hitInfo.collider;
+            if (hit.TryGetComponent<IDamageable>(out IDamageable damageable))
+            {
+                if (!damagedTargets.Contains(damageable) && !hit.CompareTag("Player"))
+                {
+                    // ตรวจสอบกำแพงกั้นก่อนทำดาเมจ
+                    if (!IsWallBlocking(hit.transform.position))
+                    {
+                        damagedTargets.Add(damageable);
+                        damageable.TakeDamage(WeaponData.damage);
+
+                        // ระบบ Knockback
+                        if (hit.TryGetComponent<IKnockback>(out IKnockback knockback))
+                        {
+                            Vector3 dir = (hit.transform.position - transform.position).normalized;
+                            dir.y = 0;
+                            knockback.Knockback(dir, WeaponData.knockbackForce);
+                        }
+                    }
+                }
+            }
         }
     }
-
-    public override void WeaponAnimationEventTrigger()
-    {
-            
-    }
+    #endregion
     public bool IsWallBlocking(Vector3 targetPOS)
     {
         // 1. ตั้งค่าจุดเริ่มต้น (ระดับอก) และคำนวณทิศทาง
@@ -94,20 +172,36 @@ public class MeleeWeapon : WeaponScript
     }
     private void OnDrawGizmos()
     {
-        if(EnableHitbox == false)
+        switch (hitboxType)
         {
-            Gizmos.color = Color.red;
-        }
-        else
-        {
-            Gizmos.color = Color.green;
+            case HitboxTriggerType.CapsuleCollider:
+                if (EnableHitbox == false)
+                {
+                    Gizmos.color = Color.red;
+                }
+                else
+                {
+                    Gizmos.color = Color.green;
 
-        }
-        Gizmos.DrawWireSphere(bladeBase.position, swordRadius);
-        Gizmos.DrawWireSphere(bladeTip.position, swordRadius);
-        Gizmos.DrawLine(bladeBase.position + Vector3.up * swordRadius, bladeTip.position + Vector3.up * swordRadius);
-        Gizmos.DrawLine(bladeBase.position - Vector3.up * swordRadius, bladeTip.position - Vector3.up * swordRadius);
-        Gizmos.DrawLine(bladeBase.position + Vector3.right * swordRadius, bladeTip.position + Vector3.right * swordRadius);
-        Gizmos.DrawLine(bladeBase.position - Vector3.right * swordRadius, bladeTip.position - Vector3.right * swordRadius);
+                }
+                Gizmos.DrawWireSphere(bladeBase.position, swordRadius);
+                Gizmos.DrawWireSphere(bladeTip.position, swordRadius);
+                Gizmos.DrawLine(bladeBase.position + Vector3.up * swordRadius, bladeTip.position + Vector3.up * swordRadius);
+                Gizmos.DrawLine(bladeBase.position - Vector3.up * swordRadius, bladeTip.position - Vector3.up * swordRadius);
+                Gizmos.DrawLine(bladeBase.position + Vector3.right * swordRadius, bladeTip.position + Vector3.right * swordRadius);
+                Gizmos.DrawLine(bladeBase.position - Vector3.right * swordRadius, bladeTip.position - Vector3.right * swordRadius);
+                break;
+            case HitboxTriggerType.BoxCollider:
+                Gizmos.color = EnableHitbox ? Color.green : Color.red;
+
+                // คำนวณ Matrix ให้ Gizmos วาดตามตำแหน่งและมุมหมุนของตัวละคร
+                Vector3 gizmoCenter = PlayerTransform.TransformPoint(boxOffset);
+                Matrix4x4 cubeMatrix = Matrix4x4.TRS(gizmoCenter, PlayerTransform.rotation, Vector3.one);
+                Gizmos.matrix = cubeMatrix;
+
+                // วาดกล่อง (DrawWireCube ใช้ขนาดเต็ม จึงต้องคูณ 2 จาก halfExtents)
+                Gizmos.DrawWireCube(Vector3.zero, boxHalfExtents * 2);
+                break;
+        }   
     }
 }

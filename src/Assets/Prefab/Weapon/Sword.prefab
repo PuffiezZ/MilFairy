@@ -171,6 +171,9 @@ MonoBehaviour:
   bladeBase: {fileID: 1965003350545317451}
   bladeTip: {fileID: 1166813073419978478}
   swordRadius: 0.1
+  boxOffset: {x: 0, y: 1, z: 1.5}
+  boxHalfExtents: {x: 1, y: 1, z: 1}
+  hitboxType: 1
 --- !u!65 &8882462548380624506
 BoxCollider:
   m_ObjectHideFlags: 0

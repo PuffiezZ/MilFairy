@@ -3,66 +3,65 @@ using Sausagecat.PlayerControlSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using static UtilityDev;
 
-public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback
+public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAttackable
 {
     [Header("Base Settings")]
-    public float maxHP = 100f;
+    public MonsterData monsterData;
     protected float currentHP;
     public string monsterName;
 
-    [Header("Health Bar References")]
+    [Header("Script Refernce")]
     [SerializeField] private HealthBar healthBarUI;
+    [SerializeField] protected NavMeshAgent aiAgent;
+    [SerializeField] private MonsterState monsterState;
 
     [Header("Monster Character Setting")]
     public float gravity = 9.81f;
 
-    private CharacterController controller;
     private Vector3 impact = Vector3.zero;
     private float verticalVelocity = 0f;
+    public float StopDistanceToTarget { get; private set; }
+    public float MaxHP { get; private set; }
+    public bool IsAttacking { get; set; }
+    public bool IsAttackRotating { get; set; }
+    public NavMeshAgent NavAIMesh { get { return aiAgent; } }
+    public MonsterState MonsterState { get { return monsterState; } }
+
     protected virtual void Start()
     {
-        currentHP = maxHP;
+        OnDefaultSetData(monsterData);
         if (healthBarUI != null)
         {
-            healthBarUI.UpdateHealthBar(maxHP, currentHP);
+            healthBarUI.UpdateHealthBar(MaxHP, currentHP);
         }
-
-        controller = GetComponent<CharacterController>();
+        if(aiAgent != null)
+        {
+            aiAgent.stoppingDistance = StopDistanceToTarget;
+            aiAgent.speed = monsterData.GetStatValue("MoveSpeed");
+        }
     }
     private void Update()
     {
-        HandleKnockback();
-        HandleVerticleVelocity();
-    }
-    private void HandleKnockback()
-    {
-        // ค่อยๆ ลดแรงกระแทกลงตามเวลา (Friction)
-        if (impact.magnitude > 0.2f)
+        if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            controller.Move(impact * Time.deltaTime);
+            EnemyState currentState = GetComponent<MonsterState>().CurrentState;
+            if (currentState == EnemyState.Idle)
+                monsterState.CallChangeStateFunc(EnemyState.ChasePayload);
+            else if (currentState == EnemyState.ChasePayload)
+                monsterState.CallChangeStateFunc(EnemyState.Idle);
         }
-        impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
-
     }
-    private void HandleVerticleVelocity()
+    public void OnDefaultSetData(MonsterData mData)
     {
-        // 1. คำนวณแรงโน้มถ่วง
-        if (controller.isGrounded && verticalVelocity < 0f)
-        {
-            verticalVelocity = -2f;
-        }
-        verticalVelocity -= gravity * Time.deltaTime;
+        MaxHP = mData.GetStatValue("MaxHP");
+        currentHP = MaxHP;
 
-        // 2. คำนวณแรง Knockback (Friction)
-        impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
-
-        // 3. รวมแรงทั้งหมด (Horizontal Impact + Vertical Gravity)
-        Vector3 finalMove = impact + (Vector3.up * verticalVelocity);
-
-        // 4. สั่งเคลื่อนที่เพียงครั้งเดียว
-        controller.Move(finalMove * Time.deltaTime);
+        StopDistanceToTarget = mData.GetStatValue("StopDistance");
     }
+
     public virtual void TakeDamage(float damage)
     {
         float finalDamage = damage; // คุณอาจเพิ่มการคำนวณดาเมจที่นี่ เช่น ลดตามเกราะ
@@ -94,7 +93,25 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback
     }
     private void LocalKnockback(Vector3 direction, float force)
     {
-        impact = direction * force;
+        // 1. หยุดเดินทันทีที่โดนตี
+        aiAgent.isStopped = true;
+        aiAgent.velocity = direction * force;
+        // 2. ใช้ Coroutine จัดการการฟื้นตัวแทนการเขียนใน Update
+        StopAllCoroutines();
+        StartCoroutine(RecoverFromKnockback());
+    }
+    public IEnumerator RecoverFromKnockback()
+    {
+        // รอให้แรงส่ง (Impact) ค่อยๆ หายไป
+        while (aiAgent.velocity.magnitude > 0.2f)
+        {
+            aiAgent.velocity = Vector3.Lerp(aiAgent.velocity, Vector3.zero, 5 * Time.deltaTime);
+            yield return null;
+        }
+
+        // 3. ปลดล็อกเพื่อให้ Behavior Tree กลับมาสั่งเดินได้อีกครั้ง
+        aiAgent.isStopped = false;
+        Debug.Log("AI recovered and ready to move.");
     }
     [PunRPC]
     public virtual void RPC_TakeDamage(float damage)
@@ -104,11 +121,11 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback
     private void localTakeDamage(float damage)
     {
         currentHP -= damage;
-        Debug.Log($"{monsterName} took {damage} damage. Current HP: {currentHP}/{maxHP}");
+        Debug.Log($"{monsterName} took {damage} damage. Current HP: {currentHP}/{MaxHP}");
         // เล่น Effect เลือดกระเด็น หรือแอนิเมชันโดนตี
         if (healthBarUI != null)
         {
-            healthBarUI.UpdateHealthBar(maxHP, currentHP);
+            healthBarUI.UpdateHealthBar(MaxHP, currentHP);
         }
         if (currentHP <= 0)
         {
@@ -128,4 +145,26 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback
         }
     }
 
+    public void OnCallAttack()
+    {
+        if (PhotonNetwork.InRoom)
+        {
+            // ส่ง RPC เพื่อให้ทุกคนเล่นแอนิเมชันโจมตี
+            photonView.RPC(nameof(RPC_AttackHandle), RpcTarget.All);
+        }
+        else
+        {
+            AttackHandle();
+        }
+    }
+    [PunRPC]
+    private void RPC_AttackHandle()
+    {
+        AttackHandle();
+    }
+
+    public virtual void AttackHandle()
+    {
+        
+    }
 }

@@ -5,4 +5,5 @@ using UnityEngine;
 public interface IKnockback
 {
     public void Knockback(Vector3 direction, float force);
+    public IEnumerator RecoverFromKnockback();
 }

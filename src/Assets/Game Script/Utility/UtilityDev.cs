@@ -51,4 +51,28 @@ public static class UtilityDev
         Light = 0,
         Heavy = 1
     }
+    public enum EnemyState 
+    { Idle = 0, 
+      Chase = 1, 
+      Attack = 2, 
+      Flee = 3,
+      ChasePayload = 4
+    }
+    public enum ComparisonStateType
+    {
+        EqualTo = 2,
+        NotEqualTo = 3
+    }
+
+    public enum StateControllerType
+    {
+        BehaviourTree = 0,
+        FSM = 1
+    }
+
+    public enum HitboxTriggerType
+    {
+        CapsuleCollider = 0,
+        BoxCollider = 1,
+    }
 }
