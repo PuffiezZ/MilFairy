@@ -67,6 +67,9 @@ MonoBehaviour:
   - RPC_DataSetUp
   - RPC_PlayAttackEffect
   - RPC_AttackHandle
+  - RPC_SyncFSMVariable
+  - RPC_ChangeStateFSM
+  - RPC_UpdateStateFSM
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
