@@ -38,6 +38,7 @@ public class UIManager : MonoBehaviour
         Player.OnResourceValueChanged -= UpdateResource;
 
         PlayerEquipment.OnSetNewWeapon -= UpdateWeaponSlot;
+        RoomManager.OnWinTriggered -= WinUIHandler;
     }
 
     private void UpdateHealthBar(float current, float max)

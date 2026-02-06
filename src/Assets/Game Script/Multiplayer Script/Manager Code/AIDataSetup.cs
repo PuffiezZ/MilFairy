@@ -25,7 +25,7 @@ public class AIDataSetup : MonoBehaviourPun
         }
     }
     [PunRPC]
-    private void RPC_DataSetUp(int getPv)
+    public void RPC_DataSetUp(int getPv)
     {
         PhotonView payloadPv = PhotonView.Find(getPv);
 

@@ -84,7 +84,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
         }
     }
     [PunRPC]
-    private void RPC_Knockback(Vector3 direction, float force)
+    public void RPC_Knockback(Vector3 direction, float force)
     {
         LocalKnockback(direction, force);
     }
@@ -187,7 +187,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
         }
     }
     [PunRPC]
-    private void RPC_AttackHandle()
+    public void RPC_AttackHandle()
     {
         AttackHandle();
     }

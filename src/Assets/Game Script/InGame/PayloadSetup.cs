@@ -56,7 +56,7 @@ public class PayloadSetup : MonoBehaviourPun
     }
 
     [PunRPC]
-    private void RPC_SyncPayloadSplineContainer(int photonViewID)
+    public void RPC_SyncPayloadSplineContainer(int photonViewID)
     {
         PhotonView payloadView = PhotonView.Find(photonViewID);
         if (payloadView != null)
