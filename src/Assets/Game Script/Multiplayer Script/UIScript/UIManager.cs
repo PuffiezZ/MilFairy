@@ -15,6 +15,11 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private Slider healthSlider;
 
+    [BoxGroup("UI Parent")]
+    [SerializeField] private RectTransform gameplayUI;
+    [BoxGroup("UI Parent")]
+    [SerializeField] private RectTransform resultUI;
+
     private void OnEnable()
     {
         // เริ่มติดตาม (Subscribe) เมื่อสคริปต์ทำงาน
@@ -22,6 +27,8 @@ public class UIManager : MonoBehaviour
         Player.OnResourceValueChanged += UpdateResource;
 
         PlayerEquipment.OnSetNewWeapon += UpdateWeaponSlot;
+
+        RoomManager.OnWinTriggered += WinUIHandler;
     }
 
     private void OnDisable()
@@ -61,5 +68,11 @@ public class UIManager : MonoBehaviour
     public void UpdateWeaponSlot(int indexSlot,WeaponData weaponData)
     {
         weaponsSlot[indexSlot].SetWeaponSlotUI(weaponData);
+    }
+
+    public void WinUIHandler()
+    {
+        gameplayUI.gameObject.SetActive(false);
+        resultUI.gameObject.SetActive(true);
     }
 }

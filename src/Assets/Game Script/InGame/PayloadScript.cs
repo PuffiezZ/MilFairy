@@ -11,32 +11,26 @@ public class PayloadScript : MonoBehaviourPun
     public float AccelerationTime = 2f;
     public SplineAnimate splineAnimate;
 
-    private Coroutine speedCoroutine;
     private float distancePercentage = 0f;
     private float splineLenght = 0f;
     private bool isTurnOn = false;
     private float currentMoveSpeed = 0f;
     private Collider[] collisionPlayer;
+    private PayloadSpawner pSpawner;
+
     public void PayloadOnSetup(SplineContainer sc)
     {
         splineAnimate.Container = sc;
         splineAnimate.MaxSpeed = 0;
         splineLenght = splineAnimate.Container.CalculateLength();
+
+        pSpawner = GetComponent<PayloadSpawner>();
+        pSpawner.spawnPointParent = GameObject.FindGameObjectWithTag("SpawnPoint").transform;
     }
     private void Update()
     {
         // ในระบบ Multiplayer เรามักจะให้ Master Client เป็นคนตัดสินใจเรื่อง "เงื่อนไขการวิ่ง"
-        if (PhotonNetwork.InRoom)
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                HandlePayloadLogic();
-            }
-        }
-        else
-        {
-            HandlePayloadLogic();
-        }
+        HandlePayloadLogic();
 
         // ทุกเครื่อง (รวมถึง Client) จะต้องรันการขยับตำแหน่งตามความเร็วปัจจุบันเพื่อให้ภาพนุ่มนวล
         if (currentMoveSpeed > 0)
@@ -70,6 +64,10 @@ public class PayloadScript : MonoBehaviourPun
         // ทุกเครื่องจะได้รับความเร็วเท่ากัน และนำไปรันใน PayloadPositionHandler() ต่อไป
         currentMoveSpeed = speed;
     }
+    public void SetPayloadSpeed(float speed)
+    {
+        currentMoveSpeed = speed;
+    }
 
     private bool CheckPlayerNearby()
     {
@@ -93,23 +91,15 @@ public class PayloadScript : MonoBehaviourPun
         {
             transform.rotation = Quaternion.LookRotation(forwardDirection, upDirection);
         }
+        if (distancePercentage >= 1.0f)
+        {
+            RoomManager.Instance.TriggerWinCondition();
+        }
     }
     public void PlayloadSwitchFunction()
     {
         isTurnOn = !isTurnOn;
         Debug.Log("Payload Engine: " + (isTurnOn ? "ON" : "OFF"));
-    }
-
-    private void AdjustSpeedEnumerator()
-    {
-        if (isTurnOn)
-        {
-            currentMoveSpeed = MoveSpeedTarget;
-        }
-        else
-        {
-            currentMoveSpeed = 0f;
-        }
     }
 
     private void OnDrawGizmos()

@@ -17,6 +17,7 @@ MonoBehaviour:
   damage: 10
   attackRange: 3
   attackSpeed: 2
+  knockbackForce: 3
   weaponPrefab: {fileID: 7197992888256433340, guid: 084b8686be77f464c87b98fb10fb4f5a,
     type: 3}
   animationSetIndex: 0

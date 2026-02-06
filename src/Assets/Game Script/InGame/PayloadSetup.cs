@@ -79,5 +79,8 @@ public class PayloadSetup : MonoBehaviourPun
     {
         PayloadScript payloadScript = gameObject.GetComponent<PayloadScript>();
         payloadScript.PayloadOnSetup(targetSpline);
+        
+        RoomManager  rManager = GetComponent<RoomManager>();
+        rManager.CurrentPlayingPayload = payloadScript;
     }
 }

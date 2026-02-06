@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customStats:
   - statName: MaxHP
-    statValue: 100
+    statValue: 25
   - statName: MoveSpeed
     statValue: 3
   - statName: AttackDamage

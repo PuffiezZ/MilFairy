@@ -19,6 +19,8 @@ public class MainMenu : MonoBehaviourPunCallbacks
     private void Awake()
     {
         MainMenusingleton = this;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
     void Start()
     {

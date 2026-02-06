@@ -19,19 +19,48 @@ public class MonsterState : MonoBehaviourPunCallbacks
     [SerializeField] private Blackboard fsmBlackboard;
     [ShowIf(nameof(stateControllerType), StateControllerType.FSM)]
     [BoxGroup("FSM")]
-    [SerializeField] private FSM fsm;
+    [SerializeField] public SignalDefinition hurtSignal;
 
 
     private EnemyState currentState = EnemyState.ChasePayload;
     private MonsterBase monsterBase;
     public EnemyState CurrentState { get { return currentState; } }
     public Blackboard FSMblackboard { get { return fsmBlackboard; } }
+    public FSMOwner FSMOwner { get { return finiteStateMachine; } }
 
     private void Start()
     {
         monsterBase = GetComponent<MonsterBase>();
+        monsterBase.OnMonsterDie += () =>
+        {
+            finiteStateMachine.StopBehaviour();
+        };
+        ResetOnSpawn();
+    }
+    
+    public override void OnEnable()
+    {
+        ResetOnSpawn();
+    }
+    public override void OnDisable()
+    {
+        finiteStateMachine.behaviour.onStateEnter -= CallUpdateStateFunc_FSM;
 
-        fsm.onStateEnter += CallUpdateStateFunc_FSM;
+    }
+    private void ResetOnSpawn()
+    {
+        if (fsmBlackboard != null)
+        {
+            // ล้างข้อมูลเก่าเพื่อเริ่มรอบใหม่
+            fsmBlackboard.SetVariableValue("FirstSeenPlayer", null);
+            fsmBlackboard.SetVariableValue("TargetObject", null);
+            fsmBlackboard.SetVariableValue("PlayerInVision", null);
+            fsmBlackboard.SetVariableValue("TargetPOS", Vector3.zero);
+        }
+        MonsterBase mBase = GetComponent<MonsterBase>();
+        mBase.OnDefaultSetData();
+        finiteStateMachine.behaviour.onStateEnter += CallUpdateStateFunc_FSM;
+        finiteStateMachine.StartBehaviour();
     }
     #region Change State Region
     public void CallUpdateStateFunc_FSM(IState state)
@@ -56,8 +85,8 @@ public class MonsterState : MonoBehaviourPunCallbacks
         //currentState = (EnemyState)newStateNumber;
 
         //behaviorTree.RestartBehavior();
-        finiteStateMachine.graph.UpdateGraph();
-        stateOverheadsUI.UpdateStateText(finiteStateMachine.GetCurrentState().FSM.currentStateName);
+        //finiteStateMachine.graph.UpdateGraph();
+        stateOverheadsUI.UpdateStateText(finiteStateMachine.behaviour.currentStateName);
     }
     public void UpdateFSMVariable<T>(string varName, T value)
     {

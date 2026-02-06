@@ -7,13 +7,7 @@ public class FSM_Attack : ActionTask<MonsterBase>
 {
     protected override void OnExecute()
     {
+        agent.OnFinishAttack += EndAction;
         agent.OnCallAttack();
-    }
-    protected override void OnUpdate()
-    {
-        if (!agent.IsAttacking)
-        {
-            EndAction();
-        }
     }
 }

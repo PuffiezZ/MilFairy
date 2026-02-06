@@ -13,6 +13,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bateria
       objectReference: {fileID: 0}
+    - target: {fileID: 647607137318243779, guid: cdc057af157553146a46d33ea6bff273,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 1371149130500895364, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}
       propertyPath: m_Mesh
@@ -15287,6 +15292,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 0807046bbb3b5854aa2c488858266407,
         type: 2}
+    - target: {fileID: 4863993711482946977, guid: cdc057af157553146a46d33ea6bff273,
+        type: 3}
+      propertyPath: _enableAction
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4863993711482946977, guid: cdc057af157553146a46d33ea6bff273,
+        type: 3}
+      propertyPath: _firstActivation
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4932006310404976243, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}
       propertyPath: sceneViewId
@@ -15394,14 +15409,13 @@ PrefabInstance:
       value: '{"_variables":{"FirstSeenPlayer":{"_name":"FirstSeenPlayer","_id":"1dcfd861-9151-4fc5-aee4-06f49d6a442d","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
         UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"TargetObject":{"_name":"TargetObject","_id":"d8ef4376-da2c-4f70-816f-ded14b5a9384","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
         UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"PlayerInVision":{"_name":"PlayerInVision","_id":"26cb9044-2323-4765-8fe9-7422bd5f2aee","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
-        UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"CurrentState":{"_propertyPath":"MonsterState.CurrentState","_name":"CurrentState","_id":"c32b0301-ea3f-4a75-91c5-d0a10a61484b","$type":"NodeCanvas.Framework.Variable`1[[UtilityDev+EnemyState,
-        Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"TargetPOS":{"_name":"TargetPOS","_id":"1b51a5ab-ff3d-44be-b1da-052cdf6d88e9","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Vector3,
+        UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"TargetPOS":{"_name":"TargetPOS","_id":"1b51a5ab-ff3d-44be-b1da-052cdf6d88e9","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Vector3,
         UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
       objectReference: {fileID: 0}
     - target: {fileID: 7762022405456314648, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}
       propertyPath: _serializedVariables.Array.size
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7762022405456314648, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}
@@ -15424,8 +15438,8 @@ PrefabInstance:
     - target: {fileID: 7762022405456314648, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}
       propertyPath: _serializedVariables.Array.data[3]._json
-      value: '{"_propertyPath":"MonsterState.CurrentState","_name":"CurrentState","_id":"c32b0301-ea3f-4a75-91c5-d0a10a61484b","$type":"NodeCanvas.Framework.Variable`1[[UtilityDev+EnemyState,
-        Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+      value: '{"_name":"TargetPOS","_id":"1b51a5ab-ff3d-44be-b1da-052cdf6d88e9","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Vector3,
+        UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
       objectReference: {fileID: 0}
     - target: {fileID: 7762022405456314648, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}

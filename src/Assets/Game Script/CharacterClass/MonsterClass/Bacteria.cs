@@ -15,18 +15,15 @@ public class Bacteria : MonsterBase
         float dashForce = monsterData.GetStatValue("DashForce");
         float dashDuration = monsterData.GetStatValue("DashDuration");
 
-        Blackboard blackboard = GetComponent<Blackboard>();
-        GameObject targetGO = blackboard.GetVariableValue<GameObject>("TargetObject");
+        if (gameObject.activeSelf)
+        {
+            StartCoroutine(BitingAttack());
+        }
 
-        //Vector3 targetPos = targetGO.transform.position;
-        //Vector3 direction = (targetPos - transform.position).normalized;
-
-        IsAttackRotating = true;
-        IsAttacking = true;
-
-        StartCoroutine(BitingAttack());
-
-        //StartCoroutine(DashAttack(direction, dashForce, dashDuration));
+    }
+    private void OnDisable()
+    {
+        StopCoroutine(BitingAttack());
     }
     private IEnumerator BitingAttack()
     {
@@ -53,6 +50,7 @@ public class Bacteria : MonsterBase
             }
         }
         IsAttacking = false;
+        OnFinishAttack?.Invoke();
         yield break;
     }
     public IEnumerator DashAttack(Vector3 direction, float force, float duration)
@@ -83,7 +81,7 @@ public class Bacteria : MonsterBase
             aiAgent.Move(direction * frameDistance);
             yield return null;
         }
-        IsAttacking = false;
+        OnFinishAttack?.Invoke();
     }
     private void OnDrawGizmosSelected()
     {

@@ -205,6 +205,7 @@ MonoBehaviour:
   stateOverheadsUI: {fileID: 4089109085632437028}
   finiteStateMachine: {fileID: 0}
   fsmBlackboard: {fileID: 0}
+  hurtSignal: {fileID: 11400000, guid: 5318047b0a9cdcc47b2164dc2e6b6fc2, type: 2}
 --- !u!114 &4489669055147146674
 MonoBehaviour:
   m_ObjectHideFlags: 0

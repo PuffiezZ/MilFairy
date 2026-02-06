@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using static UtilityDev;
 
 public class MeleeWeapon : WeaponScript
@@ -121,15 +122,17 @@ public class MeleeWeapon : WeaponScript
                     // ตรวจสอบกำแพงกั้นก่อนทำดาเมจ
                     if (!IsWallBlocking(hit.transform.position))
                     {
+                        damagedTargets.Add(damageable);
+                        damageable.TakeDamage(WeaponData.damage);
                         // ระบบ Knockback
                         if (hit.TryGetComponent<IKnockback>(out IKnockback knockback))
                         {
-                            Vector3 dir = (hit.transform.position - transform.position).normalized;
-                            dir.y = 0;
-                            knockback.Knockback(dir, WeaponData.knockbackForce);
-                        }
-                        damagedTargets.Add(damageable);
-                        damageable.TakeDamage(WeaponData.damage);    
+                            Vector3 knockbackDir = hit.transform.position - PlayerTransform.position;
+
+                            // 2. ปรับค่า Y เป็น 0 เพื่อให้กระเด็นในแนวราบเท่านั้น (กันมอนสเตอร์มุดดินหรือลอยฟ้าแบบแปลกๆ)
+                            knockbackDir.y = 0;
+                            knockback.Knockback(knockbackDir.normalized, WeaponData.knockbackForce);
+                        }   
                     }
                 }
             }

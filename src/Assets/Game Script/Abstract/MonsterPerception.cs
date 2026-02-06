@@ -49,37 +49,12 @@ public class MonsterPerception : MonoBehaviour
                     monsterState.FSMblackboard.SetVariableValue("FirstSeenPlayer", currentPlayerInVision);
                     monsterState.FSMblackboard.SetVariableValue("TargetObject", currentPlayerInVision);
                 }
-                //monsterState.CallChangeStateFunc(EnemyState.Chase);
             }
-            //else
-            //{
-            //    // ถ้าเจอเป้าหมายแต่ไม่ใช่ผู้เล่น (เช่น เจอรถ Payload) และยังไม่ได้ ChasePayload อยู่
-            //    if (monsterState.CurrentState != EnemyState.ChasePayload)
-            //    {
-            //        GameObject payloadGB = monsterState.FSMblackboard.GetVariableValue<GameObject>("PayloadGameobject");
-            //        monster.TargetObject = payloadGB;
-
-            //        monsterState.FSMblackboard.SetVariableValue("TargetObject", monster.TargetObject);
-            //        monsterState.CallChangeStateFunc(EnemyState.ChasePayload);
-            //    }
-            //}
         }
         else
         {
             monsterState.FSMblackboard.SetVariableValue("PlayerInVision", null);
         }
-        //else
-        //{
-        //    // กรณีไม่เจออะไรเลย ให้กลับไปหา Payload (ถ้ายังไม่ทำอยู่)
-        //    if (monsterState.CurrentState != EnemyState.ChasePayload)
-        //    {
-        //        GameObject payloadGB = monsterState.FSMblackboard.GetVariableValue<GameObject>("PayloadGameobject");
-        //        monster.TargetObject = payloadGB;
-
-        //        monsterState.FSMblackboard.SetVariableValue("TargetObject", monster.TargetObject);
-        //        monsterState.CallChangeStateFunc(EnemyState.ChasePayload);
-        //    }
-        //}
     }
     public bool FindVisibleTargets()
     {

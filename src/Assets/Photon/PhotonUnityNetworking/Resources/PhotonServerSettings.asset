@@ -70,6 +70,7 @@ MonoBehaviour:
   - RPC_SyncFSMVariable
   - RPC_ChangeStateFSM
   - RPC_UpdateStateFSM
+  - RPC_OnPayloadReachedGoal
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
