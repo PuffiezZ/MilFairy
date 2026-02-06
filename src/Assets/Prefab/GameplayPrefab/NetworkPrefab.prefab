@@ -55,6 +55,7 @@ MonoBehaviour:
   - {fileID: 7197992888256433340, guid: 084b8686be77f464c87b98fb10fb4f5a, type: 3}
   - {fileID: 7395786787712819640, guid: 25623f3a26944cf40a13cf6f56f232c9, type: 3}
   - {fileID: 647607137318243779, guid: cdc057af157553146a46d33ea6bff273, type: 3}
+  - {fileID: 2744164879318043872, guid: ededc6327cf98e748a170c91d8a3d629, type: 3}
 --- !u!114 &2039021016254437988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,3 +68,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2143cfbd13c46494da48e41ab5921d42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  monsterPrefab: {fileID: 2744164879318043872, guid: ededc6327cf98e748a170c91d8a3d629,
+    type: 3}
