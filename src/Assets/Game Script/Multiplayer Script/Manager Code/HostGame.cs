@@ -21,6 +21,8 @@ public class HostGame : MonoBehaviourPunCallbacks
     [SerializeField] private PlayerLobbyList playerLobbyList;
     [SerializeField] private MainMenu mainmenu;
 
+    private bool isCancellingRoom = false;
+
     public void ConnectToPhotonServer()
     {
         mainmenu.OnClickConnect();
@@ -58,6 +60,24 @@ public class HostGame : MonoBehaviourPunCallbacks
         Debug.Log("Host Connected To PhotonServer!");
     }
 
+    public void CancelDuringConnecting()
+    {
+        // ตรวจสอบว่ากำลังเชื่อมต่อ หรือเชื่อมต่ออยู่หรือไม่
+        if (PhotonNetwork.IsConnected || PhotonNetwork.NetworkingClient.State == ClientState.ConnectingToMasterServer)
+        {
+            PhotonNetwork.Disconnect();
+            Debug.Log("Canceling connection and Disconnecting...");
+        }
+    }
+
+    public void CancenlCreatingRoom()
+    {
+        isCancellingRoom = true;
+
+        lobbyCreatingRoom_Rect.gameObject.SetActive(false);
+        lobbyHostConfig_Rect.gameObject.SetActive(true);
+    }
+
     public void CreateRoom()
     {
         if (string.IsNullOrEmpty(servername_TMPinput.text)) return;
@@ -86,10 +106,17 @@ public class HostGame : MonoBehaviourPunCallbacks
     // เมื่อสร้างสำเร็จ Photon จะพาเข้าห้องให้อัตโนมัติ (ไม่ต้องเรียก Join ซ้ำ)
     public override void OnJoinedRoom()
     {
+        if (isCancellingRoom)
+        {
+            isCancellingRoom = false; // รีเซ็ตสถานะ
+            PhotonNetwork.LeaveRoom(); // สั่งให้ออกจากห้องทันที
+            Debug.Log("Room was created but left due to cancellation.");
+            return; // ไม่ต้องรัน Logic แสดงผลหน้า Lobby ต่อ
+        }
+
+        // Logic เดิมของคุณ
         Debug.Log("Host Joined Room: " + PhotonNetwork.CurrentRoom.Name);
         gameObject.SetActive(false);
-        lobbyFailed_Rect.gameObject.SetActive(false);
-        lobbyLoading_Rect.gameObject.SetActive(false);
         lobbyCreatingRoom_Rect.gameObject.SetActive(false);
         lobbyPage_Rect.gameObject.SetActive(true);
 
@@ -98,6 +125,8 @@ public class HostGame : MonoBehaviourPunCallbacks
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
+        isCancellingRoom = false;
+
         Debug.LogError("สร้างห้องล้มเหลว: " + message);
         lobbyPage_Rect.gameObject.SetActive(false);
         lobbyLoading_Rect.gameObject.SetActive(false);

@@ -24,10 +24,14 @@ public class RoomList : MonoBehaviourPunCallbacks
     {
         if (!PhotonNetwork.IsConnected)
         {
-            for(int i = 0; i < uiPages.Length; i++)
+            if(uiPages.Length > 0)
             {
-                uiPages[i].gameObject.SetActive(false);
+                for (int i = 0; i < uiPages.Length; i++)
+                {
+                    uiPages[i].gameObject.SetActive(false);
+                }
             }
+
             loadingText.SetActive(true);
             joiningRoomText.SetActive(false);
             PhotonNetwork.ConnectUsingSettings();

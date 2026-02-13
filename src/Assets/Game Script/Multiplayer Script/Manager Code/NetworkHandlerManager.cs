@@ -23,7 +23,7 @@ public class NetworkErrorHandler : MonoBehaviourPunCallbacks
     {
         Debug.LogWarning($"NetworkErrorHandler: OnDisconnected เรียกทำงาน สาเหตุ: {cause}");
 
-        string errorMessage = "เกิดข้อผิดพลาดในการเชื่อมต่อ: ";
+        string errorMessage = "Disconnect Error ";
 
         switch (cause)
         {

@@ -57,4 +57,9 @@ public class MainMenu : MonoBehaviourPunCallbacks
         }
 
     }
+
+    public void ExitToDesktop()
+    {
+        Application.Quit();
+    }
 }
