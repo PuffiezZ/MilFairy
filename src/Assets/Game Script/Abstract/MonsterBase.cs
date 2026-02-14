@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using static UtilityDev;
 
-public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAttackable
+public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAttackable 
 {
     [Header("Base Settings")]
     public MonsterData monsterData;
