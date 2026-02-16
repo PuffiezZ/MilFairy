@@ -1,11 +1,14 @@
+using NaughtyAttributes;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Splines;
 
 public class PayloadSetup : MonoBehaviourPun
 {
-    [Header("Settings")]
+    [SerializeField] private bool enablePayload = false;
+    [ShowIf(nameof(enablePayload))]
     [SerializeField] private GameObject payloadPrefab; // ชื่อ Prefab ในโฟลเดอร์ Resources
+    [ShowIf(nameof(enablePayload))]
     [SerializeField] private SplineContainer targetSpline; // ลาก Spline ที่ต้องการให้รถไปวางมาใส่
     public void OnInstancePayload()
     {
@@ -25,6 +28,8 @@ public class PayloadSetup : MonoBehaviourPun
     }
     private void InstancePayload()
     {
+        if (enablePayload == false) return;
+
         Vector3 spawnPos = Vector3.zero;
         Quaternion spawnRot = Quaternion.identity;
 
