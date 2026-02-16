@@ -60,11 +60,24 @@ namespace Sausagecat.PlayerControlSystem
 
         public void OnJump(InputAction.CallbackContext context)
         {
-            bool isGround = GetComponent<PlayerMovement>().IsGround;  
-            if(context.performed && !OnJumping && isGround)
+
+            if (GetComponent<PlayerMovement>())
             {
-                OnJumping = true;
+                bool isGround = GetComponent<PlayerMovement>().IsGround;
+                if (context.performed && !OnJumping && isGround)
+                {
+                    OnJumping = true;
+                }
             }
+            else
+            {
+                bool isGround = GetComponent<PlayerRagdollMovement>().IsGrounded;
+                if (context.performed && !OnJumping && isGround)
+                {
+                    OnJumping = true;
+                }
+            }
+
         }
 
         public void OnAttack(InputAction.CallbackContext context)
