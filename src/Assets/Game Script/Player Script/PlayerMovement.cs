@@ -2,6 +2,7 @@ using Sausagecat.PlayerControlSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using static Sausagecat.PlayerControlSystem.PlayerState;
 
 namespace Sausagecat.PlayerControlSystem
@@ -34,21 +35,28 @@ namespace Sausagecat.PlayerControlSystem
         private float _turnSmoothVelocity;
         private float _targetRotationX; // เก็บค่าก้ม-เงย
         private float _targetRotationY; // เก็บค่าซ้าย-ขวา
-        private PlayerLocomotion playerLocomotion;
         private float verticalVelocity = 0f;
+
+        private PlayerLocomotion playerLocomotion;
 
         public bool lockRotating { get; private set; } = false;
         public bool IsMovementInput { get; private set; }
         public bool IsMoving { get; private set; }
         public bool IsSprinting { get; private set; }
         public bool IsGround {  get; private set; }
+        public bool IsMounting { get; set; }
+
         public Vector3 CurrentVelocity => characterController.velocity;
+        public UnityAction MovementImplement;
+        public PayloadScript plScript;
+
         private void Awake()
         {
             playerLocomotion = GetComponent<PlayerLocomotion>();
             originTurnsmooth = turnSmoothTime;
-        }
 
+            MovementImplement += DefaultMovement;
+        }
 
         private void Update()
         {
@@ -56,19 +64,8 @@ namespace Sausagecat.PlayerControlSystem
             {
                 lockRotating = !lockRotating;
             }
-
-            if (playerLocomotion.OnSprinting && CurrentVelocity.sqrMagnitude > 0.01f)
-            {
-                currentSpeed = Mathf.Lerp(currentSpeed, maxSpeed, 10f * Time.deltaTime);
-            }
-            else
-            {
-                currentSpeed = Mathf.Lerp(currentSpeed, maxSpeed/2, 10f * Time.deltaTime);
-            }
-
-            HandleMovement();
-            HandleVerticleVelocity();
-            UpdateHandleMovementState();
+            
+            MovementImplement?.Invoke();
         }
         private void LateUpdate()
         {
@@ -82,6 +79,40 @@ namespace Sausagecat.PlayerControlSystem
             // 3. สั่งหมุน CameraPivot (หมุนรอบตัวละคร)
             // แกน X คือก้มเงย, แกน Y คือหมุนรอบตัว
             _cameraPivot.rotation = Quaternion.Euler(_targetRotationX, _targetRotationY, 0f);
+        }
+
+        public void SwitchingMovement(bool isMounting)
+        {
+            MovementImplement = null;
+            if (isMounting)
+            {
+                MovementImplement = plScript.OnPayloadMoveAction;
+            }
+            else
+            {
+                MovementImplement = DefaultMovement;
+            }
+        }
+        private void DefaultMovement()
+        {
+            if (playerLocomotion.OnSprinting && CurrentVelocity.sqrMagnitude > 0.01f)
+            {
+                currentSpeed = Mathf.Lerp(currentSpeed, maxSpeed, 10f * Time.deltaTime);
+            }
+            else
+            {
+                currentSpeed = Mathf.Lerp(currentSpeed, maxSpeed / 2, 10f * Time.deltaTime);
+            }
+
+            HandleMovement();
+            HandleVerticleVelocity();
+            UpdateHandleMovementState();
+        }
+
+        public void SetEnableCharacterMovement(bool getBoolean)
+        {
+            characterController.Move(Vector3.zero); // หยุดการเคลื่อนที่ทันที
+            characterController.enabled = getBoolean;
         }
 
         private void HandleVerticleVelocity()
@@ -113,6 +144,11 @@ namespace Sausagecat.PlayerControlSystem
             IsSprinting = playerLocomotion.OnSprinting && IsMoving;
             IsGround = characterController.isGrounded;
 
+            if (IsMounting)
+            {
+                _playerState.SetMovementPlayerState(PlayerMovementState.Mounting);
+                return;
+            }
             if (IsSprinting)
             {
                 _playerState.SetMovementPlayerState(PlayerMovementState.Sprint);

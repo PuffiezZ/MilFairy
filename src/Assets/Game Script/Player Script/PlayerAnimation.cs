@@ -5,13 +5,14 @@ using UnityEngine;
 public class PlayerAnimation : MonoBehaviourPun
 {
     [SerializeField] private Animator animator;
-
     [SerializeField] private float simepleBlendSpeed = 20f;
     [SerializeField] private float locomotionBlendSpeed = 0.25f;
+    [SerializeField] private VelocityType velocityType = VelocityType.CharacterController;
 
     private PlayerLocomotion playerLocomotion;
     private PlayerMovement playerMovement;
     private PlayerState playerState;
+    private PlayerRagdollMovement playerRagdollMovement;
 
     private static int magnitudeHash = Animator.StringToHash("Magnitude");
     private static int inputXHash = Animator.StringToHash("inputX");
@@ -32,11 +33,19 @@ public class PlayerAnimation : MonoBehaviourPun
 
     private float currentAnimationfloat = 0f;
     public float TargetAnimationfloat { get; set; }
+
+    public enum VelocityType
+    {
+        CharacterController,
+        Rigidbody
+    }
+
     private void Awake()
     {
         playerLocomotion = GetComponent<PlayerLocomotion>();
         playerMovement = GetComponent<PlayerMovement>();
         playerState = GetComponent<PlayerState>();
+        playerRagdollMovement = GetComponent<PlayerRagdollMovement>();
     }
     private void Update()
     {
@@ -47,10 +56,10 @@ public class PlayerAnimation : MonoBehaviourPun
     {
         if (PhotonNetwork.InRoom && !photonView.IsMine) return;
 
-        Vector3 velocity = playerMovement.CurrentVelocity;
+        Vector3 velocity = VelocityByComponent();
         velocity.y = 0;
         locomotionMagnitude = Vector3.Lerp(locomotionMagnitude, velocity, simepleBlendSpeed * Time.deltaTime);
-        float speedRatio = locomotionMagnitude.magnitude / playerMovement.maxSpeed;
+        float speedRatio = locomotionMagnitude.magnitude / GetMaxSpeed();
         animator.SetFloat(magnitudeHash, Mathf.Clamp01(speedRatio));
 
         Vector3 targetInput = playerLocomotion.MovementInput;
@@ -60,15 +69,51 @@ public class PlayerAnimation : MonoBehaviourPun
 
         animator.SetBool(isJumpHash, playerState.CurrentPlayerMovementState == PlayerState.PlayerMovementState.Jumping);
         animator.SetBool(isFalling, playerState.CurrentPlayerMovementState == PlayerState.PlayerMovementState.Falling);
-        animator.SetBool(isGroundedHash, playerMovement.IsGround);
+        animator.SetBool(isGroundedHash, IsGroundByComponentController());
 
-        float verticalVelocity = playerMovement.CurrentVelocity.y;
-        float verticalRatio = verticalVelocity / playerMovement.maxSpeed;
+        float verticalVelocity = VelocityByComponent().y;
+        float verticalRatio = verticalVelocity / GetMaxSpeed();
         float finalVerticalValue = Mathf.Clamp(verticalRatio, 0f, 1f);
         animator.SetFloat(verticalMagnitudeHash, finalVerticalValue);
 
         currentAnimationfloat = Mathf.Lerp(currentAnimationfloat, TargetAnimationfloat, 10f * Time.deltaTime);
         animator.SetFloat(animationFloatStateHash, currentAnimationfloat);
+    }
+
+    private Vector3 VelocityByComponent()
+    {
+        if(velocityType == VelocityType.CharacterController)
+        {
+            return playerMovement.CurrentVelocity;
+        }
+        else
+        {
+            return playerRagdollMovement.RBvelocity;
+        }
+    }
+
+    private float GetMaxSpeed()
+    {
+        if (velocityType == VelocityType.CharacterController)
+        {
+            return playerMovement.maxSpeed;
+        }
+        else
+        {
+            return playerRagdollMovement.MaxSpeed;
+        }
+    }
+
+    private bool IsGroundByComponentController()
+    {
+        if (velocityType == VelocityType.CharacterController)
+        {
+            return playerMovement.IsGround;
+        }
+        else
+        {
+            return playerRagdollMovement.IsGrounded;
+        }
     }
 
     public void SetOnUsingWeaponAnimation(bool isUsingBoolean)

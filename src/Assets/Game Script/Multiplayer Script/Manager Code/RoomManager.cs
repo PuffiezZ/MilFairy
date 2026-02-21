@@ -33,17 +33,21 @@ public class RoomManager : MonoBehaviourPunCallbacks
         // ถ้าเราเปลี่ยน Scene มาโดยที่ยังอยู่ในห้อง (Joined Room แล้ว)
         if (PhotonNetwork.InRoom)
         {
-            SpawnPlayer();
             payloadSetup.OnInstancePayload();
             aiDataSetup.FSM_OnSetupDataForAI();
+
+            SpawnPlayer();
         }
         else
         {
             Transform selectedPoint = spawnPoints[0];
             GameObject player = Instantiate(playerObject, selectedPoint.position, Quaternion.identity);
-            player.GetComponent<PlayerSetup>().IsLocalPlayer();
+
             payloadSetup.OnInstancePayload();
             aiDataSetup.FSM_OnSetupDataForAI();
+
+            player.GetComponent<PlayerSetup>().IsLocalPlayer();
+            player.GetComponent<PlayerSetup>().SetPayloadInstance();
         }
     }
 
@@ -63,6 +67,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
         // เรียก Setup เพื่อเปิดกล้องเฉพาะเครื่องเรา
         player.GetComponent<PlayerSetup>().IsLocalPlayer();
+        player.GetComponent<PlayerSetup>().SetPayloadInstance();
     }
 
     public void TriggerWinCondition()

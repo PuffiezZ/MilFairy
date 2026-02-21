@@ -35,7 +35,12 @@ public class PlayerSetup : MonoBehaviourPun
         {
             nameTextTMP.gameObject.SetActive(false);
         }
-       HideCursorOnSpawn();
+        HideCursorOnSpawn();
+    }
+
+    public void SetPayloadInstance()
+    {
+        playerMovement.plScript = GameObject.FindGameObjectWithTag("Payload").GetComponent<PayloadScript>();
     }
 
     private void HideCursorOnSpawn()

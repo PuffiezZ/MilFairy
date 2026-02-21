@@ -71,6 +71,9 @@ MonoBehaviour:
   - RPC_ChangeStateFSM
   - RPC_UpdateStateFSM
   - RPC_OnPayloadReachedGoal
+  - RPC_SitOnPayload
+  - RPC_JumpOffPayload
+  - RPC_SetupPayloadAndCart
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

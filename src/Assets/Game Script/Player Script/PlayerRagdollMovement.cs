@@ -3,6 +3,7 @@ using Sausagecat.PlayerControlSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Sausagecat.PlayerControlSystem.PlayerState;
 
 public class PlayerRagdollMovement : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class PlayerRagdollMovement : MonoBehaviour
     [SerializeField] private Rigidbody rb;
     [BoxGroup("Script References")]
     [SerializeField] private ConfigurableJoint configurableJoint;
+    [BoxGroup("Script References")]
+    [SerializeField] private PlayerState _playerState;
 
     [BoxGroup("Camera Reference")]
     [SerializeField] private Transform cameraTransform;
@@ -25,19 +28,70 @@ public class PlayerRagdollMovement : MonoBehaviour
     [SerializeField] private float jumpForce = 5f;
     [BoxGroup("Player Setting")]
     [SerializeField] private float turnSpeed = 250f;
+    [BoxGroup("Player Setting")]
+    [SerializeField] private float deceleration = 10f;
 
     public float MaxSpeed => maxSpeed;
     public bool IsGrounded { get; private set; }
+    public bool IsMovementInput { get; private set; }
+    public bool IsMoving { get; private set; }
+    public bool IsSprinting { get; private set; }
+
+    public Vector3 RBvelocity => rb.velocity;
 
     private RaycastHit[] raycastHits = new RaycastHit[10];
+    private SyncJoint[] syncJoints;
+
+    private void Awake()
+    {
+        syncJoints = GetComponentsInChildren<SyncJoint>();
+    }
 
     private void FixedUpdate()
     {
-
         CheckGround();
         HandleRigidbodyHandler();
         RigidbodyJumpHandler();
+        UpdateHandleMovementState();
+        for (int i = 0; i < syncJoints.Length; i++)
+        {
+            syncJoints[i].UpdateJointFromAnimation();
+        }
+
+
     }
+    private void UpdateHandleMovementState()
+    {
+        IsMovementInput = playerLocomotion.MovementInput != Vector2.zero;
+        IsMoving = RBvelocity.sqrMagnitude > 0.01f;
+        IsSprinting = playerLocomotion.OnSprinting && IsMoving;
+
+        if (IsSprinting)
+        {
+            _playerState.SetMovementPlayerState(PlayerMovementState.Sprint);
+        }
+        else
+        {
+            if (IsMoving || IsMovementInput)
+            {
+                _playerState.SetMovementPlayerState(PlayerMovementState.Run);
+            }
+            else
+            {
+                _playerState.SetMovementPlayerState(PlayerMovementState.Idle);
+            }
+        }
+
+        if (!IsGrounded && RBvelocity.y > 0f)
+        {
+            _playerState.SetMovementPlayerState(PlayerMovementState.Jumping);
+        }
+        else if (!IsGrounded && RBvelocity.y <= 0f)
+        {
+            _playerState.SetMovementPlayerState(PlayerMovementState.Falling);
+        }
+    }
+
     private void CheckGround()
     {
         // --- Ground Check (เหมือนเดิม) ---
@@ -99,6 +153,21 @@ public class PlayerRagdollMovement : MonoBehaviour
             {
                 // ใช้ moveDir แทน transform.forward เพื่อให้แรงส่งไปตามกล้องเสมอ แม้ตัวจะยังหมุนไม่เสร็จ
                 rb.AddForce(moveDir.normalized * inputMagnitude * acceration);
+            }
+        }
+        else
+        {
+            if (IsGrounded)
+            {
+                // ดึงความเร็วปัจจุบันเฉพาะแกนราบ (Horizontal Velocity)
+                Vector3 flatVelocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+
+                // ถ้ายังมีความเร็วอยู่ ให้ใส่แรงต้านทิศทางเดิม
+                if (flatVelocity.magnitude > 0.1f)
+                {
+                    // ใส่แรงตรงข้ามกับความเร็ว (-flatVelocity) คูณด้วยแรงเบรค (deceleration)
+                    rb.AddForce(-flatVelocity * deceleration, ForceMode.Acceleration);
+                }
             }
         }
     }

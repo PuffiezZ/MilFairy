@@ -14,6 +14,7 @@ namespace Sausagecat.PlayerControlSystem
             Sprint = 2,
             Jumping = 3,
             Falling = 4,
+            Mounting = 5
         }
 
         public void SetMovementPlayerState(PlayerMovementState state)

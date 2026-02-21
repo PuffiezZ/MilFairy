@@ -1,5 +1,6 @@
 using Photon.Pun;
 using Photon.Realtime;
+using Sausagecat.PlayerControlSystem;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,8 +52,6 @@ public class Player : CharacterBase,IPickupable
     {
         base.TakeDamage(damage); // เรียกใช้ Logic ลดเลือดจากตัวแม่
         CallUpdatePlayerUIHealth();
-
-
     }
     private void CallUpdatePlayerUIHealth()
     {
@@ -65,6 +64,21 @@ public class Player : CharacterBase,IPickupable
         {
             LocalUpdatePlayerHealthUI(currentHealth, maxHealth);
         }
+    }
+
+    public void OnMountingPayload()
+    {
+        PlayerMovement pm = GetComponent<PlayerMovement>();
+        pm.SetEnableCharacterMovement(false);
+        pm.SwitchingMovement(true);
+        pm.IsMounting = true;
+    }
+    public void OnDismountingPayload()
+    {
+        PlayerMovement pm = GetComponent<PlayerMovement>();
+        pm.SetEnableCharacterMovement(true);
+        pm.SwitchingMovement(false);
+        pm.IsMounting = false;
     }
     [PunRPC]
     public void RPC_UpdatePlayerHealthUI(float currentHealthValue, float maxHealthValue)
