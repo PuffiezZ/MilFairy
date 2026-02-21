@@ -12,14 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7885970b15a8df14b86a504990fcc46e, type: 3}
   m_Name: Unarmed
   m_EditorClassIdentifier: 
-  Name: 
+  Name: Unarmed
   type: 0
-  damage: 0
+  damage: 5
   attackRange: 2
-  attackSpeed: 1
-  knockbackForce: 5
+  attackSpeed: 3
+  knockbackForce: 2
   weaponPrefab: {fileID: 0}
   animationSetIndex: 0
   weaponSprite: {fileID: 0}
   weaponType: 0
-  ComboList: []
+  ComboList:
+  - {fileID: 11400000, guid: d4b10e44ccfb82b40816b9e190ad6006, type: 2}

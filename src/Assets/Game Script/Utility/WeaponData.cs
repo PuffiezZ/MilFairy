@@ -18,4 +18,17 @@ public class WeaponData : ItemData
 
     public UtilityDev.WeaponType weaponType;
     public List<ComboNode> ComboList;
+
+    public ComboNode GetComboAnimation(bool isRandom = false)
+    {
+        if(isRandom == false)
+        {
+            return ComboList[0];
+        }
+        else
+        {
+            int randomIndex = Random.Range(0,ComboList.Count - 1);
+            return ComboList[randomIndex];
+        }
+    }
 }

@@ -15,7 +15,7 @@ MonoBehaviour:
   AnimationOverrideCtrl: {fileID: 22100000, guid: 3e72065f609800d40a86cc956c93290f,
     type: 2}
   NormalizedTimeToNext: 1
-  AttackSpeedCombo: 1
-  DelayToNextCombo: 0
-  EnableAnimationTriggerHitbox: 0
+  AttackSpeedCombo: 2
+  DelayToNextCombo: 0.25
+  EnableAnimationTriggerHitbox: 1
   TimeHitboxTrigger: 0

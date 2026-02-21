@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using Photon.Pun;
 using Photon.Realtime;
 using Sausagecat.PlayerControlSystem;

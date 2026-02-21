@@ -788,6 +788,7 @@ MonoBehaviour:
   equipment: {fileID: 2505050765525561763}
   playerAnimation: {fileID: 4629303127956484378}
   playerLocomotion: {fileID: 8750774201261472505}
+  cooldownAttackTime: 1
   startingNode: {fileID: 0}
 --- !u!114 &5202229221434022749
 MonoBehaviour:
@@ -821,6 +822,8 @@ MonoBehaviour:
   - SocketTransform: {fileID: 569772796147146442}
   - SocketTransform: {fileID: 1476077052737860139}
   TwoMeleeSheathSocket: []
+  unarmedWeapon: {fileID: 7197992888256433340, guid: 9c0bc143c43543d4c858c177d58b2e51,
+    type: 3}
   playerCombat: {fileID: 4914690698565031803}
   playerAnimation: {fileID: 4629303127956484378}
 --- !u!114 &3310473656372117739
@@ -900,6 +903,7 @@ MonoBehaviour:
   lookSenseH: 0.2
   lookSenseV: 0.2
   lookLimitV: 70
+  plScript: {fileID: 0}
 --- !u!114 &8024135504926004342
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -25,6 +25,7 @@ public class MeleeWeapon : WeaponScript
     [ShowIf(nameof(hitboxType), HitboxTriggerType.BoxCollider)]
     [SerializeField] private Vector3 boxHalfExtents = new Vector3(1f, 1f, 1f); // ขนาดความกว้าง/สูง/ลึก ของกล่อง
 
+
     public bool EnableHitbox { get; private set; } = false;
     public Transform BladeBase { get { return bladeBase; } }
     public Transform BladeTip { get { return bladeTip; } }
@@ -33,6 +34,24 @@ public class MeleeWeapon : WeaponScript
     [SerializeField] private HitboxTriggerType hitboxType;
     private Action hitActionEventUpdate;
     private void OnEnable()
+    {
+        DebugHitbox();
+    }
+    private void OnDisable()
+    {
+        hitActionEventUpdate -= CapsuleColliderHitboxTrigger;
+        hitActionEventUpdate -= HitboxColliderTrigger;
+    }
+
+    private void Update()
+    {
+        if (EnableHitbox == false)
+            return;
+
+        hitActionEventUpdate?.Invoke();
+    }
+
+    public void DebugHitbox()
     {
         hitActionEventUpdate = null;
         switch (hitboxType)
@@ -44,18 +63,6 @@ public class MeleeWeapon : WeaponScript
                 hitActionEventUpdate += HitboxColliderTrigger;
                 break;
         }
-    }
-    private void OnDisable()
-    {
-        hitActionEventUpdate -= CapsuleColliderHitboxTrigger;
-        hitActionEventUpdate -= HitboxColliderTrigger;
-    }
-    private void Update()
-    {
-        if (EnableHitbox == false)
-            return;
-
-        hitActionEventUpdate?.Invoke();
     }
 
     public override void WeaponTrigger()

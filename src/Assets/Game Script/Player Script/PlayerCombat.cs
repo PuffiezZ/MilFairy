@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.InputSystem.XR;
 public class PlayerCombat : MonoBehaviourPunCallbacks
@@ -18,7 +19,13 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     [SerializeField] private PlayerEquipment equipment;
     [SerializeField] private PlayerAnimation playerAnimation;
     [SerializeField] private PlayerLocomotion playerLocomotion;
-    private List<ComboNode> comboNodes = new List<ComboNode>();
+
+    [Header("Attack Settings")]
+    [SerializeField] private float cooldownAttackTime = 1.5f;
+    
+    private float currentCooldownAttackTime = 0f;
+
+    private ComboNode combo;
     private bool isAttacking = false;
     public bool isSheathing { get; set; }
     private bool enableToSheath = false;
@@ -30,6 +37,9 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     private float nTime;
 
     public int currentIndexWeaponSlotNumber { get; set; }
+    public UnityAction OnAttackAction;
+
+
     #region Combo Section
     [Foldout("Combo")]
     public ComboNode startingNode; 
@@ -46,63 +56,56 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     }
     private void Update()
     {
-        if (!PhotonNetwork.OfflineMode)
-        {
-            if (!photonView.IsMine) return;
-        }
-        if (currentComboTime > 0)
-        {
-            currentComboTime -= Time.deltaTime;
-        }
-        if(currentResetComboTime > 0)
-        {
-            currentResetComboTime -= Time.deltaTime;
-        }
-        else
-        {
-            comboIndex = 0;
-            currentResetComboTime = 0f;
-        }
-
-        nTime = playerAnimation.GetNormalizedTime("Attack");
-        if (isAttacking == true)
-        {
-            // ปลดล็อคเมื่อเล่นจบจริง หรือ หา Tag ไม่เจอ (-1)
-            if (nTime >= currentComboNode.NormalizedTimeToNext && !IsOnCooldown())
-            {
-                isAttacking = false;
-            }
-        }
-
-        if (!isAttacking && (nTime >= 0.98f || nTime <= -1f))
-        {
-            enableToSheath = true;
-        }
-        else
-        {
-            // ถ้ากำลังโจมตีอยู่ ห้ามเก็บอาวุธเด็ดขาด
-            enableToSheath = false;
-        }
-
-        if (isAttacking == false)
-        {
-            if (playerLocomotion.EnableToAttack && isSheathing == false)
-            {
-                OnInvokeAttack();
-                playerLocomotion.EnableToAttack = false;
-            }
-        }
-
+        AttackUpdateHandler();
         if (Input.GetKeyDown(KeyCode.LeftAlt) && enableToSheath && !isSheathing)
         {
-            WeaponScript currentWeapon = equipment.CurrentWeaponOnHanded;
+            SheathUpdateHandler();
+        }
+        HandleImpact();
+    }
+    private void SheathUpdateHandler()
+    {
+        WeaponScript currentWeapon = equipment.CurrentWeaponOnHanded;
 
-            if (currentWeapon == null) return;
-            if (!currentWeapon.IsShethed)
+        if (currentWeapon == null) return;
+        if (!currentWeapon.IsShethed)
+        {
+            OnStartSheath();
+        }
+    }
+    private void AttackUpdateHandler()
+    {
+        if (!PhotonNetwork.OfflineMode)
+        {
+            if (!photonView.IsMine) return; //ไม่ใช่ computer ตัวเอง ไม่ต้องทำอะไร
+        }
+
+        if(currentCooldownAttackTime > 0f)
+        {
+            currentCooldownAttackTime -= Time.deltaTime;
+
+            if(currentCooldownAttackTime < 0.0f)
             {
-                OnStartSheath();
+                currentCooldownAttackTime = 0f;
+                enableToSheath = true;
             }
         }
+
+        if (currentCooldownAttackTime <= 0f)
+        {
+            if (playerLocomotion.SendAttackSignal && isSheathing == false)
+            {
+                OnInvokeAttack();
+
+                playerLocomotion.SendAttackSignal = false;
+                currentCooldownAttackTime = cooldownAttackTime;
+                enableToSheath = false;
+            }
+        }
+
+    }
+    private void HandleImpact()
+    {
         if (impact.magnitude > 0.2f)
         {
             // ระบบจะหยุดอัตโนมัติเมื่อชนกำแพง เพราะ CharacterController.Move มีระบบตรวจจับการชนในตัวอยู่แล้ว
@@ -152,24 +155,13 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     #region Attack Functions
     public void OnInvokeAttack()
     {
-        WeaponScript weapon = equipment.CurrentCarriedWeapons[currentIndexWeaponSlotNumber];
-        if (weapon == null)
-        {
-            Debug.Log($"Weapon is null or empty ||");
-            return;
-        }
+        WeaponScript weapon = equipment.CurrentWeaponOnHanded;
 
-        if (weapon.IsShethed)
-        {
-            OnStartDrawedWeapon(); // Fixed Bug
-        }
-        else
-        {
-            ExecuteAttack(); // Current Fix!
-        }
-
+        bool noCurrentWeaponOnHanded = weapon == null;
+        ExecuteAttack(noCurrentWeaponOnHanded);
     }
-    void ExecuteAttack()
+
+    void ExecuteAttack(bool noWeaponOnHanded)
     {
         if(photonView.IsMine && PhotonNetwork.InRoom)
         {
@@ -177,45 +169,50 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         }
         else if (!PhotonNetwork.InRoom)
         {
-            LocalExcuteAttack();
+            LocalExcuteAttack(noWeaponOnHanded);
         }
     }
     [PunRPC]
-    private void RPC_ExecuteAttack()
+    private void RPC_ExecuteAttack(bool noWeaponOnHanded)
     {
-        LocalExcuteAttack();
+        LocalExcuteAttack(noWeaponOnHanded);
     }
-    private void LocalExcuteAttack()
+    private void LocalExcuteAttack(bool noWeaponOnHanded)
     {
-        if (comboIndex >= comboNodes.Count)
+        if (noWeaponOnHanded == true)
         {
-            comboIndex = 0;
+            equipment.SetNewHandedWeapon();
         }
-        currentComboNode = comboNodes[comboIndex];
 
-        if (currentComboNode == null) return;
+        //if (comboIndex >= comboNodes.Count)
+        //{
+        //    comboIndex = 0;
+        //}
+        //currentComboNode = comboNodes[comboIndex];
 
-        currentComboNode.PlayerCombat = this;
-        playerAnimation.SetAttackSpeed(currentComboNode.AttackSpeedCombo);
-        playerAnimation.PerformAttackAnimation(currentComboNode);
+        //if (currentComboNode == null) return;
+        ComboNode getCN = equipment.CurrentWeaponOnHanded.WeaponData.GetComboAnimation(false);
+        playerAnimation.SetAttackSpeed(3f);
+        playerAnimation.PerformAttackAnimation(getCN);
         StartCoroutine(DashTowardsTarget());
 
         isAttacking = true;
         enableToSheath = false;
 
-        currentResetComboTime = resetComboTime;
-        currentComboTime = currentComboNode.DelayToNextCombo;
+        //currentResetComboTime = resetComboTime;
+        //currentComboTime = currentComboNode.DelayToNextCombo;
 
-        comboIndex++;
+        //comboIndex++;
         Debug.Log("Perform Light Attack");
+
     }
     #endregion
     #region Draw Weapon Functions   
     public void OnInvokeDrawed()
     {
         playerAnimation.SetOnUsingWeaponAnimation(true);
-        equipment.SetDrawedEquipmentPOS(currentIndexWeaponSlotNumber);
-        comboNodes = equipment.CurrentWeaponOnHanded.WeaponData.ComboList;
+        equipment.SetWeaponDrawPosition(currentIndexWeaponSlotNumber);
+        //comboNodes = equipment.CurrentWeaponOnHanded.WeaponData.ComboList;
         //Play Animation Sheathed
     }
 
@@ -240,7 +237,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     private void LocalStartDraw()
     {
         playerAnimation.OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath.Draw);
-        playerLocomotion.EnableToAttack = false;
+        playerLocomotion.SendAttackSignal = false;
     }
 
     public void WeaponIsDrawed()
@@ -253,7 +250,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     #region Sheath Weapon Functions
     public void OnInvokeSheathed()
     {
-        equipment.SetSheathEquipmentPOS(currentIndexWeaponSlotNumber);
+        equipment.OnHandedCallShethedWeapon(currentIndexWeaponSlotNumber);
         playerAnimation.SetOnUsingWeaponAnimation(false);
     }
 
@@ -285,6 +282,8 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         WeaponScript weapon = equipment.CurrentCarriedWeapons[currentIndexWeaponSlotNumber];
         weapon.IsShethed = true;
         isSheathing = false;
+
+        equipment.SetNewHandedWeapon(); // hand reset
     }
     #endregion
 
@@ -309,6 +308,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     private void LocalTriggerHitboxFromWeaponAnimationEvent()
     {
         WeaponScript weapon = equipment.CurrentWeaponOnHanded;
+
         weapon.WeaponTrigger();
     }
     #endregion
