@@ -74,6 +74,7 @@ MonoBehaviour:
   - RPC_SitOnPayload
   - RPC_JumpOffPayload
   - RPC_SetupPayloadAndCart
+  - RPC_Execute
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
