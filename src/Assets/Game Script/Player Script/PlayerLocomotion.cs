@@ -88,6 +88,10 @@ namespace Sausagecat.PlayerControlSystem
                 Debug.Log("On Attack Locomotion Invoke (Performed Only)");
                 SendAttackSignal = true;
             }
+            else
+            {
+                SendAttackSignal = false;
+            }
         }
 
         public void OnWeaponToggle(InputAction.CallbackContext context)

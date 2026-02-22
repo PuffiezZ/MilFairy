@@ -68,7 +68,9 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         WeaponScript currentWeapon = equipment.CurrentWeaponOnHanded;
 
         if (currentWeapon == null) return;
-        if (!currentWeapon.IsShethed)
+
+        bool isNotUnarmed = currentWeapon.WeaponData.weaponType != UtilityDev.WeaponType.Unarmed;
+        if (!currentWeapon.IsShethed && isNotUnarmed)
         {
             OnStartSheath();
         }
@@ -96,8 +98,6 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
             if (playerLocomotion.SendAttackSignal && isSheathing == false)
             {
                 OnInvokeAttack();
-
-                playerLocomotion.SendAttackSignal = false;
                 currentCooldownAttackTime = cooldownAttackTime;
                 enableToSheath = false;
             }
@@ -165,7 +165,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     {
         if(photonView.IsMine && PhotonNetwork.InRoom)
         {
-            photonView.RPC(nameof(RPC_ExecuteAttack), RpcTarget.All);
+            photonView.RPC(nameof(RPC_ExecuteAttack), RpcTarget.All,noWeaponOnHanded);
         }
         else if (!PhotonNetwork.InRoom)
         {
@@ -184,13 +184,6 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
             equipment.SetNewHandedWeapon();
         }
 
-        //if (comboIndex >= comboNodes.Count)
-        //{
-        //    comboIndex = 0;
-        //}
-        //currentComboNode = comboNodes[comboIndex];
-
-        //if (currentComboNode == null) return;
         ComboNode getCN = equipment.CurrentWeaponOnHanded.WeaponData.GetComboAnimation(false);
         playerAnimation.SetAttackSpeed(3f);
         playerAnimation.PerformAttackAnimation(getCN);
@@ -199,10 +192,6 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         isAttacking = true;
         enableToSheath = false;
 
-        //currentResetComboTime = resetComboTime;
-        //currentComboTime = currentComboNode.DelayToNextCombo;
-
-        //comboIndex++;
         Debug.Log("Perform Light Attack");
 
     }
@@ -212,8 +201,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     {
         playerAnimation.SetOnUsingWeaponAnimation(true);
         equipment.SetWeaponDrawPosition(currentIndexWeaponSlotNumber);
-        //comboNodes = equipment.CurrentWeaponOnHanded.WeaponData.ComboList;
-        //Play Animation Sheathed
+
     }
 
     public void OnStartDrawedWeapon()
@@ -250,7 +238,6 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     #region Sheath Weapon Functions
     public void OnInvokeSheathed()
     {
-        equipment.OnHandedCallShethedWeapon(currentIndexWeaponSlotNumber);
         playerAnimation.SetOnUsingWeaponAnimation(false);
     }
 
@@ -282,7 +269,9 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         WeaponScript weapon = equipment.CurrentCarriedWeapons[currentIndexWeaponSlotNumber];
         weapon.IsShethed = true;
         isSheathing = false;
-
+        
+        int indexSlot = equipment.CurrentWeaponOnHanded.IndexSlotNumber;
+        equipment.OnHandedCallShethedWeapon(indexSlot);
         equipment.SetNewHandedWeapon(); // hand reset
     }
     #endregion

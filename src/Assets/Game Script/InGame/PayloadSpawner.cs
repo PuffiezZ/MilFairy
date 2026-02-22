@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEditor.FilePathAttribute;
+
 // using NaughtyAttributes; // ถ้าใช้ BoxGroup ให้ uncomment บรรทัดนี้
 
 public class PayloadSpawner : MonoBehaviourPunCallbacks

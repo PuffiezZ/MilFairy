@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.TerrainTools;
 using UnityEngine;
 [CreateAssetMenu(fileName = "New Monster Data", menuName = "Monster/New Monster Data")]
 

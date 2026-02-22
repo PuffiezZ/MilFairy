@@ -21,6 +21,6 @@ MonoBehaviour:
   weaponPrefab: {fileID: 0}
   animationSetIndex: 0
   weaponSprite: {fileID: 0}
-  weaponType: 0
+  weaponType: 5
   ComboList:
   - {fileID: 11400000, guid: d4b10e44ccfb82b40816b9e190ad6006, type: 2}

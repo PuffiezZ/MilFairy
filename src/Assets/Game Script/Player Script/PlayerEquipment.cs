@@ -1,5 +1,6 @@
 using NaughtyAttributes;
 using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class PlayerEquipment : MonoBehaviourPun
 
     [Tooltip("When no weapon use unarmed")]
     [SerializeField] private GameObject unarmedWeapon;
+    private WeaponScript spawnedUnarmed;
 
     private WeaponScript currentWeaponOnHanded;
     private WeaponScript[] currentCarriedWeapons = new WeaponScript[2];
@@ -31,7 +33,13 @@ public class PlayerEquipment : MonoBehaviourPun
     [BoxGroup("Class References")]
     [SerializeField] private PlayerAnimation playerAnimation;
 
-
+    private void Start()
+    {
+        if (currentWeaponOnHanded == null)
+        {
+            SetNewHandedWeapon(null);
+        }
+    }
     public void OnPlayerEquipped(EquipmentScript tEquipment)
     {
         switch (tEquipment)
@@ -65,13 +73,45 @@ public class PlayerEquipment : MonoBehaviourPun
     public void SetNewHandedWeapon(WeaponScript weapon = null)
     {
         if (weapon != null)
+        {
             currentWeaponOnHanded = weapon;
+        }
         else
-            currentWeaponOnHanded = UnarmedWeapon;
+        {
+            // 1. ตรวจสอบว่าเคย Spawn อาวุธหมัดออกมาหรือยัง
+            if (spawnedUnarmed == null)
+            {
+                // ถ้ายังไม่มี ให้สร้างออกมาเป็นลูกของตัวละคร (transform)
+                spawnedUnarmed = Instantiate(unarmedWeapon, transform).GetComponent<WeaponScript>();
+                spawnedUnarmed.name = "Unarmed_Hand";
+            }
+
+            // 2. ตั้งค่าการอ้างอิงให้ถูกต้อง
+            currentWeaponOnHanded = spawnedUnarmed;
+            currentWeaponOnHanded.PlayerTransform = transform; // ส่ง Transform ตัวละครไปให้สคริปต์อาวุธ
+
+            // 3. สั่ง Register Hitbox
+            if (currentWeaponOnHanded.TryGetComponent<MeleeWeapon>(out MeleeWeapon punch))
+            {
+                punch.RegisterHitbox();
+            }
+
+            Debug.Log($"<color=cyan>Unarmed Spawned and Registered:</color> {currentWeaponOnHanded.PlayerTransform.name}");
+        }
     }
     public IEnumerator SwapWeapon(int index)
     {
-        if (!currentCarriedWeapons[index].IsShethed)
+        if(currentCarriedWeapons[index] == null && currentCarriedWeapons[index].GetComponent<WeaponScript>().WeaponData.weaponType != UtilityDev.WeaponType.Unarmed)
+        {
+            Debug.Log($"No Weapon in Slot[{index}] to Swap");
+            yield break;
+        }
+        if (currentWeaponOnHanded.IndexSlotNumber == index && currentWeaponOnHanded.GetComponent<WeaponScript>().WeaponData.weaponType != UtilityDev.WeaponType.Unarmed)
+        {
+            Debug.Log($"Already Holding Weapon at index[{index}]");
+            yield break;
+        }
+        if (!currentWeaponOnHanded.IsShethed && currentWeaponOnHanded.GetComponent<WeaponScript>().WeaponData.weaponType != UtilityDev.WeaponType.Unarmed)
         {
             playerCombat.OnStartSheath();
             while (playerCombat.isSheathing)

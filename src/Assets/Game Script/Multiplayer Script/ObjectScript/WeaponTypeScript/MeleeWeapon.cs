@@ -35,8 +35,9 @@ public class MeleeWeapon : WeaponScript
     private Action hitActionEventUpdate;
     private void OnEnable()
     {
-        DebugHitbox();
+        RegisterHitbox();
     }
+
     private void OnDisable()
     {
         hitActionEventUpdate -= CapsuleColliderHitboxTrigger;
@@ -51,7 +52,7 @@ public class MeleeWeapon : WeaponScript
         hitActionEventUpdate?.Invoke();
     }
 
-    public void DebugHitbox()
+    public void RegisterHitbox()
     {
         hitActionEventUpdate = null;
         switch (hitboxType)

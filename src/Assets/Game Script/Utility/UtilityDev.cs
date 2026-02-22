@@ -30,7 +30,8 @@ public static class UtilityDev
 
         // Range Group
         SlingshotOrBow = 3, // ธนูไหมขัดฟัน (ต้องใช้สองมือดึง)
-        PistolStyle = 4     // อาวุธยิงมือเดียว (ถ้ามีในอนาคต)
+        PistolStyle = 4,     // อาวุธยิงมือเดียว (ถ้ามีในอนาคต)
+        Unarmed = 5         // เปลือยมือ (ใช้ท่าตีเปล่า)
     }
 
     public enum ArmorType
