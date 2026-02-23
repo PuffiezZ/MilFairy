@@ -14,6 +14,12 @@ public class PlayerAnimation : MonoBehaviourPun
     private PlayerState playerState;
     private PlayerRagdollMovement playerRagdollMovement;
 
+    [Header("Arm Layer Settings")]
+    [SerializeField] private float weightLerpSpeed = 10f;
+    private int armLayerIndex;
+    private float targetArmWeight = 0f;
+    private float currentArmWeight = 0f;
+
     private static int magnitudeHash = Animator.StringToHash("Magnitude");
     private static int inputXHash = Animator.StringToHash("inputX");
     private static int inputYHash = Animator.StringToHash("inputY");
@@ -46,6 +52,8 @@ public class PlayerAnimation : MonoBehaviourPun
         playerMovement = GetComponent<PlayerMovement>();
         playerState = GetComponent<PlayerState>();
         playerRagdollMovement = GetComponent<PlayerRagdollMovement>();
+
+        armLayerIndex = animator.GetLayerIndex("Arm Holding");
     }
     private void Update()
     {
@@ -78,8 +86,17 @@ public class PlayerAnimation : MonoBehaviourPun
 
         currentAnimationfloat = Mathf.Lerp(currentAnimationfloat, TargetAnimationfloat, 10f * Time.deltaTime);
         animator.SetFloat(animationFloatStateHash, currentAnimationfloat);
-    }
 
+        if (armLayerIndex != -1) // ตรวจสอบว่ามี Layer นี้อยู่จริง
+        {
+            currentArmWeight = Mathf.Lerp(currentArmWeight, targetArmWeight, weightLerpSpeed * Time.deltaTime);
+            animator.SetLayerWeight(armLayerIndex, currentArmWeight);
+        }
+    }
+    public void SetArmLayerWeight(float weight)
+    {
+        targetArmWeight = Mathf.Clamp01(weight);
+    }
     private Vector3 VelocityByComponent()
     {
         if(velocityType == VelocityType.CharacterController)

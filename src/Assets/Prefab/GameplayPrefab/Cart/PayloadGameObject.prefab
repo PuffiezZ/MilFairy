@@ -903,7 +903,7 @@ MonoBehaviour:
   SphereAreaRadius: 7.76
   MoveSpeedTarget: 3
   AccelerationTime: 1.5
-  TurnSpeed: 120
+  TurnSpeed: 30
   RearHitch: {fileID: 1712688625294102399}
   sitPosition: {fileID: 3672630039201251088}
   payloadRb: {fileID: -6423400562861707195}

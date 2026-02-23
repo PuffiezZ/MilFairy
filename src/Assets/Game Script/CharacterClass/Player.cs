@@ -1,24 +1,44 @@
-using NaughtyAttributes;
 using Photon.Pun;
-using Photon.Realtime;
 using Sausagecat.PlayerControlSystem;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.Events;
 using static UtilityDev;
 using static UtilityDev.ResourceType;
 
 public class Player : CharacterBase,IPickupable
 {
+
+    [Header("Throw Settings")]
+    public float minThrowForce = 5f;
+    public float maxThrowForce = 25f;
+    public float maxChargeTime = 2f;
+    public Vector3 throwDirectionOffset = new Vector3(0, 0.5f, 1f); // ขว้างไปข้างหน้าและเฉียงขึ้นเล็กน้อย
+
     // ใช้ Event ที่เราคุยกันก่อนหน้าเพื่ออัปเดต UI
     public static event Action<float, float> OnPlayerHealthChanged;
     public static event Action<UtilityDev.ResourceType, float, int> OnResourceValueChanged;
+    public static event Action OnMainActionCalled;
 
     private float[] percentageProgressResource = new float[6];
     private int[] amountResource = new int[6];
 
+    private PlayerCombat playerCombat;
+
+    private void Start()
+    {
+        playerCombat = GetComponent<PlayerCombat>();
+        SetActionLeftClick(playerCombat.OnInvokeAttack);
+    }
+    public static bool CheckboolActionLeftClick(Action getAction)
+    {
+        return OnMainActionCalled == getAction;
+    }
+    public static void SetActionLeftClick(Action getAction = null)
+    {
+        OnMainActionCalled = null;
+        OnMainActionCalled = getAction;
+    }
     private void Update()
     {
         if (PhotonNetwork.InRoom && !photonView.IsMine) return;
@@ -47,6 +67,10 @@ public class Player : CharacterBase,IPickupable
             NetworkPrefabSpawner.Instance.SpawnResource("Sword", photonView);
         }
 
+    }
+    public void InvokeCallOnMainActionCalled()
+    {
+        OnMainActionCalled?.Invoke();
     }
 
     public override void TakeDamage(float damage)

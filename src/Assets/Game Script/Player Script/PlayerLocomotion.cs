@@ -16,7 +16,7 @@ namespace Sausagecat.PlayerControlSystem
         public bool OnSprinting { get; private set; }
         public bool OnJumping { get; set; }
 
-        public bool SendAttackSignal { get; set; }
+        public bool SendMainActionSignal { get; set; }
         private Coroutine weaponSwapCoroutine;
 
         private void OnEnable()
@@ -86,11 +86,11 @@ namespace Sausagecat.PlayerControlSystem
             if (context.performed)
             {
                 Debug.Log("On Attack Locomotion Invoke (Performed Only)");
-                SendAttackSignal = true;
+                SendMainActionSignal = true;
             }
-            else
+            if(context.canceled)
             {
-                SendAttackSignal = false;
+                SendMainActionSignal = false;
             }
         }
 

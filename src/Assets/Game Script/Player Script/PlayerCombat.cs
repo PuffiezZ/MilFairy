@@ -1,14 +1,9 @@
-using NaughtyAttributes;
 using Photon.Pun;
 using Sausagecat.PlayerControlSystem;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Experimental.GlobalIllumination;
-using UnityEngine.InputSystem.XR;
+
 public class PlayerCombat : MonoBehaviourPunCallbacks
 {
     [Header("Movement Settings")]
@@ -19,41 +14,26 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     [SerializeField] private PlayerEquipment equipment;
     [SerializeField] private PlayerAnimation playerAnimation;
     [SerializeField] private PlayerLocomotion playerLocomotion;
+    [SerializeField] private Player player;
 
     [Header("Attack Settings")]
     [SerializeField] private float cooldownAttackTime = 1.5f;
-    
-    private float currentCooldownAttackTime = 0f;
-
-    private ComboNode combo;
-    private bool isAttacking = false;
-    public bool isSheathing { get; set; }
     private bool enableToSheath = false;
-    private int comboIndex = 0;
-
-    private float currentComboTime = 0f;
-    private float resetComboTime = 1.8f;
-    private float currentResetComboTime = 0f;
-    private float nTime;
+    private float currentCooldownAttackTime = 0f;
+    public bool isSheathing { get; set; }
 
     public int currentIndexWeaponSlotNumber { get; set; }
     public UnityAction OnAttackAction;
 
-
-    #region Combo Section
-    [Foldout("Combo")]
-    public ComboNode startingNode; 
-    [Foldout("Combo")]
-    private ComboNode currentComboNode;
-
     private CharacterController controller;
     private Vector3 impact = Vector3.zero;
-    private float verticalVelocity = 0f;
-    #endregion
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
     }
+
+
     private void Update()
     {
         AttackUpdateHandler();
@@ -95,9 +75,12 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
 
         if (currentCooldownAttackTime <= 0f)
         {
-            if (playerLocomotion.SendAttackSignal && isSheathing == false)
+            if (playerLocomotion.SendMainActionSignal && isSheathing == false)
             {
-                OnInvokeAttack();
+                if(Player.CheckboolActionLeftClick(OnInvokeAttack))
+                {
+                    player.InvokeCallOnMainActionCalled();
+                }
                 currentCooldownAttackTime = cooldownAttackTime;
                 enableToSheath = false;
             }
@@ -148,10 +131,6 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         yield return null;
     }
 
-    private bool IsOnCooldown()
-    {
-        return currentComboTime > 0;
-    }
     #region Attack Functions
     public void OnInvokeAttack()
     {
@@ -189,7 +168,6 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         playerAnimation.PerformAttackAnimation(getCN);
         StartCoroutine(DashTowardsTarget());
 
-        isAttacking = true;
         enableToSheath = false;
 
         Debug.Log("Perform Light Attack");
@@ -225,7 +203,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     private void LocalStartDraw()
     {
         playerAnimation.OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath.Draw);
-        playerLocomotion.SendAttackSignal = false;
+        playerLocomotion.SendMainActionSignal = false;
     }
 
     public void WeaponIsDrawed()

@@ -117,7 +117,7 @@ public class MeleeWeapon : WeaponScript
             PlayerTransform.forward,
             PlayerTransform.rotation,
             0.1f, // ระยะ cast สั้นๆ เพื่อเช็คพื้นที่ ณ จุดนั้น
-            LayerMask.GetMask("Enemy") // แนะนำให้ใส่ LayerMask เพื่อ Performance AI 32 ตัว
+            LayerMask.GetMask("Enemy","Damageable") // แนะนำให้ใส่ LayerMask เพื่อ Performance AI 32 ตัว
         );
 
         foreach (RaycastHit hitInfo in hits)
@@ -158,7 +158,7 @@ public class MeleeWeapon : WeaponScript
         float distance = direction.magnitude;
 
         // 2. ตั้งค่า LayerMask
-        int wallMask = LayerMask.GetMask("Environment", "Obstacle");
+        int wallMask = LayerMask.GetMask("Obstacle");
 
         // 3. ยิง Raycast
         bool isHit = Physics.Raycast(start, direction.normalized, distance, wallMask);

@@ -276,4 +276,14 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
             InvokeJumpOffPayload();
         }
     }
+
+    public void OnHoldInteract(GameObject player, float progress)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnCancelInteract()
+    {
+        throw new System.NotImplementedException();
+    }
 }

@@ -75,4 +75,14 @@ public abstract class GameObjectPickUp : MonoBehaviourPun,IInteractable
         HideWorldInterectUI();
         gameObject.SetActive(getBoolean);
     }
+
+    public void OnHoldInteract(GameObject player, float progress)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnCancelInteract()
+    {
+        throw new System.NotImplementedException();
+    }
 }

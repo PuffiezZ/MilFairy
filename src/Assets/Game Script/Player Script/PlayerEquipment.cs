@@ -17,6 +17,11 @@ public class PlayerEquipment : MonoBehaviourPun
 
     [Tooltip("When no weapon use unarmed")]
     [SerializeField] private GameObject unarmedWeapon;
+
+    [BoxGroup("Hold Slot")]
+    [SerializeField] private Transform holdSlot;
+    public Transform HoldSlot { get { return holdSlot; } }
+
     private WeaponScript spawnedUnarmed;
 
     private WeaponScript currentWeaponOnHanded;

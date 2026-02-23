@@ -40,4 +40,14 @@ public class SwitchGameObject : MonoBehaviourPun,IInteractable
     // ส่วนของ UI (ใช้ตามความเหมาะสม)
     public void ShowWorldInterectUI() { /* แสดงปุ่ม E */ }
     public void HideWorldInterectUI() { /* ซ่อนปุ่ม E */ }
+
+    public void OnHoldInteract(GameObject player, float progress)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnCancelInteract()
+    {
+        throw new System.NotImplementedException();
+    }
 }
