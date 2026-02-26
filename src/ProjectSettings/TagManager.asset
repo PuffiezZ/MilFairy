@@ -8,6 +8,7 @@ TagManager:
   - Payload
   - SpawnPoint
   - Enemy
+  - InvisibleCollision
   layers:
   - Default
   - TransparentFX

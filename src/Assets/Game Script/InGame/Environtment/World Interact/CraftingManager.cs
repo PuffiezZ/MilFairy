@@ -38,7 +38,7 @@ public class CraftingManager : MonoBehaviourPunCallbacks
     private void ExecuteCrafting()
     {
         craftingZone.CleanUpItems();
-        
+
         // ดึงชื่อไอเทมทั้งหมดที่มีอยู่ใน Zone
         // *สมมติว่าใน HoldableObject มีตัวแปรชื่อ itemName นะครับ ถ้าเป็นอย่างอื่นให้แก้ตรงนี้*
         List<string> currentItemNames = craftingZone.itemsInRange
@@ -80,14 +80,14 @@ public class CraftingManager : MonoBehaviourPunCallbacks
             else
                 Destroy(item.gameObject);
         }
-        
+
         craftingZone.itemsInRange.Clear();
 
         // 2. สร้างไอเทมใหม่
         if (PhotonNetwork.InRoom)
         {
             // ต้องมั่นใจว่า Prefab อยู่ใน Resources folder
-            PhotonNetwork.Instantiate(recipe.resultPrefab.name, spawnPoint.position, spawnPoint.rotation);
+            NetworkPrefabSpawner.Instance.SpawnResource(recipe.resultPrefab.name, photonView);
         }
         else
         {

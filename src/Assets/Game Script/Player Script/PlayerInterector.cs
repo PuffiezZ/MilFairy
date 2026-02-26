@@ -89,11 +89,31 @@ public class PlayerInterector : MonoBehaviourPun
 
     private bool HasLineOfSight(GameObject target)
     {
-        RaycastHit hit;
-        if (Physics.Linecast(cameraTransform.position, target.transform.position, out hit))
+        Vector3 start = cameraTransform.position;
+        Vector3 end = target.transform.position;
+        Vector3 direction = end - start;
+        float distance = direction.magnitude;
+
+        // ใช้ RaycastAll เพื่อหาวัตถุทั้งหมดที่ขวางอยู่ในเส้นทาง
+        RaycastHit[] hits = Physics.RaycastAll(start, direction.normalized, distance);
+        
+        // เรียงลำดับ hits ตามระยะทาง (ใกล้ไปไกล)
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (var hit in hits)
         {
-            return hit.collider.gameObject == target;
+            // 1. ถ้าเจอเป้าหมายก่อน แสดงว่ามี Line of Sight
+            if (hit.collider.gameObject == target) return true;
+
+            // 2. ถ้าเจอวัตถุที่มี Tag หรือ Layer ที่ต้องการ Ignore ให้ข้ามไป (Continue)
+            if (hit.collider.CompareTag("InvisibleCollision") || hit.collider.gameObject.layer == LayerMask.NameToLayer("InvisibleCollision")) 
+                continue;
+            if (hit.collider.isTrigger) continue; // ปกติเราจะข้าม Trigger zones ต่างๆ ด้วย
+
+            // 3. ถ้าเจอวัตถุอื่นที่ทึบ (เช่น กำแพงจริง) ขวางอยู่ก่อนถึงเป้าหมาย ให้ถือว่าไม่มี Line of Sight
+            return false;
         }
+
         return false;
     }
     private void DrawDebugRadius()
