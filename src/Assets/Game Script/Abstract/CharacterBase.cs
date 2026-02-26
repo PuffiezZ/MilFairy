@@ -10,9 +10,14 @@ public abstract class CharacterBase : MonoBehaviourPunCallbacks, IDamageable
     [SerializeField] protected float currentHealth;
     [SerializeField] protected float armor = 0f;
 
+    [Header("General Setting")]
+    [SerializeField] private bool enableDamage = true;
+    public bool EnableDamage { get; set; }
+
     protected virtual void Awake()
     {
         currentHealth = maxHealth;
+        EnableDamage = enableDamage;
     }
 
     // ฟังก์ชันหลักสำหรับรับดาเมจ

@@ -89,7 +89,7 @@ public class MeleeWeapon : WeaponScript
             bool isNotDamaged = !damagedTargets.Contains(damageable);
             bool isWallBlocking = IsWallBlocking(hit.transform.position);
 
-            if (damageable != null && isNotPlayer && isNotDamaged && !isWallBlocking)
+            if (damageable != null && isNotPlayer && isNotDamaged && !isWallBlocking && damageable.EnableDamage)
             {
                 float damageOut = WeaponData.damage;
                 damagedTargets.Add(damageable);

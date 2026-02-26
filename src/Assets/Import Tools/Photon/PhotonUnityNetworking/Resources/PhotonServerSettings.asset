@@ -80,6 +80,8 @@ MonoBehaviour:
   - RPC_HandlePickUp
   - RPC_HandleThrow
   - RPC_HandleHit
+  - RPC_ToggleSwitch
+  - RPC_RequestCraft
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

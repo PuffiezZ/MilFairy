@@ -18,14 +18,14 @@ public class PlayerInterector : MonoBehaviourPun
     [SerializeField] private Color rayColorHit = Color.green;
 
     private IInteractable currentTarget;
-    private IInteractable lastTarget; // เพิ่มตัวแปรเก็บเป้าหมายก่อนหน้า
+    private IInteractable lastTarget; // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝยก๏ฟฝอนหน๏ฟฝ๏ฟฝ
     private GameObject currentTargetObject;
 
     void Update()
     {
         FindBestInteractable();
 
-        // Debug: แสดงรัศมีรอบตัวผู้เล่น
+        // Debug: ๏ฟฝสด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอบ๏ฟฝ๏ฟฝวผ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
         if (showDebug)
         {
             DrawRaycastLine();
@@ -36,7 +36,7 @@ public class PlayerInterector : MonoBehaviourPun
         if (currentTarget != null && Input.GetKeyDown(KeyCode.E))
         {
             IInteractable interactable = currentTarget;
-            interactable.OnBeginIntereact(this.gameObject); //มีปัญหาตรงนี้
+            interactable.OnBeginIntereact(this.gameObject); //๏ฟฝีปัญ๏ฟฝาตรง๏ฟฝ๏ฟฝ๏ฟฝ
             currentTarget = null;
         }
     }
@@ -47,7 +47,7 @@ public class PlayerInterector : MonoBehaviourPun
 
         IInteractable bestTarget = null;
         GameObject bestTargetObj = null;
-        float closestAngle = 0.5f; // ประมาณ 60 องศา
+        float closestAngle = 0.5f; // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาณ 60 อง๏ฟฝ๏ฟฝ
 
 
         foreach (var col in colliders)
@@ -59,7 +59,7 @@ public class PlayerInterector : MonoBehaviourPun
                 Vector3 directionToTarget = (col.transform.position - cameraTransform.position).normalized;
                 float dot = Vector3.Dot(cameraTransform.forward, directionToTarget);
 
-                // Debug: ลากเส้นไปยังวัตถุทั้งหมดในรัศมี (สีแดงคือยังไม่ถูกเลือก)
+                // Debug: ๏ฟฝาก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัง๏ฟฝัต๏ฟฝุท๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ (๏ฟฝ๏ฟฝแดง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัง๏ฟฝ๏ฟฝ๏ฟฝูก๏ฟฝ๏ฟฝ๏ฟฝอก)
                 if (showDebug) Debug.DrawLine(cameraTransform.position, col.transform.position, Color.red);
 
                 if (dot > closestAngle)
@@ -77,11 +77,11 @@ public class PlayerInterector : MonoBehaviourPun
         currentTarget = bestTarget;
         currentTargetObject = bestTargetObj;
 
-        // Debug: ลากเส้นไปยังวัตถุที่เลือกอยู่ (สีเขียว)
+        // Debug: ๏ฟฝาก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัง๏ฟฝัต๏ฟฝุท๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ (๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ)
         if (showDebug && currentTargetObject != null)
         {
             Debug.DrawLine(cameraTransform.position, currentTargetObject.transform.position, targetColor);
-            Debug.Log($"<color=green>Targeting:</color> {currentTargetObject.name} (Dot: {closestAngle:F2})");
+            //Debug.Log($"<color=green>Targeting:</color> {currentTargetObject.name} (Dot: {closestAngle:F2})");
         }
 
         UpdateUI();
@@ -98,7 +98,7 @@ public class PlayerInterector : MonoBehaviourPun
     }
     private void DrawDebugRadius()
     {
-        // วาดวงกลมจำลองรัศมี (แบบง่าย)
+        // ๏ฟฝาดวง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ (แบบ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ)
         float segments = 20;
         float angle = 0f;
         Vector3 lastPoint = Vector3.zero;
@@ -118,20 +118,20 @@ public class PlayerInterector : MonoBehaviourPun
 
     private void DrawRaycastLine()
     {
-        // คำนวณจุดสิ้นสุดของ Raycast ตามระยะ Interact
+        // ๏ฟฝำนวณ๏ฟฝุด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝุด๏ฟฝอง Raycast ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Interact
         Vector3 forwardDirection = cameraTransform.forward * interactRadius;
         Vector3 endPoint = cameraTransform.position + forwardDirection;
 
-        // ถ้ามี Target ที่ถูกเลือก (Hybrid เลือกมาให้) ให้เปลี่ยนสีเส้นเป็นสีเขียว
+        // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Target ๏ฟฝ๏ฟฝ๏ฟฝูก๏ฟฝ๏ฟฝ๏ฟฝอก (Hybrid ๏ฟฝ๏ฟฝ๏ฟฝอก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ) ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝยน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
         Color currentColor = (currentTarget != null) ? rayColorHit : rayColorDefault;
 
-        // วาดเส้น Raycast ออกจากกลางกล้อง
+        // ๏ฟฝาด๏ฟฝ๏ฟฝ๏ฟฝ Raycast ๏ฟฝอก๏ฟฝาก๏ฟฝ๏ฟฝาง๏ฟฝ๏ฟฝ๏ฟฝอง
         Debug.DrawRay(cameraTransform.position, forwardDirection, currentColor);
 
-        // วาด Crosshair เล็กๆ ที่ปลายเส้น Raycast (Optional)
+        // ๏ฟฝาด Crosshair ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Raycast (Optional)
         if (currentTarget != null)
         {
-            // ลากเส้นเชื่อมจากปลาย Raycast ไปหาวัตถุเพื่อให้เห็นการ Snap
+            // ๏ฟฝาก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Raycast ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัต๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ็นก๏ฟฝ๏ฟฝ Snap
             Debug.DrawLine(endPoint, currentTargetObject.transform.position, Color.white);
         }
     }
@@ -139,11 +139,11 @@ public class PlayerInterector : MonoBehaviourPun
     private void UpdateUI()
     {
         if (PhotonNetwork.InRoom && !photonView.IsMine) return;
-        // 1. เช็คว่าเป้าหมายเปลี่ยนไปจากเดิมหรือไม่
+        // 1. ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝยนไปจาก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
         if (currentTarget != lastTarget)
         {
-            // 2. เช็คชิ้นเก่า: ต้องเช็คทั้ง null และตรวจสอบว่า object ไม่ได้ถูกทำลาย (Missing Reference)
-            // การใช้ lastTarget as MonoBehaviour ช่วยให้เราเช็คสถานะการ Destroy ใน Unity ได้แม่นยำขึ้น
+            // 2. ๏ฟฝ็คช๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ: ๏ฟฝ๏ฟฝอง๏ฟฝ็คท๏ฟฝ๏ฟฝ null ๏ฟฝ๏ฟฝะต๏ฟฝวจ๏ฟฝอบ๏ฟฝ๏ฟฝ๏ฟฝ object ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝูก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ (Missing Reference)
+            // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ lastTarget as MonoBehaviour ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝสถานะก๏ฟฝ๏ฟฝ Destroy ๏ฟฝ Unity ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝำข๏ฟฝ๏ฟฝ
             if (lastTarget != null && !lastTarget.Equals(null))
             {
                 try
@@ -152,11 +152,11 @@ public class PlayerInterector : MonoBehaviourPun
                 }
                 catch (System.NullReferenceException)
                 {
-                    // ถ้ามันหายไปแล้วจริงๆ ให้ข้ามไปเลย
+                    // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝวจ๏ฟฝิง๏ฟฝ ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
                 }
             }
 
-            // 3. เปิด UI ชิ้นใหม่
+            // 3. ๏ฟฝิด UI ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
             if (currentTarget != null)
             {
                 currentTarget.ShowWorldInterectUI();

@@ -19,6 +19,9 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     [SerializeField] protected NavMeshAgent aiAgent;
     [SerializeField] private MonsterState monsterState;
 
+    [Header("General Setting")]
+    [SerializeField] private bool enableDamage = true;
+
     [Header("Monster Character Setting")]
     public float gravity = 9.81f;
 
@@ -29,12 +32,14 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     public bool IsAttacking { get; set; }
     public bool Hurt { get; set; }
     public bool IsAttackRotating { get; set; }
+    public bool EnableDamage { get; set; }
     public NavMeshAgent NavAIMesh { get { return aiAgent; } }
     public MonsterState MonsterState { get { return monsterState; } }
 
     public Action OnStartAttack {get;set;}
     public Action OnFinishAttack { get; set; }
     public Action OnMonsterDie { get; set; }
+
 
     protected virtual void Start()
     {
@@ -48,6 +53,8 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
             aiAgent.stoppingDistance = StopDistanceToTarget;
             aiAgent.speed = monsterData.GetStatValue("MoveSpeed");
         }
+
+        EnableDamage = enableDamage;
     }
 
     public void OnDefaultSetData()

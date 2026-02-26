@@ -7,6 +7,9 @@ using Photon.Pun;
 [RequireComponent(typeof(PhotonView))]
 public class EnvironmentDamageable : MonoBehaviourPun, IDamageable
 {
+    [Header("General Setting")]
+    [SerializeField] private bool enableDamage = true;
+
     [Header("Visual Shake Settings")]
     [Tooltip("ลาก Model ลูกมาใส่ตรงนี้ หากปล่อยว่างจะสั่นที่ตัวเอง")]
     [SerializeField] private Transform visualTransform;
@@ -28,6 +31,9 @@ public class EnvironmentDamageable : MonoBehaviourPun, IDamageable
     public float CurrentHealth { get; private set; }
     public float MaxHealth => maxHealth;
 
+    public bool EnableDamage { get; set; }
+
+
     // ฟังก์ชันนี้จะทำงานอัตโนมัติเมื่อลาก Script นี้ไปแปะใน Inspector
     private void Reset()
     {
@@ -39,6 +45,7 @@ public class EnvironmentDamageable : MonoBehaviourPun, IDamageable
     private void Awake()
     {
         CurrentHealth = maxHealth;
+        EnableDamage = enableDamage;
 
         if (visualTransform == null) 
             visualTransform = transform;

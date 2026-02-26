@@ -43,7 +43,7 @@ public class Bacteria : MonsterBase
         RaycastHit[] hits = Physics.SphereCastAll(origin, biteRadius, direction, biteDistance, LayerMask.GetMask("Player"));
         foreach (var hit in hits)
         {
-            if (hit.collider.TryGetComponent<IDamageable>(out IDamageable victim))
+            if (hit.collider.TryGetComponent<IDamageable>(out IDamageable victim) && victim.EnableDamage)
             {
                 victim.TakeDamage(monsterData.GetStatValue("AttackDamage"));
                 Debug.Log($"Bite hit: {hit.collider.name}");
