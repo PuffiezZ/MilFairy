@@ -1,6 +1,7 @@
 using Photon.Pun;
 using Sausagecat.PlayerControlSystem;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerAnimation : MonoBehaviourPun
 {
@@ -10,13 +11,21 @@ public class PlayerAnimation : MonoBehaviourPun
     [SerializeField] private VelocityType velocityType = VelocityType.CharacterController;
 
     private PlayerLocomotion playerLocomotion;
+
+    [Header("IK Rig Settings")]
+    [SerializeField] private Rig handRig; // ลาก Rig ของธนูมาใส่ที่นี่
+
     private PlayerMovement playerMovement;
     private PlayerState playerState;
     private PlayerRagdollMovement playerRagdollMovement;
+    private PlayerCombat playerCombat;
 
     [Header("Arm Layer Settings")]
     [SerializeField] private float weightLerpSpeed = 10f;
     private int armLayerIndex;
+    private int armBowIndex;
+    private float currentArmBowWeight = 0f;
+    private float targetArmBowWeight = 0f;
     private float targetArmWeight = 0f;
     private float currentArmWeight = 0f;
 
@@ -29,15 +38,21 @@ public class PlayerAnimation : MonoBehaviourPun
     private static int verticalMagnitudeHash = Animator.StringToHash("VerticalMagnitude");
     private static int isUsingOneHandedWeapon = Animator.StringToHash("isUsingOneHanded");
     private static int isDrawOneHandedHash = Animator.StringToHash("isDrawOneHanded");
+    private static int isDrawBowHash = Animator.StringToHash("isDrawBow");
     private static int isSheathedOneHandedHash = Animator.StringToHash("isSheathedOneHanded");
     private static int animationFloatStateHash = Animator.StringToHash("animationFloatState");
     private static int lightAttackTriggerHash = Animator.StringToHash("lightAttackTrigger");
-    private static int heavyAttackTriggerHash = Animator.StringToHash("heavyAttackTrigger");
+    
+    private static int isChargingHash = Animator.StringToHash("IsCharging");
+    private static int isSheathedDrawBowHash = Animator.StringToHash("isSheathedDrawBow");
+ 
 
     Vector3 locomotionMagnitude = Vector3.zero;
     Vector3 currentBlendInput = Vector3.zero;
 
     private float currentAnimationfloat = 0f;
+    private float targethandRigWeight = 0f;
+
     public float TargetAnimationfloat { get; set; }
 
     public enum VelocityType
@@ -52,8 +67,11 @@ public class PlayerAnimation : MonoBehaviourPun
         playerMovement = GetComponent<PlayerMovement>();
         playerState = GetComponent<PlayerState>();
         playerRagdollMovement = GetComponent<PlayerRagdollMovement>();
+        playerCombat = GetComponent<PlayerCombat>();
+
 
         armLayerIndex = animator.GetLayerIndex("Arm Holding");
+        armBowIndex = animator.GetLayerIndex("Arm Sheathed - Bow Drawed");
     }
     private void Update()
     {
@@ -79,6 +97,7 @@ public class PlayerAnimation : MonoBehaviourPun
         animator.SetBool(isFalling, playerState.CurrentPlayerMovementState == PlayerState.PlayerMovementState.Falling);
         animator.SetBool(isGroundedHash, IsGroundByComponentController());
 
+        animator.SetBool(isChargingHash,playerCombat.IsCharging);
         float verticalVelocity = VelocityByComponent().y;
         float verticalRatio = verticalVelocity / GetMaxSpeed();
         float finalVerticalValue = Mathf.Clamp(verticalRatio, 0f, 1f);
@@ -87,15 +106,48 @@ public class PlayerAnimation : MonoBehaviourPun
         currentAnimationfloat = Mathf.Lerp(currentAnimationfloat, TargetAnimationfloat, 10f * Time.deltaTime);
         animator.SetFloat(animationFloatStateHash, currentAnimationfloat);
 
+
         if (armLayerIndex != -1) // ��Ǩ�ͺ����� Layer ��������ԧ
         {
             currentArmWeight = Mathf.Lerp(currentArmWeight, targetArmWeight, weightLerpSpeed * Time.deltaTime);
             animator.SetLayerWeight(armLayerIndex, currentArmWeight);
         }
+        if (armBowIndex != -1) // Ǩͺ Layer ԧ
+        {
+            currentArmBowWeight = Mathf.Lerp(currentArmBowWeight, targetArmBowWeight, weightLerpSpeed * Time.deltaTime);
+            animator.SetLayerWeight(armBowIndex, currentArmBowWeight);
+        }
+
+        // จัดการ Rig Weight ของ IK Rigging
+        if (handRig != null)
+        {
+            handRig.weight = Mathf.Lerp(handRig.weight, targethandRigWeight, 10f* Time.deltaTime);
+        }
     }
     public void SetArmLayerWeight(float weight)
     {
         targetArmWeight = Mathf.Clamp01(weight);
+        
+        if(weight == 0f)
+        {
+            targethandRigWeight  = 0f;
+        }
+        else if (weight == 1f)
+        {
+            targethandRigWeight  = 1f;
+        }
+    }
+    public void SetArmBowLayerWeight(float weight)
+    {
+        targetArmBowWeight = Mathf.Clamp01(weight);
+        if(weight == 0f)
+        {
+            targethandRigWeight  = 0f;
+        }
+        else if (weight == 1f)
+        {
+            targethandRigWeight  = 1f;
+        }
     }
     private Vector3 VelocityByComponent()
     {
@@ -133,9 +185,14 @@ public class PlayerAnimation : MonoBehaviourPun
         }
     }
 
-    public void SetOnUsingWeaponAnimation(bool isUsingBoolean)
+    public void SetOnUsingWeaponAnimation(bool isUsingBoolean,UtilityDev.WeaponType weaponType)
     {
-        animator.SetBool(isUsingOneHandedWeapon, isUsingBoolean);
+        if(weaponType == UtilityDev.WeaponType.OneHandedMelee)
+            animator.SetBool(isUsingOneHandedWeapon, isUsingBoolean);
+        else if(weaponType == UtilityDev.WeaponType.SlingshotOrBow)
+        {
+            
+        }
     }
 
     public void OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath drawOrSheath,UtilityDev.WeaponType weaponType)
@@ -157,6 +214,17 @@ public class PlayerAnimation : MonoBehaviourPun
                 }
                 break;
             case UtilityDev.WeaponType.SlingshotOrBow:
+                if (drawOrSheath == UtilityDev.DrawOrSheath.Draw)
+                {
+                    SetArmBowLayerWeight(1f);
+                    animator.SetTrigger(isDrawBowHash);
+                    animator.ResetTrigger(isSheathedDrawBowHash);
+                } 
+                else
+                {
+                    animator.SetTrigger(isSheathedDrawBowHash);
+                    animator.ResetTrigger(isDrawBowHash);
+                }
                 break;
         }
         

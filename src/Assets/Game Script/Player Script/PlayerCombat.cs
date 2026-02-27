@@ -20,13 +20,16 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     [SerializeField] private float cooldownAttackTime = 1.5f;
     private bool enableToSheath = false;
     private float currentCooldownAttackTime = 0f;
+
     public bool isSheathing { get; set; }
+    public bool IsCharging { get; private set; }
 
     public int currentIndexWeaponSlotNumber { get; set; }
     public UnityAction OnAttackAction;
 
     private CharacterController controller;
     private Vector3 impact = Vector3.zero;
+    private UtilityDev.WeaponType lastWeaponTypeBeforeSheath;
 
     private void Start()
     {
@@ -88,12 +91,14 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
                 if (playerLocomotion.SendMainActionSignal && !chargeableWeapon.IsCharging)
                 {
                     chargeableWeapon.StartCharging();
+                    IsCharging = true;
                 }
                 else if (!playerLocomotion.SendMainActionSignal && chargeableWeapon.IsCharging)
                 {
                     OnInvokeAttack();
                     currentCooldownAttackTime = cooldownAttackTime;
                     enableToSheath = false;
+                    IsCharging = false;
                 }
             }
             chargeableWeapon.UpdateCharge();
@@ -219,8 +224,8 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     #region Draw Weapon Functions   
     public void OnInvokeDrawed()
     {
-        playerAnimation.SetOnUsingWeaponAnimation(true);
-        equipment.SetWeaponDrawPosition(currentIndexWeaponSlotNumber);
+        playerAnimation.SetOnUsingWeaponAnimation(true,equipment.CurrentCarriedWeapons[currentIndexWeaponSlotNumber].WeaponData.weaponType);
+        equipment.SetWeaponDrawPosition(currentIndexWeaponSlotNumber,equipment.CurrentCarriedWeapons[currentIndexWeaponSlotNumber].WeaponData.weaponType);
 
     }
 
@@ -258,7 +263,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     #region Sheath Weapon Functions
     public void OnInvokeSheathed()
     {
-        playerAnimation.SetOnUsingWeaponAnimation(false);
+        playerAnimation.SetOnUsingWeaponAnimation(false, lastWeaponTypeBeforeSheath);
     }
 
     public void OnStartSheath()
@@ -281,7 +286,8 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     private void LocalStartSheath()
     {
         isSheathing = true;
-        playerAnimation.OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath.Sheath,equipment.CurrentWeaponOnHanded.WeaponData.weaponType);
+        lastWeaponTypeBeforeSheath = equipment.CurrentWeaponOnHanded.WeaponData.weaponType;
+        playerAnimation.OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath.Sheath, lastWeaponTypeBeforeSheath);
     }
 
     public void WeaponIsSheathed()

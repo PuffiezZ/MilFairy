@@ -199,7 +199,7 @@ public class PlayerEquipment : MonoBehaviourPun
         }
     }
 
-    public void SetWeaponDrawPosition(int indexSlot)
+    public void SetWeaponDrawPosition(int indexSlot,UtilityDev.WeaponType weaponType)
     {
         // �֧����Ф÷������� Slot ����� (��Ƿ����� Instantiate ���͹�á)
         WeaponScript weapon = currentCarriedWeapons[indexSlot];
@@ -207,8 +207,17 @@ public class PlayerEquipment : MonoBehaviourPun
 
         currentWeaponOnHanded = weapon;
 
-        // ᷹���� Instantiate ���� ������� Parent 价�����᷹
-        weapon.transform.SetParent(OneMeleeHanded_POS, false);
+        Transform handPOS = null;
+        switch (weaponType)
+        {
+            case UtilityDev.WeaponType.OneHandedMelee:
+                handPOS = OneMeleeHanded_POS;
+                break;
+            case UtilityDev.WeaponType.SlingshotOrBow:
+                handPOS = RangeWeaponHanded_POS; 
+                break;
+        }            
+        weapon.transform.SetParent(handPOS, false);
         weapon.transform.localPosition = Vector3.zero;
         weapon.transform.localRotation = Quaternion.identity;
         weapon.OnDrawedWeapon(); // ����¹ʶҹ� IsShethed �� false

@@ -26,7 +26,7 @@ public class HoldableObject : MonoBehaviour, IInteractable
     }
     private void Update()
     {
-        // ¨Ñ´¡ÒÃ Input ¡ÒÃ¢ÇéÒ§à©¾ÒÐà¨éÒ¢Í§·Õè¶×ÍÍÂÙè
+        // ï¿½Ñ´ï¿½ï¿½ï¿½ Input ï¿½ï¿½Ã¢ï¿½ï¿½Ò§à©¾ï¿½ï¿½ï¿½ï¿½Ò¢Í§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (PhotonNetwork.InRoom)
         {
             if (isBeingHeld && ownerPlayer != null && ownerPlayer.photonView.IsMine)
@@ -46,14 +46,14 @@ public class HoldableObject : MonoBehaviour, IInteractable
     {
         PlayerLocomotion pLocomotion = ownerPlayer.GetComponent<PlayerLocomotion>();
 
-        // 1. ¨Ñ§ËÇÐàÃÔèÁ¡´ (ªÒÃì¨)
+        // 1. ï¿½Ñ§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½)
         if (pLocomotion.SendMainActionSignal && !isCharging)
         {
             isCharging = true;
             chargeStartTime = Time.time;
         }
 
-        // 2. ¨Ñ§ËÇÐ»ÅèÍÂ»ØèÁ (âÂ¹)
+        // 2. ï¿½Ñ§ï¿½ï¿½Ð»ï¿½ï¿½ï¿½Â»ï¿½ï¿½ï¿½ (ï¿½Â¹)
         if (!pLocomotion.SendMainActionSignal && isCharging)
         {
             float chargeDuration = Time.time - chargeStartTime;
@@ -69,7 +69,7 @@ public class HoldableObject : MonoBehaviour, IInteractable
     {
         if (PhotonNetwork.InRoom)
         {
-            // Êè§áÃ§¢ÇéÒ§¼èÒ¹ RPC
+            // ï¿½ï¿½ï¿½Ã§ï¿½ï¿½ï¿½Ò§ï¿½ï¿½Ò¹ RPC
             pv.RPC(nameof(RPC_HandleThrow), RpcTarget.AllBuffered, force);
         }
         else
@@ -85,19 +85,19 @@ public class HoldableObject : MonoBehaviour, IInteractable
 
     private void LocalThrow(float force)
     {
-        // à¡çº Reference ·ÔÈ·Ò§¡èÍ¹»Å´ Parent
+        // ï¿½ï¿½ Reference ï¿½ï¿½È·Ò§ï¿½ï¿½Í¹ï¿½Å´ Parent
         Vector3 throwDir = ownerPlayer.transform.TransformDirection(ownerPlayer.throwDirectionOffset).normalized;
 
-        LocalDrop(); // »Å´ Parent áÅÐ¤×¹¤èÒ Action
+        LocalDrop(); // ï¿½Å´ Parent ï¿½ï¿½Ð¤×¹ï¿½ï¿½ï¿½ Action
 
-        // ãÊèáÃ§¢ÇéÒ§
+        // ï¿½ï¿½ï¿½ï¿½Ã§ï¿½ï¿½ï¿½Ò§
         rb.AddForce(throwDir * force, ForceMode.Impulse);
     }
     public void OnBeginIntereact(GameObject player, bool getBoolean = false)
     {
         if (isBeingHeld) return;
 
-        // ¶éÒà»ç¹ Multiplayer µéÍ§¢Íà»ç¹à¨éÒ¢Í§ÇÑµ¶Ø¡èÍ¹à¾×èÍãËé¢ÂÑºä´éÅ×è¹äËÅ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ Multiplayer ï¿½ï¿½Í§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¢Í§ï¿½Ñµï¿½Ø¡ï¿½Í¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (PhotonNetwork.InRoom)
         {
             pv.RequestOwnership();
@@ -123,8 +123,8 @@ public class HoldableObject : MonoBehaviour, IInteractable
     {
         ownerPlayer = player.GetComponent<Player>();
 
-        // ÊÓ¤Ñ­: Êè§ Action ÇèÒ§ä»à¾×èÍ Override ¡ÒÃâ¨ÁµÕ»¡µÔ
-        // äÁèµéÍ§ãÊè Throw(10f) µÃ§¹Õé à¾ÃÒÐàÃÒ¨Ðàªç¤áÃ§¨Ò¡ Update
+        // ï¿½Ó¤Ñ­: ï¿½ï¿½ Action ï¿½ï¿½Ò§ï¿½ï¿½ï¿½ï¿½ï¿½ Override ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½
+        // ï¿½ï¿½ï¿½ï¿½Í§ï¿½ï¿½ï¿½ Throw(10f) ï¿½Ã§ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¨ï¿½ï¿½ï¿½ï¿½Ã§ï¿½Ò¡ Update
         if (ownerPlayer.photonView.IsMine && PhotonNetwork.InRoom)
         {
             Player.SetActionLeftClick(() => {});
@@ -137,7 +137,7 @@ public class HoldableObject : MonoBehaviour, IInteractable
 
             ownerPlayer.GetComponent<PlayerAnimation>().SetArmLayerWeight(1f);
         }
-            isBeingHeld = true;
+        isBeingHeld = true;
         rb.isKinematic = true;
         rb.useGravity = false;
 
@@ -148,7 +148,7 @@ public class HoldableObject : MonoBehaviour, IInteractable
 
     }
 
-    // ¿Ñ§¡ìªÑ¹ÊÓËÃÑºÇÒ§¢Í§ (Drop)
+    // ï¿½Ñ§ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½Ñºï¿½Ò§ï¿½Í§ (Drop)
     public void Drop()
     {
         if (PhotonNetwork.InRoom)
@@ -171,7 +171,7 @@ public class HoldableObject : MonoBehaviour, IInteractable
     {
         isBeingHeld = false;
 
-        // ¤×¹¤èÒ Action ¡èÍ¹¨Ð»Å´ Parent ËÃ×ÍÅéÒ§¤èÒ ownerPlayer
+        // ï¿½×¹ï¿½ï¿½ï¿½ Action ï¿½ï¿½Í¹ï¿½Ð»Å´ Parent ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò§ï¿½ï¿½ï¿½ ownerPlayer
         if (ownerPlayer != null)
         {
             if (ownerPlayer.photonView.IsMine && PhotonNetwork.InRoom)
@@ -194,12 +194,12 @@ public class HoldableObject : MonoBehaviour, IInteractable
         rb.isKinematic = false;
         rb.useGravity = true;
 
-        ownerPlayer = null; // ÅéÒ§¤èÒËÅÑ§¨Ò¡ÇÒ§áÅéÇ
+        ownerPlayer = null; // ï¿½ï¿½Ò§ï¿½ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½Ò¡ï¿½Ò§ï¿½ï¿½ï¿½ï¿½
     }
 
     public void OnCancelInteract() { }
     public void OnHoldInteract(GameObject player, float progress) { }
     // --- IInteractable Implementation ---
-    public void ShowWorldInterectUI() { /* âªÇì»ØèÁ E */ }
-    public void HideWorldInterectUI() { /* »Ô´»ØèÁ E */ }
+    public void ShowWorldInterectUI() { /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ E */ }
+    public void HideWorldInterectUI() { /* ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ E */ }
 }
