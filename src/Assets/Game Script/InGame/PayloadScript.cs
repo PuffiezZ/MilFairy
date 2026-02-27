@@ -44,10 +44,10 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     }
     private void Update()
     {
-        // ในระบบ Multiplayer เรามักจะให้ Master Client เป็นคนตัดสินใจเรื่อง "เงื่อนไขการวิ่ง"
+        // ๏ฟฝ๏ฟฝะบ๏ฟฝ Multiplayer ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Master Client ๏ฟฝ็นค๏ฟฝ๏ฟฝัด๏ฟฝิน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง "๏ฟฝ๏ฟฝ๏ฟฝอนไขก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ"
         HandlePayloadLogic();
 
-        // ทุกเครื่อง (รวมถึง Client) จะต้องรันการขยับตำแหน่งตามความเร็วปัจจุบันเพื่อให้ภาพนุ่มนวล
+        // ๏ฟฝุก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง (๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝึง Client) ๏ฟฝะต๏ฟฝอง๏ฟฝัน๏ฟฝ๏ฟฝรข๏ฟฝับ๏ฟฝ๏ฟฝ๏ฟฝหน่งต๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝวปัจ๏ฟฝุบัน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาพ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
         //if (currentMoveSpeed > 0)
         //{
         //    PayloadPositionHandler();
@@ -55,7 +55,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     }
     private void FixedUpdate()
     {
-        // *** สำคัญ: ย้ายการเรียก UnityAction มาที่ FixedUpdate เพราะเราควบคุมด้วย Physics แล้ว ***
+        // *** ๏ฟฝำคัญ: ๏ฟฝ๏ฟฝ๏ฟฝยก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝยก UnityAction ๏ฟฝาท๏ฟฝ๏ฟฝ FixedUpdate ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาควบ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Physics ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ ***
         //if (currentMoveSpeed > 0f)
         //{
         //    OnPayloadMoveAction?.Invoke();
@@ -72,7 +72,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
         {
             if (PhotonNetwork.InRoom)
             {
-                // ส่งค่าความเร็วไปให้ทุกคนซิงค์ตาม
+                // ๏ฟฝ่งค๏ฟฝาค๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝุก๏ฟฝ๏ฟฝ๏ฟฝิง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
                 photonView.RPC(nameof(RPC_SyncPayloadSpeed), RpcTarget.All, newSpeed);
             }
             else
@@ -84,7 +84,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     [PunRPC]
     private void RPC_SyncPayloadSpeed(float speed)
     {
-        // ทุกเครื่องจะได้รับความเร็วเท่ากัน และนำไปรันใน PayloadPositionHandler() ต่อไป
+        // ๏ฟฝุก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝับ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝากัน ๏ฟฝ๏ฟฝะน๏ฟฝ๏ฟฝ๏ฟฝัน๏ฟฝ PayloadPositionHandler() ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
         currentMoveSpeed = speed;
     }
     public void SetPayloadSpeed(float speed)
@@ -99,9 +99,9 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     }
     private void PayloadPositionHandler()
     {
-        //// 1. คำนวณระยะทางสะสม (0-1)
+        //// 1. ๏ฟฝำนวณ๏ฟฝ๏ฟฝ๏ฟฝะทาง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ (0-1)
         //distancePercentage += (currentMoveSpeed * Time.deltaTime) / splineLenght;
-        //distancePercentage = Mathf.Clamp01(distancePercentage); // กันค่าเกิน 1
+        //distancePercentage = Mathf.Clamp01(distancePercentage); // ๏ฟฝัน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝิน 1
 
         //Vector3 currentPosition = splineAnimate.Container.EvaluatePosition(distancePercentage);
         //transform.position = currentPosition;
@@ -162,7 +162,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
         if (targetPv != null)
         {
             GameObject playerObj = targetPv.gameObject;
-            // ทำ Logic การสวมใส่ต่อด้วย playerObj
+            // ๏ฟฝ๏ฟฝ Logic ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอด๏ฟฝ๏ฟฝ๏ฟฝ playerObj
             PlayerEquipment playerEquipment = playerObj.GetComponent<PlayerEquipment>();
             SitOnPayload(playerObj);
         }
@@ -196,7 +196,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
             if (playerPv.IsMine)
             {
                 int getViewID = playerPv.ViewID;
-                // ส่ง RPC บอกทุกเครื่องให้ปลดผู้เล่นคนนี้ออก
+                // ๏ฟฝ๏ฟฝ RPC ๏ฟฝอก๏ฟฝุก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝลด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ่นค๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอก
                 photonView.RPC(nameof(RPC_JumpOffPayload), RpcTarget.AllBuffered, getViewID);
             }
         }
@@ -220,14 +220,14 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
         Player p = playerObj.GetComponent<Player>();
         if (p != null)
         {
-            // 1. ปลดผู้เล่นออกจาก Parent (SitPosition) กลับสู่โลกปกติ
+            // 1. ๏ฟฝลด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอก๏ฟฝาก Parent (SitPosition) ๏ฟฝ๏ฟฝับ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝลก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
             p.transform.SetParent(null);
 
-            // 2. คืนค่าสถานะให้ผู้เล่น (เช่น เปิด CharacterController, กลับมาใช้ Gravity ปกติ)
-            // *คุณต้องสร้างฟังก์ชัน OnDismountingPayload() ใน Script Player ด้วยนะครับ
+            // 2. ๏ฟฝืน๏ฟฝ๏ฟฝ๏ฟฝสถาน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ (๏ฟฝ๏ฟฝ ๏ฟฝิด CharacterController, ๏ฟฝ๏ฟฝับ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Gravity ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ)
+            // *๏ฟฝุณ๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝาง๏ฟฝัง๏ฟฝ๏ฟฝัน OnDismountingPayload() ๏ฟฝ Script Player ๏ฟฝ๏ฟฝ๏ฟฝยนะค๏ฟฝับ
             p.OnDismountingPayload();
 
-            // 3. Reset สถานะการกระโดดของ PlayerLocomotion เพื่อป้องกันการกระโดดเบิ้ลเมื่อลงพื้น
+            // 3. Reset สถานะก๏ฟฝรก๏ฟฝ๏ฟฝโดด๏ฟฝอง PlayerLocomotion ๏ฟฝ๏ฟฝ๏ฟฝอป๏ฟฝอง๏ฟฝัน๏ฟฝ๏ฟฝรก๏ฟฝ๏ฟฝโดด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝลง๏ฟฝ๏ฟฝ๏ฟฝ
             PlayerLocomotion pLocomotion = p.GetComponent<PlayerLocomotion>();
             if (pLocomotion != null)
             {
@@ -235,7 +235,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
             }
         }
 
-        // 4. เคลียร์ค่าคนขับและ Input ของรถออก เพื่อให้รถหยุดสนิทและพร้อมรับคนใหม่
+        // 4. ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาค๏ฟฝ๏ฟฝับ๏ฟฝ๏ฟฝ๏ฟฝ Input ๏ฟฝองรถ๏ฟฝอก ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝรถ๏ฟฝ๏ฟฝุดสนิท๏ฟฝ๏ฟฝะพ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝับ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
         CurrentPlayerControl = null;
         reciveLocomotion = null;
         verticalInput = 0f;
@@ -248,21 +248,16 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
         verticalInput = reciveLocomotion.MovementInput.y;
         horizontalInput = reciveLocomotion.MovementInput.x;
 
-        // --- แก้ไขส่วนการเคลื่อนที่ ---
 
-        // 1. คำนวณทิศทางที่ต้องการจะไป (Local Forward)
         Vector3 targetDirection = transform.forward * verticalInput;
 
-        // 2. คำนวณความเร็วเป้าหมาย (Speed N)
-        // เราจะเอาความเร็ว Y เดิมไว้ (เผื่อตกหลุม/แรงโน้มถ่วง) แล้วเปลี่ยนแค่ X, Z
+
         Vector3 targetVelocity = targetDirection * MoveSpeedTarget;
 
-        // 3. ยัดความเร็วใส่ Rigidbody โดยตรง (Override Physics Forces)
-        // รักษาค่า Y เดิมไว้ เพื่อให้แรงโน้มถ่วงทำงานปกติ
         payloadRb.velocity = new Vector3(targetVelocity.x, payloadRb.velocity.y, targetVelocity.z);
 
 
-        // --- ส่วนการหมุน (MoveRotation ใช้ได้เหมือนเดิม เพราะไม่ค่อยโดนดึง) ---
+        // --- ๏ฟฝ๏ฟฝวน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝุน (MoveRotation ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอน๏ฟฝ๏ฟฝ๏ฟฝ ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝโดน๏ฟฝึง) ---
         if (verticalInput != 0f && horizontalInput != 0f)
         {
             float turnMultiplier = (verticalInput < 0) ? -1f : 1f;

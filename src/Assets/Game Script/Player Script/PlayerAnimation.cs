@@ -87,7 +87,7 @@ public class PlayerAnimation : MonoBehaviourPun
         currentAnimationfloat = Mathf.Lerp(currentAnimationfloat, TargetAnimationfloat, 10f * Time.deltaTime);
         animator.SetFloat(animationFloatStateHash, currentAnimationfloat);
 
-        if (armLayerIndex != -1) // µÃÇ¨ÊÍºÇèÒÁÕ Layer ¹ÕéÍÂÙè¨ÃÔ§
+        if (armLayerIndex != -1) // ï¿½ï¿½Ç¨ï¿½Íºï¿½ï¿½ï¿½ï¿½ï¿½ Layer ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô§
         {
             currentArmWeight = Mathf.Lerp(currentArmWeight, targetArmWeight, weightLerpSpeed * Time.deltaTime);
             animator.SetLayerWeight(armLayerIndex, currentArmWeight);
@@ -138,25 +138,33 @@ public class PlayerAnimation : MonoBehaviourPun
         animator.SetBool(isUsingOneHandedWeapon, isUsingBoolean);
     }
 
-    public void OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath drawOrSheath)
+    public void OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath drawOrSheath,UtilityDev.WeaponType weaponType)
     {
-        if(drawOrSheath == UtilityDev.DrawOrSheath.Draw)
+        switch (weaponType)
         {
-            animator.SetTrigger(isDrawOneHandedHash);
-            animator.ResetTrigger(isSheathedOneHandedHash);
-            Debug.Log("Draw Animation Triggered");
+            case UtilityDev.WeaponType.OneHandedMelee:
+                if(drawOrSheath == UtilityDev.DrawOrSheath.Draw)
+                {
+                    animator.SetTrigger(isDrawOneHandedHash);
+                    animator.ResetTrigger(isSheathedOneHandedHash);
+                    Debug.Log("Draw Animation Triggered");
+                }
+                else
+                {
+                    animator.SetTrigger(isSheathedOneHandedHash);
+                    animator.ResetTrigger(isDrawOneHandedHash);
+                    Debug.Log("Sheathed Animation Triggered");
+                }
+                break;
+            case UtilityDev.WeaponType.SlingshotOrBow:
+                break;
         }
-        else
-        {
-            animator.SetTrigger(isSheathedOneHandedHash);
-            animator.ResetTrigger(isDrawOneHandedHash);
-            Debug.Log("Sheathed Animation Triggered");
-        }
+        
     }
 
     public void PerformAttackAnimation(ComboNode getComboNode)
     {
-        // ÊÁÁµÔÇèÒã¹ Animator ¢Í§¤Ø³ ·èÒµÕàºÒãªé¤ÅÔ»ª×èÍ "LightAttack_Base"
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Animator ï¿½Í§ï¿½Ø³ ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½ï¿½ "LightAttack_Base"
         AnimatorOverrideController aoc = getComboNode.AnimationOverrideCtrl;
         animator.runtimeAnimatorController = aoc;
         animator.SetTrigger(lightAttackTriggerHash);
@@ -176,7 +184,7 @@ public class PlayerAnimation : MonoBehaviourPun
 
         if (stateInfo.IsTag(nameTag))
         {
-            // áÁéáÍ¹ÔàÁªÑ¹¨ÐàÃçÇ¢Öé¹ áµè normalizedTime ¨ÐÂÑ§¤§ÇÔè§¨Ò¡ 0 ä» 1 àÊÁÍ
+            // ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½Ç¢ï¿½ï¿½ ï¿½ï¿½ normalizedTime ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½ï¿½ï¿½è§¨Ò¡ 0 ï¿½ 1 ï¿½ï¿½ï¿½ï¿½
             return Mathf.Clamp01(stateInfo.normalizedTime);
         }
 
@@ -185,7 +193,7 @@ public class PlayerAnimation : MonoBehaviourPun
 
     public void SetAttackSpeed(float speed)
     {
-        // Êè§¤èÒ¤ÇÒÁàÃçÇ·ÕèµéÍ§¡ÒÃà¢éÒä»ã¹ Parameter
+        // ï¿½è§¤ï¿½Ò¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Í§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Parameter
         animator.SetFloat("AnimationAttackSpeed", speed);
     }
 }

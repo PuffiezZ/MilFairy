@@ -7,9 +7,9 @@ using UnityEngine.Events;
 public class PlayerCombat : MonoBehaviourPunCallbacks
 {
     [Header("Movement Settings")]
-    [SerializeField] private float dashDistance = 2.0f; // ÃÐÂÐ¾Øè§»¡µÔ
-    [SerializeField] private float snapDistance = 4.0f; // ÃÐÂÐµÃÇ¨¨ÑºÈÑµÃÙà¾×èÍ¾Øè§ãÊè
-    [SerializeField] private LayerMask enemyLayer;     // àÅ×Í¡ Layer ·Õèà»ç¹ÈÑµÃÙ
+    [SerializeField] private float dashDistance = 2.0f; // ï¿½ï¿½ï¿½Ð¾ï¿½è§»ï¿½ï¿½ï¿½
+    [SerializeField] private float snapDistance = 4.0f; // ï¿½ï¿½ï¿½Ðµï¿½Ç¨ï¿½Ñºï¿½Ñµï¿½ï¿½ï¿½ï¿½ï¿½Í¾ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] private LayerMask enemyLayer;     // ï¿½ï¿½ï¿½Í¡ Layer ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñµï¿½ï¿½
 
     [SerializeField] private PlayerEquipment equipment;
     [SerializeField] private PlayerAnimation playerAnimation;
@@ -36,7 +36,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        AttackUpdateHandler();
+        AttackUpdateHandler(equipment.CurrentWeaponOnHanded);
         if (Input.GetKeyDown(KeyCode.LeftAlt) && enableToSheath && !isSheathing)
         {
             SheathUpdateHandler();
@@ -55,53 +55,77 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
             OnStartSheath();
         }
     }
-    private void AttackUpdateHandler()
+    private void AttackUpdateHandler(WeaponScript currentWeapon)
     {
         if (!PhotonNetwork.OfflineMode)
         {
-            if (!photonView.IsMine) return; //äÁèãªè computer µÑÇàÍ§ äÁèµéÍ§·ÓÍÐäÃ
+            if (!photonView.IsMine) return; //ï¿½ï¿½ï¿½ï¿½ï¿½ computer ï¿½ï¿½ï¿½ï¿½Í§ ï¿½ï¿½ï¿½ï¿½Í§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         }
 
+        if(currentWeapon.WeaponData.weaponType != UtilityDev.WeaponType.SlingshotOrBow)
+        {
+            CooldownAttack();
+            if (currentCooldownAttackTime <= 0f)
+            { 
+                if (playerLocomotion.SendMainActionSignal && isSheathing == false)
+                {
+                    if(Player.CheckboolActionLeftClick(OnInvokeAttack))
+                    {
+                        player.InvokeCallOnMainActionCalled();
+                    }
+                    currentCooldownAttackTime = cooldownAttackTime;
+                    enableToSheath = false;
+                }
+            }
+        }
+       else if (currentWeapon.WeaponData.weaponType == UtilityDev.WeaponType.SlingshotOrBow)
+        {
+            ChargeableWeapon chargeableWeapon = equipment.CurrentWeaponOnHanded.GetComponent<ChargeableWeapon>();
+            
+            CooldownAttack();
+            if (currentCooldownAttackTime <= 0f)
+            {
+                if (playerLocomotion.SendMainActionSignal && !chargeableWeapon.IsCharging)
+                {
+                    chargeableWeapon.StartCharging();
+                }
+                else if (!playerLocomotion.SendMainActionSignal && chargeableWeapon.IsCharging)
+                {
+                    OnInvokeAttack();
+                    currentCooldownAttackTime = cooldownAttackTime;
+                    enableToSheath = false;
+                }
+            }
+            chargeableWeapon.UpdateCharge();
+       }
+    }
+    private void CooldownAttack()
+    {
         if(currentCooldownAttackTime > 0f)
         {
             currentCooldownAttackTime -= Time.deltaTime;
-
             if(currentCooldownAttackTime < 0.0f)
             {
                 currentCooldownAttackTime = 0f;
                 enableToSheath = true;
             }
         }
-
-        if (currentCooldownAttackTime <= 0f)
-        {
-            if (playerLocomotion.SendMainActionSignal && isSheathing == false)
-            {
-                if(Player.CheckboolActionLeftClick(OnInvokeAttack))
-                {
-                    player.InvokeCallOnMainActionCalled();
-                }
-                currentCooldownAttackTime = cooldownAttackTime;
-                enableToSheath = false;
-            }
-        }
-
     }
     private void HandleImpact()
     {
         if (impact.magnitude > 0.2f)
         {
-            // ÃÐºº¨ÐËÂØ´ÍÑµâ¹ÁÑµÔàÁ×èÍª¹¡Óá¾§ à¾ÃÒÐ CharacterController.Move ÁÕÃÐººµÃÇ¨¨Ñº¡ÒÃª¹ã¹µÑÇÍÂÙèáÅéÇ
+            // ï¿½Ðºï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½Ñµï¿½ï¿½Ñµï¿½ï¿½ï¿½ï¿½ï¿½Íªï¿½ï¿½ï¿½á¾§ ï¿½ï¿½ï¿½ï¿½ CharacterController.Move ï¿½ï¿½ï¿½Ðºï¿½ï¿½ï¿½Ç¨ï¿½Ñºï¿½ï¿½Ãªï¿½ã¹µï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             controller.Move(impact * Time.deltaTime);
         }
-        // ¤èÍÂæ Å´áÃ§¾Øè§Å§ (Friction)
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ Å´ï¿½Ã§ï¿½ï¿½ï¿½Å§ (Friction)
         impact = Vector3.Lerp(impact, Vector3.zero, 10 * Time.deltaTime);
     }
     private IEnumerator DashTowardsTarget()
     {
         Vector3 startPos = transform.position + Vector3.up;
 
-        // 1. ÃÐºº Snap (ËÒÈÑµÃÙà¾×èÍËÑ¹Ë¹éÒ) - ãªé Code à´ÔÁ¢Í§¤Ø³
+        // 1. ï¿½Ðºï¿½ Snap (ï¿½ï¿½ï¿½Ñµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¹Ë¹ï¿½ï¿½) - ï¿½ï¿½ Code ï¿½ï¿½ï¿½ï¿½Í§ï¿½Ø³
         int rayCount = 8;
         float fanAngle = 50f;
         float minDistance = snapDistance;
@@ -116,7 +140,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
                 if (hit.distance < minDistance)
                 {
                     minDistance = hit.distance;
-                    // ËÑ¹Ë¹éÒËÒÈÑµÃÙ
+                    // ï¿½Ñ¹Ë¹ï¿½ï¿½ï¿½ï¿½ï¿½Ñµï¿½ï¿½
                     Vector3 dirToEnemy = (hit.collider.transform.position - transform.position);
                     dirToEnemy.y = 0;
                     transform.rotation = Quaternion.LookRotation(dirToEnemy);
@@ -124,8 +148,8 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
             }
         }
 
-        // 2. ÊÑè§¾Øè§´éÇÂÃÐºº Impact (àËÁ×Í¹ Knockback)
-        // ãªé·ÔÈ·Ò§·ÕèµÑÇÅÐ¤ÃËÑ¹ÍÂÙè (transform.forward)
+        // 2. ï¿½ï¿½è§¾ï¿½è§´ï¿½ï¿½ï¿½ï¿½Ðºï¿½ Impact (ï¿½ï¿½ï¿½ï¿½Í¹ Knockback)
+        // ï¿½ï¿½ï¿½È·Ò§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¤ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ (transform.forward)
         impact = transform.forward * dashDistance;
 
         yield return null;
@@ -135,42 +159,60 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     public void OnInvokeAttack()
     {
         WeaponScript weapon = equipment.CurrentWeaponOnHanded;
+        float power = 0;
+
+        // à¸–à¹‰à¸²à¹€à¸›à¹‡à¸™à¸­à¸²à¸§à¸¸à¸˜à¸£à¸°à¸¢à¸°à¹„à¸à¸¥ à¹ƒà¸«à¹‰à¸”à¸¶à¸‡à¸„à¹ˆà¸²à¸žà¸¥à¸±à¸‡à¸ˆà¸²à¸à¸à¸²à¸£à¸Šà¸²à¸£à¹Œà¸ˆà¸­à¸­à¸à¸¡à¸²
+        if (weapon != null && weapon is RangeWeapon rangeWeapon)
+        {
+            power = rangeWeapon.GetChargeSystem().ReleaseCharge();
+        }
 
         bool noCurrentWeaponOnHanded = weapon == null;
-        ExecuteAttack(noCurrentWeaponOnHanded);
+        ExecuteAttack(noCurrentWeaponOnHanded, power);
     }
 
-    void ExecuteAttack(bool noWeaponOnHanded)
+    void ExecuteAttack(bool noWeaponOnHanded, float power)
     {
         if(photonView.IsMine && PhotonNetwork.InRoom)
         {
-            photonView.RPC(nameof(RPC_ExecuteAttack), RpcTarget.All,noWeaponOnHanded);
+            photonView.RPC(nameof(RPC_ExecuteAttack), RpcTarget.All, noWeaponOnHanded, power);
         }
         else if (!PhotonNetwork.InRoom)
         {
-            LocalExcuteAttack(noWeaponOnHanded);
+            LocalExcuteAttack(noWeaponOnHanded, power);
         }
     }
     [PunRPC]
-    private void RPC_ExecuteAttack(bool noWeaponOnHanded)
+    private void RPC_ExecuteAttack(bool noWeaponOnHanded, float power)
     {
-        LocalExcuteAttack(noWeaponOnHanded);
+        LocalExcuteAttack(noWeaponOnHanded, power);
     }
-    private void LocalExcuteAttack(bool noWeaponOnHanded)
+    private void LocalExcuteAttack(bool noWeaponOnHanded, float power)
     {
         if (noWeaponOnHanded == true)
         {
             equipment.SetNewHandedWeapon();
         }
+        
+        if(equipment.CurrentWeaponOnHanded.WeaponData.weaponType == UtilityDev.WeaponType.OneHandedMelee
+        || equipment.CurrentWeaponOnHanded.WeaponData.weaponType == UtilityDev.WeaponType.Unarmed)
+        {
+            ComboNode getCN = equipment.CurrentWeaponOnHanded.WeaponData.GetComboAnimation(false);
+            playerAnimation.SetAttackSpeed(3f);
+            playerAnimation.PerformAttackAnimation(getCN);
+            StartCoroutine(DashTowardsTarget());
 
-        ComboNode getCN = equipment.CurrentWeaponOnHanded.WeaponData.GetComboAnimation(false);
-        playerAnimation.SetAttackSpeed(3f);
-        playerAnimation.PerformAttackAnimation(getCN);
-        StartCoroutine(DashTowardsTarget());
+            enableToSheath = false;
 
-        enableToSheath = false;
-
-        Debug.Log("Perform Light Attack");
+            Debug.Log("Perform Light Attack");
+        }
+        else if (equipment.CurrentWeaponOnHanded.WeaponData.weaponType == UtilityDev.WeaponType.SlingshotOrBow)
+        {
+            if (equipment.CurrentWeaponOnHanded is RangeWeapon rangeWeapon)
+            {
+                rangeWeapon.Fire(power);
+            }
+        }
 
     }
     #endregion
@@ -182,27 +224,27 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
 
     }
 
-    public void OnStartDrawedWeapon()
+    public void OnStartDrawedWeapon(int weaponIndex)
     {
         if (PhotonNetwork.InRoom && photonView.IsMine)
         {
-            // ºÍ¡·Ø¡¤¹ãËéàÅè¹áÍ¹ÔàÁªÑ¹ªÑ¡´Òº
-            photonView.RPC(nameof(RPC_StartDrawWeapon), RpcTarget.All);
+            // ï¿½Í¡ï¿½Ø¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½Ñ¡ï¿½Òº
+            photonView.RPC(nameof(RPC_StartDrawWeapon), RpcTarget.All,weaponIndex);
         }
         else if (!PhotonNetwork.InRoom)
         {
-            LocalStartDraw();
+            LocalStartDraw(weaponIndex);
         }
     }
     [PunRPC]
-    private void RPC_StartDrawWeapon()
+    private void RPC_StartDrawWeapon(int weaponIndex)
     {
-        LocalStartDraw();
+        LocalStartDraw(weaponIndex);
     }
 
-    private void LocalStartDraw()
+    private void LocalStartDraw(int weaponIndex)
     {
-        playerAnimation.OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath.Draw);
+        playerAnimation.OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath.Draw,equipment.CurrentCarriedWeapons[weaponIndex].WeaponData.weaponType);
         playerLocomotion.SendMainActionSignal = false;
     }
 
@@ -223,7 +265,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.InRoom && photonView.IsMine)
         {
-            // ºÍ¡·Ø¡¤¹ãËéàÅè¹áÍ¹ÔàÁªÑ¹ªÑ¡´Òº
+            // ï¿½Í¡ï¿½Ø¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½Ñ¡ï¿½Òº
             photonView.RPC(nameof(RPC_StartSheathWeapon), RpcTarget.All);
         }
         else if (!PhotonNetwork.InRoom)
@@ -239,7 +281,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
     private void LocalStartSheath()
     {
         isSheathing = true;
-        playerAnimation.OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath.Sheath);
+        playerAnimation.OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath.Sheath,equipment.CurrentWeaponOnHanded.WeaponData.weaponType);
     }
 
     public void WeaponIsSheathed()

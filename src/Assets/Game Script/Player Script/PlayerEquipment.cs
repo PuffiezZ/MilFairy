@@ -12,8 +12,10 @@ public class PlayerEquipment : MonoBehaviourPun
     [SerializeField] private Transform OneMeleeHanded_POS;
     [BoxGroup("Socket Weapon Attach (One-Handed)")]
     [SerializeField] private SheathedWeaponSocket[] OneMeleeSheathSocket;
-    [BoxGroup("Socket Weapon Attach (Two-Handed)")]
-    [SerializeField] private SheathedWeaponSocket[] TwoMeleeSheathSocket;
+    [BoxGroup("Socket Weapon Attach (One-Handed Melee)")]
+    [SerializeField] private Transform RangeWeaponHanded_POS;
+    [BoxGroup("Range Weapon Sheath Socket")]
+    [SerializeField] private SheathedWeaponSocket[] RangeWeaponSheathSocket;
 
     [Tooltip("When no weapon use unarmed")]
     [SerializeField] private GameObject unarmedWeapon;
@@ -57,22 +59,22 @@ public class PlayerEquipment : MonoBehaviourPun
 
     private void HandleEquippedWeapon(WeaponScript getWeapon)
     {
-        // 1. Check ÊÓËÃÑº slot ·ÕèÇèÒ§
+        // 1. Check ï¿½ï¿½ï¿½ï¿½Ñº slot ï¿½ï¿½ï¿½ï¿½ï¿½Ò§
         bool slotIsFree = false;
         for (int i = 0; i < currentCarriedWeapons.Length; i++)
         {
             if (currentCarriedWeapons[i] == null)
             {
-                // à¨Í ãËé Set
+                // ï¿½ï¿½ ï¿½ï¿½ï¿½ Set
                 SetWeaponSlot(i, getWeapon);
                 slotIsFree = true;
                 break;
             }
         }
-        // à¨Í Slot ·ÕèÇèÒ§ ãËé return ä»àÅÂäÁèµéÍ§·ÓÍÐäÃµèÍ
+        // ï¿½ï¿½ Slot ï¿½ï¿½ï¿½ï¿½ï¿½Ò§ ï¿½ï¿½ï¿½ return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í§ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½
         if (slotIsFree) return;
 
-        // 2. ¶éÒäÁèà¨Í Slot ·ÕèÇèÒ§ ãËéãªé Slot index ·Õè¶×ÍÍÒÇØ¸ÍÂÙèÅèÒÊØ´
+        // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Slot ï¿½ï¿½ï¿½ï¿½ï¿½Ò§ ï¿½ï¿½ï¿½ï¿½ï¿½ Slot index ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´
         SetWeaponSlot(indexCarriedWeapon, getWeapon);
     }
     public void SetNewHandedWeapon(WeaponScript weapon = null)
@@ -83,19 +85,19 @@ public class PlayerEquipment : MonoBehaviourPun
         }
         else
         {
-            // 1. µÃÇ¨ÊÍºÇèÒà¤Â Spawn ÍÒÇØ¸ËÁÑ´ÍÍ¡ÁÒËÃ×ÍÂÑ§
+            // 1. ï¿½ï¿½Ç¨ï¿½Íºï¿½ï¿½ï¿½ï¿½ï¿½ Spawn ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½Ñ´ï¿½Í¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ§
             if (spawnedUnarmed == null)
             {
-                // ¶éÒÂÑ§äÁèÁÕ ãËéÊÃéÒ§ÍÍ¡ÁÒà»ç¹ÅÙ¡¢Í§µÑÇÅÐ¤Ã (transform)
+                // ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò§ï¿½Í¡ï¿½ï¿½ï¿½ï¿½ï¿½Ù¡ï¿½Í§ï¿½ï¿½ï¿½ï¿½Ð¤ï¿½ (transform)
                 spawnedUnarmed = Instantiate(unarmedWeapon, transform).GetComponent<WeaponScript>();
                 spawnedUnarmed.name = "Unarmed_Hand";
             }
 
-            // 2. µÑé§¤èÒ¡ÒÃÍéÒ§ÍÔ§ãËé¶Ù¡µéÍ§
+            // 2. ï¿½ï¿½é§¤ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½Ò§ï¿½Ô§ï¿½ï¿½ï¿½Ù¡ï¿½ï¿½Í§
             currentWeaponOnHanded = spawnedUnarmed;
-            currentWeaponOnHanded.PlayerTransform = transform; // Êè§ Transform µÑÇÅÐ¤Ãä»ãËéÊ¤ÃÔ»µìÍÒÇØ¸
+            currentWeaponOnHanded.PlayerTransform = transform; // ï¿½ï¿½ Transform ï¿½ï¿½ï¿½ï¿½Ð¤ï¿½ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½Ô»ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸
 
-            // 3. ÊÑè§ Register Hitbox
+            // 3. ï¿½ï¿½ï¿½ Register Hitbox
             if (currentWeaponOnHanded.TryGetComponent<MeleeWeapon>(out MeleeWeapon punch))
             {
                 punch.RegisterHitbox();
@@ -125,7 +127,7 @@ public class PlayerEquipment : MonoBehaviourPun
             }
         }
         playerCombat.currentIndexWeaponSlotNumber = index;
-        playerCombat.OnStartDrawedWeapon();
+        playerCombat.OnStartDrawedWeapon(playerCombat.currentIndexWeaponSlotNumber);
 
         string nameWeapon = currentWeaponOnHanded.WeaponData.Name;
         Debug.Log($"Current Holding Weapon {nameWeapon} at index[{index}]");
@@ -134,7 +136,7 @@ public class PlayerEquipment : MonoBehaviourPun
 
     public void SetWeaponSlot(int indexSlot, WeaponScript getWeapon)
     {
-        //¶éÒ Slot ¹Ñé¹ÁÕÍÒÇØ¸ÍÂÙèáÅéÇ ãËéàÍÒÍÒÇØ¸¹Ñé¹ä»à¡çºäÇéã¹½Ñ¡¡èÍ¹
+        //ï¿½ï¿½ï¿½ Slot ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã¹½Ñ¡ï¿½ï¿½Í¹
         currentCarriedWeapons[indexSlot] = getWeapon;
         currentCarriedWeapons[indexSlot].IndexSlotNumber = indexSlot;
         currentCarriedWeapons[indexSlot].IsShethed = true;
@@ -157,45 +159,59 @@ public class PlayerEquipment : MonoBehaviourPun
 
                 SetWeaponSheathedPosition(indexSlot, getWeapon);
                 break;
+            case UtilityDev.WeaponType.SlingshotOrBow:
+                SheathedWeaponSocket rangeSheathSocket;
+                if(RangeWeaponSheathSocket[0].CheckSocketIsFree())
+                {
+                    rangeSheathSocket = RangeWeaponSheathSocket[0];
+                    rangeSheathSocket.SetWeaponInSocket(getWeapon);
+                }
+                else if(RangeWeaponSheathSocket[1].CheckSocketIsFree())
+                {
+                    rangeSheathSocket = RangeWeaponSheathSocket[1];
+                    rangeSheathSocket.SetWeaponInSocket(getWeapon);
+                }  
+                SetWeaponSheathedPosition(indexSlot, getWeapon);   
+                break;
         }
     }
 
 
     public void SetWeaponSheathedPosition(int indexSlot, WeaponScript getWeapon)
     {
-        // 1. àÊ¡ Visual ¤ÃÑé§à´ÕÂÇáÅÐà¡çºäÇéã¹ Array
+        // 1. ï¿½Ê¡ Visual ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Array
         GameObject instanceWeapon = getWeapon.gameObject;
         if (instanceWeapon == null) return;
 
-        // 2. ¨Ñ´¡ÒÃàÃ×èÍ§ UI ·Õè¹ÕèàÅÂ
+        // 2. ï¿½Ñ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í§ UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         WeaponData weaponData = getWeapon.WeaponData;
         OnSetNewWeapon?.Invoke(indexSlot, weaponData); 
 
-        // 3. µÑé§¤èÒµÓáË¹è§ãËéµÔ´¡Ñº½Ñ¡
+        // 3. ï¿½ï¿½é§¤ï¿½Òµï¿½ï¿½Ë¹ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Ñºï¿½Ñ¡
         instanceWeapon.transform.SetParent(getWeapon.SheathedSocket.SocketTransform, false);
         instanceWeapon.transform.localPosition = Vector3.zero;
         instanceWeapon.transform.localRotation = Quaternion.identity;
 
         if (getWeapon != null)
         {
-            getWeapon.OnSheathedWeapon(); // àÃÕÂ¡ãªé¿Ñ§¡ìªÑ¹»Ô´ Rigidbody/Collider ·Õè¤Ø³à¢ÕÂ¹äÇé
+            getWeapon.OnSheathedWeapon(); // ï¿½ï¿½ï¿½Â¡ï¿½ï¿½Ñ§ï¿½ï¿½Ñ¹ï¿½Ô´ Rigidbody/Collider ï¿½ï¿½ï¿½Ø³ï¿½ï¿½Â¹ï¿½ï¿½ï¿½
             getWeapon.IndexSlotNumber = indexSlot;
         }
     }
 
     public void SetWeaponDrawPosition(int indexSlot)
     {
-        // ´Ö§µÑÇÅÐ¤Ã·ÕèÍÂÙèã¹ Slot ¹Ñé¹ÁÒ (µÑÇ·ÕèàÃÒ Instantiate äÇéµÍ¹áÃ¡)
+        // ï¿½Ö§ï¿½ï¿½ï¿½ï¿½Ð¤Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Slot ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ Instantiate ï¿½ï¿½ï¿½Í¹ï¿½Ã¡)
         WeaponScript weapon = currentCarriedWeapons[indexSlot];
         if (weapon == null) return;
 
         currentWeaponOnHanded = weapon;
 
-        // á·¹·Õè¨Ð Instantiate ãËÁè ãËéÂéÒÂ Parent ä»·ÕèÁ×Íá·¹
+        // á·¹ï¿½ï¿½ï¿½ï¿½ Instantiate ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Parent ä»·ï¿½ï¿½ï¿½ï¿½ï¿½á·¹
         weapon.transform.SetParent(OneMeleeHanded_POS, false);
         weapon.transform.localPosition = Vector3.zero;
         weapon.transform.localRotation = Quaternion.identity;
-        weapon.OnDrawedWeapon(); // à»ÅÕèÂ¹Ê¶Ò¹Ð IsShethed à»ç¹ false
+        weapon.OnDrawedWeapon(); // ï¿½ï¿½ï¿½ï¿½Â¹Ê¶Ò¹ï¿½ IsShethed ï¿½ï¿½ false
 
     }
 
@@ -204,12 +220,12 @@ public class PlayerEquipment : MonoBehaviourPun
         WeaponScript weapon = currentWeaponOnHanded;
         if (weapon == null) return;
 
-        // á·¹·Õè¨Ð Instantiate ãËÁè ãËéÂéÒÂ Parent ä»·ÕèÁ×Íá·¹
+        // á·¹ï¿½ï¿½ï¿½ï¿½ Instantiate ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Parent ä»·ï¿½ï¿½ï¿½ï¿½ï¿½á·¹
         weapon.transform.SetParent(weapon.SheathedSocket.SocketTransform, false);
         weapon.transform.localPosition = Vector3.zero;
         weapon.transform.localRotation = Quaternion.identity;
 
-        weapon.OnSheathedWeapon(); // à»ÅÕèÂ¹Ê¶Ò¹Ð IsShethed à»ç¹ false
+        weapon.OnSheathedWeapon(); // ï¿½ï¿½ï¿½ï¿½Â¹Ê¶Ò¹ï¿½ IsShethed ï¿½ï¿½ false
     }
 }
 
