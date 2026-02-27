@@ -1667,10 +1667,10 @@ GameObject:
   - component: {fileID: 8348807336614477942}
   - component: {fileID: -6423400562861707195}
   - component: {fileID: 2422158089981348123}
-  - component: {fileID: 5413992084341302093}
+  - component: {fileID: 3009275176693736831}
   m_Layer: 7
   m_Name: PayloadGameObject
-  m_TagString: Payload
+  m_TagString: PayloadController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1705,7 +1705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13e5db30511e00c49b59695b6e551ae6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SphereAreaRadius: 7.76
+  SphereAreaRadius: 35
   MoveSpeedTarget: 3
   AccelerationTime: 1.5
   TurnSpeed: 30
@@ -1813,8 +1813,8 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 1
   m_TeleportEnabled: 0
   m_TeleportIfDistanceGreaterThan: 3
---- !u!65 &5413992084341302093
-BoxCollider:
+--- !u!136 &3009275176693736831
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1831,9 +1831,11 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.9725821, y: 1.5930138, z: 2.5206785}
-  m_Center: {x: 0.10643339, y: 0.8071079, z: 0.95147943}
+  serializedVersion: 2
+  m_Radius: 0.8763058
+  m_Height: 3.2538033
+  m_Direction: 2
+  m_Center: {x: 0.16447997, y: 0.7361171, z: 1.049963}
 --- !u!1 &7434807998246931531
 GameObject:
   m_ObjectHideFlags: 0

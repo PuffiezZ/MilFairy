@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PrototypeArea.unity
     guid: 71458104e2c298b49a9e9528337002bb
+  - enabled: 1
+    path: Assets/Scenes/MapDesign1.unity
+    guid: caea90aa01e86234482cf4da7a0a1691
   m_configObjects: {}

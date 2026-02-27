@@ -44,23 +44,9 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     }
     private void Update()
     {
-        // ��к� Multiplayer ����ѡ����� Master Client �繤��Ѵ�Թ�����ͧ "���͹䢡�����"
         HandlePayloadLogic();
+    }
 
-        // �ء����ͧ (����֧ Client) �е�ͧ�ѹ��â�Ѻ���˹觵���������ǻѨ�غѹ��������Ҿ�������
-        //if (currentMoveSpeed > 0)
-        //{
-        //    PayloadPositionHandler();
-        //}
-    }
-    private void FixedUpdate()
-    {
-        // *** �Ӥѭ: ���¡�����¡ UnityAction �ҷ�� FixedUpdate ������ҤǺ������� Physics ���� ***
-        //if (currentMoveSpeed > 0f)
-        //{
-        //    OnPayloadMoveAction?.Invoke();
-        //}
-    }
     private void HandlePayloadLogic()
     {
         bool hasPlayer = CheckPlayerNearby();
@@ -145,6 +131,9 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     {
         if (PhotonNetwork.InRoom)
         {
+            // สำคัญ: ขอสิทธิ์เป็นเจ้าของรถเข็นก่อน เพื่อให้ส่ง RPC และควบคุมความเร็วได้
+            photonView.RequestOwnership();
+
             int getViewID = player.GetComponent<PhotonView>().ViewID;
             photonView.RPC(nameof(RPC_SitOnPayload), RpcTarget.AllBuffered, getViewID);
         }

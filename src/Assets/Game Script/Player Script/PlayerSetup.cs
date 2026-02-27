@@ -17,7 +17,7 @@ public class PlayerSetup : MonoBehaviourPun
     {
         if (PhotonNetwork.InRoom)
         {
-            // ´Ö§ª×èÍ¨Ò¡à¨éÒ¢Í§ photonView ¹ÕéÁÒáÊ´§
+            // ï¿½Ö§ï¿½ï¿½ï¿½Í¨Ò¡ï¿½ï¿½Ò¢Í§ photonView ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê´ï¿½
             nameTextTMP.text = photonView.Owner.NickName;
         }
         else
@@ -40,7 +40,7 @@ public class PlayerSetup : MonoBehaviourPun
 
     public void SetPayloadInstance()
     {
-        playerMovement.plScript = GameObject.FindGameObjectWithTag("Payload").GetComponent<PayloadScript>();
+        playerMovement.plScript = GameObject.FindGameObjectWithTag("PayloadController").GetComponent<PayloadScript>();
     }
 
     private void HideCursorOnSpawn()

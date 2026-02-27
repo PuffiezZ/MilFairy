@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   recipeName: TestRecipe
   requiredItemNames:
-  - 1
-  - 1
-  - 1
+  - Bread
+  - Bread
+  - Bread
   resultPrefab: {fileID: 7197992888256433340, guid: 084b8686be77f464c87b98fb10fb4f5a,
     type: 3}

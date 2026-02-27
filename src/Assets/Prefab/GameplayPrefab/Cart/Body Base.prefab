@@ -474,7 +474,7 @@ GameObject:
   - component: {fileID: -7527136269585042285}
   m_Layer: 0
   m_Name: Body Base
-  m_TagString: Untagged
+  m_TagString: Payload
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -529,10 +529,10 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.3692245, y: 1.1848861, z: 3.6992874}
-  m_Center: {x: -0.0751915, y: 0.81049746, z: -2.9482994}
+  m_Size: {x: 2.3692245, y: 0.7254678, z: 3.0929604}
+  m_Center: {x: -0.0751915, y: 0.5807883, z: -2.6451359}
 --- !u!54 &4734107371365709456
 Rigidbody:
   m_ObjectHideFlags: 0
