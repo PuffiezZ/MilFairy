@@ -97,12 +97,6 @@ public class Player : CharacterBase,IPickupable
         pm.SetEnableCharacterMovement(false);
         pm.SwitchingMovement(true);
         pm.IsMounting = true;
-
-        // ปิดการ Sync ตำแหน่งชั่วคราว เพื่อให้เคลื่อนที่ตาม Parent (Payload) ได้โดยไม่โดนขัดขวางจากข้อมูล Network
-        if (TryGetComponent<PhotonTransformView>(out var ptv))
-        {
-            ptv.enabled = false;
-        }
     }
     public void OnDismountingPayload()
     {
@@ -110,12 +104,6 @@ public class Player : CharacterBase,IPickupable
         pm.SetEnableCharacterMovement(true);
         pm.SwitchingMovement(false);
         pm.IsMounting = false;
-
-        // เปิดการ Sync ตำแหน่งกลับมาเมื่อลงจากรถ
-        if (TryGetComponent<PhotonTransformView>(out var ptv))
-        {
-            ptv.enabled = true;
-        }
     }
     [PunRPC]
     public void RPC_UpdatePlayerHealthUI(float currentHealthValue, float maxHealthValue)

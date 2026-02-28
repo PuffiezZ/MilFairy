@@ -150,6 +150,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
 
         if (targetPv != null)
         {
+            if(!targetPv.IsMine) return;
             GameObject playerObj = targetPv.gameObject;
             SitOnPayload(playerObj);
         }
@@ -162,10 +163,12 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
         Player p = player.GetComponent<Player>();
 
         if (p == null) return;
+        if (p.photonView.IsMine == false) return;
 
         CurrentPlayerControl = p;
         reciveLocomotion = p.GetComponent<PlayerLocomotion>();
 
+        
         p.OnMountingPayload();
 
         p.transform.SetParent(sitPosition);
@@ -183,7 +186,6 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
             if (playerPv.IsMine)
             {
                 int getViewID = playerPv.ViewID;
-                // �� RPC �͡�ء����ͧ���Ŵ�����蹤�����͡
                 photonView.RPC(nameof(RPC_JumpOffPayload), RpcTarget.AllBuffered, getViewID);
             }
         }
@@ -207,7 +209,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
         Player p = playerObj.GetComponent<Player>();
         if (p != null)
         {
-            // 1. �Ŵ�������͡�ҡ Parent (SitPosition) ��Ѻ����š����
+           
             p.transform.SetParent(null);
 
             p.OnDismountingPayload();
