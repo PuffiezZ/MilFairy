@@ -1,6 +1,7 @@
 using Photon.Pun;
 using Sausagecat.PlayerControlSystem;
 using System;
+using Unity.Properties;
 using UnityEngine;
 using UnityEngine.Events;
 using static UtilityDev;
@@ -24,18 +25,30 @@ public class Player : CharacterBase,IPickupable
     private int[] amountResource = new int[6];
 
     private PlayerCombat playerCombat;
+    private PhotonView pv;
 
     private void Start()
     {
         playerCombat = GetComponent<PlayerCombat>();
-        SetActionLeftClick(playerCombat.OnInvokeAttack);
+        pv = GetComponent<PhotonView>();
+
+        
+        SetActionLeftClick(pv, playerCombat.OnInvokeAttack);
     }
     public static bool CheckboolActionLeftClick(Action getAction)
     {
         return OnMainActionCalled == getAction;
     }
-    public static void SetActionLeftClick(Action getAction = null)
+    public static void SetActionLeftClick(PhotonView view, Action getAction = null)
     {
+        // ตรวจสอบว่าเป็น P2P (InRoom) หรือ Offline
+        if (PhotonNetwork.InRoom)
+        {
+            // ตรวจสอบความเป็นเจ้าของในแบบ static โดยใช้ PhotonView ที่ส่งเข้ามา
+            // หากไม่ใช่เจ้าของ (Remote Player) จะไม่สามารถเปลี่ยนค่า Action ของเครื่องนี้ได้
+            if (view != null && !view.IsMine) return;
+        }
+
         OnMainActionCalled = null;
         OnMainActionCalled = getAction;
     }

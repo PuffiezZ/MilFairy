@@ -127,13 +127,13 @@ public class HoldableObject : MonoBehaviour, IInteractable
         // ����ͧ��� Throw(10f) �ç��� ������Ҩ����ç�ҡ Update
         if (ownerPlayer.photonView.IsMine && PhotonNetwork.InRoom)
         {
-            Player.SetActionLeftClick(() => {});
+            Player.SetActionLeftClick(ownerPlayer.photonView, () => {});
 
             ownerPlayer.GetComponent<PlayerAnimation>().SetArmLayerWeight(1f);
         }
         else
         {
-            Player.SetActionLeftClick(() => {});
+            Player.SetActionLeftClick(ownerPlayer.photonView, () => {});
 
             ownerPlayer.GetComponent<PlayerAnimation>().SetArmLayerWeight(1f);
         }
@@ -177,14 +177,14 @@ public class HoldableObject : MonoBehaviour, IInteractable
             if (ownerPlayer.photonView.IsMine && PhotonNetwork.InRoom)
             {
                 PlayerCombat combat = ownerPlayer.GetComponent<PlayerCombat>();
-                Player.SetActionLeftClick(combat.OnInvokeAttack);
+                Player.SetActionLeftClick(ownerPlayer.photonView, combat.OnInvokeAttack);
 
                 ownerPlayer.GetComponent<PlayerAnimation>().SetArmLayerWeight(0f);
             }
             else
             {
                 PlayerCombat combat = ownerPlayer.GetComponent<PlayerCombat>();
-                Player.SetActionLeftClick(combat.OnInvokeAttack);
+                Player.SetActionLeftClick(ownerPlayer.photonView, combat.OnInvokeAttack);
 
                 ownerPlayer.GetComponent<PlayerAnimation>().SetArmLayerWeight(0f);
             }
