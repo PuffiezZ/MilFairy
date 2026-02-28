@@ -49,9 +49,6 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
 
     private void HandlePayloadLogic()
     {
-        // เฉพาะเจ้าของเท่านั้นที่เป็นคนคำนวณความเร็ว เพื่อป้องกันการส่ง RPC ซ้อนกันจากหลายเครื่อง
-        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
-
         bool hasPlayer = CheckPlayerNearby();
 
         float target = (hasPlayer && isTurnOn) ? MoveSpeedTarget : 0f;
@@ -172,14 +169,6 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
         reciveLocomotion = p.GetComponent<PlayerLocomotion>();
 
         p.OnMountingPayload();
-
-        // ปิด CharacterController และฟิสิกส์ของตัวละครก่อนทำ Parenting เพื่อไม่ให้ตำแหน่งดีด
-        CharacterController cc = player.GetComponent<CharacterController>();
-        if (cc != null) cc.enabled = false;
-
-        // ปิดการ Sync ตำแหน่งชั่วคราว (ถ้ามี PhotonTransformView) เพื่อให้มันเคลื่อนที่ไปพร้อมกับ Parent ได้แม่นยำ
-        PhotonTransformView ptv = player.GetComponent<PhotonTransformView>();
-        if (ptv != null) ptv.enabled = false;
 
         p.transform.SetParent(sitPosition);
         p.transform.localPosition = Vector3.zero;
