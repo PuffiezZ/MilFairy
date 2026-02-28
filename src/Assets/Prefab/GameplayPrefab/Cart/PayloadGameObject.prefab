@@ -1668,6 +1668,7 @@ GameObject:
   - component: {fileID: -6423400562861707195}
   - component: {fileID: 2422158089981348123}
   - component: {fileID: 3009275176693736831}
+  - component: {fileID: 4771333098383249057}
   m_Layer: 7
   m_Name: PayloadGameObject
   m_TagString: PayloadController
@@ -1732,6 +1733,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 2422158089981348123}
+  - {fileID: 4771333098383249057}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -1836,6 +1838,22 @@ CapsuleCollider:
   m_Height: 3.2538033
   m_Direction: 2
   m_Center: {x: 0.16447997, y: 0.7361171, z: 1.049963}
+--- !u!114 &4771333098383249057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7395786787712819640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 1
+  m_UseLocal: 1
 --- !u!1 &7434807998246931531
 GameObject:
   m_ObjectHideFlags: 0

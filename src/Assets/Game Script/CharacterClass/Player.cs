@@ -13,9 +13,9 @@ public class Player : CharacterBase,IPickupable
     public float minThrowForce = 5f;
     public float maxThrowForce = 25f;
     public float maxChargeTime = 2f;
-    public Vector3 throwDirectionOffset = new Vector3(0, 0.5f, 1f); // ¢ÇéÒ§ä»¢éÒ§Ë¹éÒáÅĞà©ÕÂ§¢Öé¹àÅç¡¹éÍÂ
+    public Vector3 throwDirectionOffset = new Vector3(0, 0.5f, 1f); // ï¿½ï¿½ï¿½Ò§ä»¢ï¿½Ò§Ë¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â§ï¿½ï¿½ï¿½ï¿½ï¿½ç¡¹ï¿½ï¿½ï¿½
 
-    // ãªé Event ·ÕèàÃÒ¤ØÂ¡Ñ¹¡èÍ¹Ë¹éÒà¾×èÍÍÑ»à´µ UI
+    // ï¿½ï¿½ Event ï¿½ï¿½ï¿½ï¿½ï¿½Ò¤ï¿½Â¡Ñ¹ï¿½ï¿½Í¹Ë¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ»à´µ UI
     public static event Action<float, float> OnPlayerHealthChanged;
     public static event Action<UtilityDev.ResourceType, float, int> OnResourceValueChanged;
     public static event Action OnMainActionCalled;
@@ -75,12 +75,12 @@ public class Player : CharacterBase,IPickupable
 
     public override void TakeDamage(float damage)
     {
-        base.TakeDamage(damage); // àÃÕÂ¡ãªé Logic Å´àÅ×Í´¨Ò¡µÑÇáÁè
+        base.TakeDamage(damage); // ï¿½ï¿½ï¿½Â¡ï¿½ï¿½ Logic Å´ï¿½ï¿½ï¿½Í´ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         CallUpdatePlayerUIHealth();
     }
     private void CallUpdatePlayerUIHealth()
     {
-        // ¶éÒà»ç¹µÑÇÅĞ¤Ã¢Í§àÃÒ ãËéºÍ¡ UI Manager ´éÇÂ
+        // ï¿½ï¿½ï¿½ï¿½ç¹µï¿½ï¿½ï¿½Ğ¤Ã¢Í§ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¡ UI Manager ï¿½ï¿½ï¿½ï¿½
         if (photonView.IsMine && PhotonNetwork.InRoom)
         {
             photonView.RPC(nameof(RPC_UpdatePlayerHealthUI), RpcTarget.All, currentHealth, maxHealth);
@@ -97,6 +97,12 @@ public class Player : CharacterBase,IPickupable
         pm.SetEnableCharacterMovement(false);
         pm.SwitchingMovement(true);
         pm.IsMounting = true;
+
+        // à¸›à¸´à¸”à¸à¸²à¸£ Sync à¸•à¸³à¹à¸«à¸™à¹ˆà¸‡à¸Šà¸±à¹ˆà¸§à¸„à¸£à¸²à¸§ à¹€à¸à¸·à¹ˆà¸­à¹ƒà¸«à¹‰à¹€à¸„à¸¥à¸·à¹ˆà¸­à¸™à¸—à¸µà¹ˆà¸•à¸²à¸¡ Parent (Payload) à¹„à¸”à¹‰à¹‚à¸”à¸¢à¹„à¸¡à¹ˆà¹‚à¸”à¸™à¸‚à¸±à¸”à¸‚à¸§à¸²à¸‡à¸ˆà¸²à¸à¸‚à¹‰à¸­à¸¡à¸¹à¸¥ Network
+        if (TryGetComponent<PhotonTransformView>(out var ptv))
+        {
+            ptv.enabled = false;
+        }
     }
     public void OnDismountingPayload()
     {
@@ -104,6 +110,12 @@ public class Player : CharacterBase,IPickupable
         pm.SetEnableCharacterMovement(true);
         pm.SwitchingMovement(false);
         pm.IsMounting = false;
+
+        // à¹€à¸›à¸´à¸”à¸à¸²à¸£ Sync à¸•à¸³à¹à¸«à¸™à¹ˆà¸‡à¸à¸¥à¸±à¸šà¸¡à¸²à¹€à¸¡à¸·à¹ˆà¸­à¸¥à¸‡à¸ˆà¸²à¸à¸£à¸–
+        if (TryGetComponent<PhotonTransformView>(out var ptv))
+        {
+            ptv.enabled = true;
+        }
     }
     [PunRPC]
     public void RPC_UpdatePlayerHealthUI(float currentHealthValue, float maxHealthValue)
@@ -118,7 +130,7 @@ public class Player : CharacterBase,IPickupable
     protected override void Die()
     {
         Debug.Log("Player Died! Show GameOver UI");
-        // Logic ¡ÒÃà¡Ô´ãËÁè ËÃ×Í¡ÅÒÂà»ç¹È¾
+        // Logic ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¡ï¿½ï¿½ï¿½ï¿½ï¿½È¾
     }
     #region Pick Up Resource Handle
     public void OnPickResourceInvoke(UtilityDev.ResourceType resourceType, float percentage)
@@ -142,7 +154,7 @@ public class Player : CharacterBase,IPickupable
 
     private void ChangeResourceAmount(UtilityDev.ResourceType resourceType, float percentage)
     {
-        // ÅçÍ¤äÇéàÅÂÇèÒ "à©¾ÒĞà¨éÒ¢Í§µÑÇÅĞ¤Ã¹Õéà·èÒ¹Ñé¹" ·Õè¨Ğà»ÅÕèÂ¹¤èÒã¹µÑÇá»ÃáÅĞÍÑ»à´µ UI
+        // ï¿½ï¿½Í¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ "à©¾ï¿½ï¿½ï¿½ï¿½Ò¢Í§ï¿½ï¿½ï¿½ï¿½Ğ¤Ã¹ï¿½ï¿½ï¿½ï¿½Ò¹ï¿½ï¿½" ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¹ï¿½ï¿½ï¿½ã¹µï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ»à´µ UI
         if (!photonView.IsMine && PhotonNetwork.InRoom) return;
 
         percentageProgressResource[(int)resourceType] += percentage;
@@ -153,7 +165,7 @@ public class Player : CharacterBase,IPickupable
             amountResource[(int)resourceType]++;
         }
 
-        // µÍ¹¹ÕéäÁèµéÍ§áÂ¡ if-else ÊÓËÃÑº InRoom áÅéÇ à¾ÃÒĞ IsMine ¤ÃÍº¤ÅØÁËÁ´
+        // ï¿½Í¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í§ï¿½Â¡ if-else ï¿½ï¿½ï¿½ï¿½Ñº InRoom ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ IsMine ï¿½ï¿½Íºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         OnResourceValueChanged?.Invoke(resourceType, percentageProgressResource[(int)resourceType], amountResource[(int)resourceType]);
 
         Debug.Log($"Resource Updated for {gameObject.name}: {resourceType}, Amount: {amountResource[(int)resourceType]}");

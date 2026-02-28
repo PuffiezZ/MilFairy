@@ -151,8 +151,6 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
         if (targetPv != null)
         {
             GameObject playerObj = targetPv.gameObject;
-            // �� Logic ����������ʹ��� playerObj
-            PlayerEquipment playerEquipment = playerObj.GetComponent<PlayerEquipment>();
             SitOnPayload(playerObj);
         }
     }
@@ -212,11 +210,9 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
             // 1. �Ŵ�������͡�ҡ Parent (SitPosition) ��Ѻ����š����
             p.transform.SetParent(null);
 
-            // 2. �׹���ʶҹ��������� (�� �Դ CharacterController, ��Ѻ���� Gravity ����)
-            // *�س��ͧ���ҧ�ѧ��ѹ OnDismountingPayload() � Script Player ���¹Ф�Ѻ
             p.OnDismountingPayload();
 
-            // 3. Reset ʶҹС�á��ⴴ�ͧ PlayerLocomotion ���ͻ�ͧ�ѹ��á��ⴴ���������ŧ���
+
             PlayerLocomotion pLocomotion = p.GetComponent<PlayerLocomotion>();
             if (pLocomotion != null)
             {
