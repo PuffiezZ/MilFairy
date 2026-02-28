@@ -4850,12 +4850,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ededc6327cf98e748a170c91d8a3d629, type: 3}
---- !u!1 &640123629 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2744164879318043872, guid: ededc6327cf98e748a170c91d8a3d629,
-    type: 3}
-  m_PrefabInstance: {fileID: 561700850}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &655254004
 GameObject:
   m_ObjectHideFlags: 0
@@ -7925,12 +7919,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 508759809}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1105355990 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2744164879318043872, guid: ededc6327cf98e748a170c91d8a3d629,
-    type: 3}
-  m_PrefabInstance: {fileID: 636261499}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1111123423
 GameObject:
   m_ObjectHideFlags: 0
@@ -8902,12 +8890,6 @@ MonoBehaviour:
   m_IgnoreFromBuild: 1
   m_ApplyToChildren: 1
   m_AffectedAgents: ffffffff
---- !u!1 &1316062346 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2744164879318043872, guid: ededc6327cf98e748a170c91d8a3d629,
-    type: 3}
-  m_PrefabInstance: {fileID: 714180968}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1336519216
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11921,42 +11903,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Set Active Trigger
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1316062346}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 1105355990}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 640123629}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 310966933}
