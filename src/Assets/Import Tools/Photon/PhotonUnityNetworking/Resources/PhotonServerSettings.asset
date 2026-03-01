@@ -82,6 +82,7 @@ MonoBehaviour:
   - RPC_HandleHit
   - RPC_ToggleSwitch
   - RPC_RequestCraft
+  - RPC_HandleEquippedWeapon
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

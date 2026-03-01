@@ -11,7 +11,7 @@ public abstract class GameObjectPickUp : MonoBehaviourPun,IInteractable
     {
         if (intereactWorldUI == null)
         {
-            Debug.LogError($"[GameObjectPickUp] {gameObject.name} is missing UI Reference!");
+            Debug.LogWarning($"[GameObjectPickUp] {gameObject.name} is missing UI Reference!");
         }
         OnGameObjectSpawn();
     }
@@ -54,10 +54,10 @@ public abstract class GameObjectPickUp : MonoBehaviourPun,IInteractable
         {
             GameObject player = targetPv.gameObject;
 
-            // 1. «èÍ¹ÇÑµ¶Øã¹·Ø¡à¤Ã×èÍ§·Ñ¹·Õ
+            // 1. ï¿½ï¿½Í¹ï¿½Ñµï¿½ï¿½ã¹·Ø¡ï¿½ï¿½ï¿½ï¿½Í§ï¿½Ñ¹ï¿½ï¿½
             LocalSetGameObjectActive(getBoolean);
 
-            // 2. ÊÑè§ OnInterected («Öè§¨Ðä»àÃÕÂ¡ OnPlayerEquipped ã¹¤ÅÒÊÅÙ¡)
+            // 2. ï¿½ï¿½ï¿½ OnInterected (ï¿½ï¿½è§¨ï¿½ï¿½ï¿½ï¿½ï¿½Â¡ OnPlayerEquipped ã¹¤ï¿½ï¿½ï¿½ï¿½Ù¡)
             OnInterected(player, getBoolean);
         }
     }

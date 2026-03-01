@@ -64,7 +64,9 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         {
             if (!photonView.IsMine) return; //����� computer ����ͧ ����ͧ������
         }
-
+        
+        if(currentWeapon == null) return;
+        
         if(currentWeapon.WeaponData.weaponType != UtilityDev.WeaponType.SlingshotOrBow)
         {
             CooldownAttack();
