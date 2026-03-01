@@ -161,12 +161,12 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     private void SitOnPayload(GameObject player)
     {
         if (sitPosition == null) return;
-        
         Player p = player.GetComponent<Player>();
 
         if (p == null) return;
-        if (p.photonView.IsMine == false) return;
-
+        //if (p.photonView.IsMine == false) return;
+        Debug.Log($"player Sit On Payload = {p.name}");
+        
         CurrentPlayerControl = p;
         reciveLocomotion = p.GetComponent<PlayerLocomotion>();
 

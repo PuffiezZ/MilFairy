@@ -34,12 +34,12 @@ public class Bacteria : MonsterBase
             time += Time.deltaTime;
             yield return null;
         }
-        // ¤Ó¹Ç³¨Ø´àÃÔèÁµé¹ (Origin) â´ÂºÇ¡ Offset á¡¹ Y
+        // ï¿½Ó¹Ç³ï¿½Ø´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (Origin) ï¿½ÂºÇ¡ Offset á¡¹ Y
         Vector3 origin = transform.position + (Vector3.up * yOffset);
-        // ·ÔÈ·Ò§·Õè¨ÐÂÔ§ Raycast ÍÍ¡ä»
+        // ï¿½ï¿½È·Ò§ï¿½ï¿½ï¿½ï¿½ï¿½Ô§ Raycast ï¿½Í¡ï¿½
         Vector3 direction = transform.forward;
 
-        // ãªé SphereCast à¾×èÍàªç¤¡ÒÃ»Ð·ÐµÒÁ·ÔÈ·Ò§´éÒ¹Ë¹éÒ
+        // ï¿½ï¿½ SphereCast ï¿½ï¿½ï¿½ï¿½ï¿½ç¤¡ï¿½Ã»Ð·Ðµï¿½ï¿½ï¿½ï¿½È·Ò§ï¿½ï¿½Ò¹Ë¹ï¿½ï¿½
         RaycastHit[] hits = Physics.SphereCastAll(origin, biteRadius, direction, biteDistance, LayerMask.GetMask("Player"));
         foreach (var hit in hits)
         {
@@ -60,24 +60,24 @@ public class Bacteria : MonsterBase
 
         while (Time.time < startTime + duration)
         {
-            // 1. ¤Ó¹Ç³ÃÐÂÐ·ÕèµéÍ§¡ÒÃ¨Ðä»ã¹à¿ÃÁ¹Õé
+            // 1. ï¿½Ó¹Ç³ï¿½ï¿½ï¿½Ð·ï¿½ï¿½ï¿½Í§ï¿½ï¿½Ã¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             float frameDistance = force * Time.deltaTime;
             Vector3 nextPos = transform.position + direction * frameDistance;
 
-            // 2. ãªé Linecast µÃÇ¨ÊÍºàÊé¹·Ò§¨Ò¡¨Ø´»Ñ¨¨ØºÑ¹ä»¨Ø´¶Ñ´ä»
+            // 2. ï¿½ï¿½ Linecast ï¿½ï¿½Ç¨ï¿½Íºï¿½ï¿½é¹·Ò§ï¿½Ò¡ï¿½Ø´ï¿½Ñ¨ï¿½ØºÑ¹ä»¨Ø´ï¿½Ñ´ï¿½
             RaycastHit hit;
             if (Physics.Linecast(transform.position + Vector3.up, nextPos + Vector3.up, out hit))
             {
                 if (!hit.collider.isTrigger)
                 {
-                    // ËÒ¡à¨ÍÊÔè§¡Õ´¢ÇÒ§ ãËéàÅ×èÍ¹µÑÇä»ËÂØ´·ÕèË¹éÒÊÔè§¹Ñé¹¾Í´Õ
+                    // ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½è§¡Õ´ï¿½ï¿½Ò§ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½Ë¹ï¿½ï¿½ï¿½ï¿½è§¹ï¿½é¹¾Í´ï¿½
                     transform.position = hit.point - direction * 0.2f;
                     Debug.Log("Dash Blocked by: " + hit.collider.name);
                     break;
                 }
             }
 
-            // 3. ËÒ¡äÁèÁÕÍÐäÃ¢ÇÒ§ ¤èÍÂãªé Move à¾×èÍãËéµÔ´¢Íº NavMesh
+            // 3. ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¢ï¿½Ò§ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Move ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½Íº NavMesh
             aiAgent.Move(direction * frameDistance);
             yield return null;
         }
@@ -96,11 +96,11 @@ public class Bacteria : MonsterBase
         Vector3 origin = transform.position + (Vector3.up * yOffset);
         Vector3 targetLocation = origin + (transform.forward * biteDistance);
 
-        // ÇÒ´·Ã§¡ÅÁ·Õè¨Ø´àÃÔèÁáÅÐ¨Ø´¨º
+        // ï¿½Ò´ï¿½Ã§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¨Ø´ï¿½ï¿½
         Gizmos.DrawWireSphere(origin, biteRadius);
         Gizmos.DrawWireSphere(targetLocation, biteRadius);
 
-        // ÇÒ´àÊé¹àª×èÍÁÃÐËÇèÒ§·Ã§¡ÅÁ·Ñé§ÊÍ§
+        // ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò§ï¿½Ã§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í§
         Gizmos.DrawLine(origin, targetLocation);
     }
 }

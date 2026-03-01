@@ -24,6 +24,8 @@ public class PlayerSetup : MonoBehaviourPun
         {
             nameTextTMP.gameObject.SetActive(false);
         }
+
+        StartCoroutine(WaitAndSetPayload());
     }
     public void IsLocalPlayer()
     {
@@ -38,10 +40,17 @@ public class PlayerSetup : MonoBehaviourPun
         HideCursorOnSpawn();
     }
 
-    public void SetPayloadInstance()
+    private IEnumerator WaitAndSetPayload()
     {
-        playerMovement.plScript = GameObject.FindGameObjectWithTag("PayloadController").GetComponent<PayloadScript>();
+        // รอจนกว่า RoomManager และ Payload จะถูกตั้งค่า (ป้องกันปัญหา Network Sync ล่าช้า)
+        while (RoomManager.Instance == null || RoomManager.Instance.CurrentPlayingPayload == null)
+        {
+            yield return null;
+        }
+
+        playerMovement.plScript = RoomManager.Instance.CurrentPlayingPayload;
     }
+    
 
     private void HideCursorOnSpawn()
     {

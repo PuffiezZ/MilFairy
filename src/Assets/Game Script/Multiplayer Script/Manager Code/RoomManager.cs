@@ -7,8 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private GameObject playerObject; // ต้องอยู่ในโฟลเดอร์ Resources เท่านั้น
-    [SerializeField] private Transform[] spawnPoints; // ใช้ array เพื่อสุ่มจุดเกิด
+    [SerializeField] private GameObject playerObject; // ๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Resources ๏ฟฝ๏ฟฝาน๏ฟฝ๏ฟฝ
+    [SerializeField] private Transform[] spawnPoints; // ๏ฟฝ๏ฟฝ array ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝุด๏ฟฝิด
     private const string mainMenuName = "Mainmenu";
     private PayloadSetup payloadSetup;
     private AIDataSetup aiDataSetup;
@@ -30,7 +30,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     }
     void Start()
     {
-        // ถ้าเราเปลี่ยน Scene มาโดยที่ยังอยู่ในห้อง (Joined Room แล้ว)
+        // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝยน Scene ๏ฟฝ๏ฟฝ๏ฟฝยท๏ฟฝ๏ฟฝ๏ฟฝัง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง (Joined Room ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ)
         if (PhotonNetwork.InRoom)
         {
             payloadSetup.OnInstancePayload();
@@ -47,11 +47,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
             aiDataSetup.FSM_OnSetupDataForAI();
 
             player.GetComponent<PlayerSetup>().IsLocalPlayer();
-            player.GetComponent<PlayerSetup>().SetPayloadInstance();
         }
     }
 
-    // กรณีที่อาจจะโหลด Scene มาก่อนเข้าห้องสำเร็จ
+    // ๏ฟฝรณีท๏ฟฝ๏ฟฝ๏ฟฝาจ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝลด Scene ๏ฟฝาก๏ฟฝอน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
     public override void OnJoinedRoom()
     {
         SpawnPlayer();
@@ -59,15 +58,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private void SpawnPlayer()
     {
-        // สุ่มจุดเกิดไม่ให้ทับกัน
         Transform selectedPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
 
-        // สร้างตัวละครผ่าน Network
         GameObject player = PhotonNetwork.Instantiate(playerObject.name, selectedPoint.position, Quaternion.identity);
 
-        // เรียก Setup เพื่อเปิดกล้องเฉพาะเครื่องเรา
         player.GetComponent<PlayerSetup>().IsLocalPlayer();
-        player.GetComponent<PlayerSetup>().SetPayloadInstance();
     }
 
     public void TriggerWinCondition()
@@ -77,7 +72,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom)
         {
-            // แจ้งเตือนทุกคนในห้อง
             photonView.RPC(nameof(RPC_OnPayloadReachedGoal), RpcTarget.All);
         }
         else
@@ -106,15 +100,15 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
         foreach (GameObject enemy in enemies)
         {
-            // หยุด NavMeshAgent เพื่อไม่ให้คำนวณเส้นทางต่อ
+            // ๏ฟฝ๏ฟฝุด NavMeshAgent ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝำนวณ๏ฟฝ๏ฟฝ้นทาง๏ฟฝ๏ฟฝ๏ฟฝ
             var agent = enemy.GetComponent<UnityEngine.AI.NavMeshAgent>();
             if (agent != null && agent.isOnNavMesh)
             {
                 agent.isStopped = true;
-                agent.ResetPath(); // ล้าง Path ทิ้งป้องกัน Error ResetPath
+                agent.ResetPath(); // ๏ฟฝ๏ฟฝาง Path ๏ฟฝ๏ฟฝ้งป๏ฟฝอง๏ฟฝัน Error ResetPath
             }
 
-            // หยุดพฤติกรรมของ FSM (NodeCanvas)
+            // ๏ฟฝ๏ฟฝุด๏ฟฝฤติก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง FSM (NodeCanvas)
             var fsmOwner = enemy.GetComponent<MonsterState>();
             if (fsmOwner != null)
             {

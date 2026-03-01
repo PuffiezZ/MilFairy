@@ -9,26 +9,25 @@ public class PayloadSetup : MonoBehaviourPun
 
     [BoxGroup("Payload (Leader)")]
     [ShowIf(nameof(enablePayload))]
-    [SerializeField] private GameObject payloadPrefab; // Prefab หัวลาก
+    [SerializeField] private GameObject payloadPrefab; // Prefab ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาก
     [BoxGroup("Payload (Leader)")]
     [ShowIf(nameof(enablePayload))]
     [SerializeField] private Transform payloadInstancePOS;
 
     [BoxGroup("Cart (Trailer)")]
     [ShowIf(nameof(enablePayload))]
-    [SerializeField] private bool enableCart = true; // เปิด/ปิดรถพ่วง
+    [SerializeField] private bool enableCart = true; // ๏ฟฝิด/๏ฟฝิดรถ๏ฟฝ๏ฟฝวง
     [BoxGroup("Cart (Trailer)")]
     [ShowIf(nameof(enableCart))]
-    [SerializeField] private GameObject cartPrefab;    // Prefab รถพ่วง (ToothCart)
+    [SerializeField] private GameObject cartPrefab;    // Prefab รถ๏ฟฝ๏ฟฝวง (ToothCart)
     [BoxGroup("Cart (Trailer)")]
     [ShowIf(nameof(enableCart))]
-    [SerializeField] private Transform cartInstancePOS; // จุดเกิดรถพ่วง (ถ้าไม่ใส่จะเกิดต่อท้ายเอง)
+    [SerializeField] private Transform cartInstancePOS; // ๏ฟฝุด๏ฟฝิดรถ๏ฟฝ๏ฟฝวง (๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝิด๏ฟฝ๏ฟฝอท๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง)
 
     [ShowIf(nameof(enablePayload))]
-    [SerializeField] private GameObject objectiveCart; // (อันเดิมของคุณ)
+    [SerializeField] private GameObject objectiveCart; // (๏ฟฝัน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝุณ)
     public void OnInstancePayload()
     {
-        // ในระบบ Multiplayer เราจะให้ Master Client เป็นคนสั่งสร้างเพียงคนเดียว
         if (PhotonNetwork.InRoom)
         {
             if (PhotonNetwork.IsMasterClient)
@@ -38,7 +37,7 @@ public class PayloadSetup : MonoBehaviourPun
         }
         else
         {
-            // กรณีเล่นคนเดียว (Offline)
+            // ๏ฟฝรณ๏ฟฝ๏ฟฝ๏ฟฝ่นค๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ (Offline)
             InstancePayload();
         }
     }
@@ -46,7 +45,7 @@ public class PayloadSetup : MonoBehaviourPun
     {
         if (enablePayload == false) return;
 
-        // --- 1. Spawn Payload (หัวลาก) ---
+        // --- 1. Spawn Payload (๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาก) ---
         Vector3 spawnPos = Vector3.zero;
         Quaternion spawnRot = Quaternion.identity;
 
@@ -65,31 +64,31 @@ public class PayloadSetup : MonoBehaviourPun
 
         if (PhotonNetwork.InRoom)
         {
-            // Spawn ผ่านเน็ต
+            // Spawn ๏ฟฝ๏ฟฝาน๏ฟฝ๏ฟฝ
             payloadGO = PhotonNetwork.Instantiate(payloadPrefab.name, spawnPos, spawnRot);
         }
         else
         {
-            // Spawn ออฟไลน์
+            // Spawn ๏ฟฝอฟ๏ฟฝลน๏ฟฝ
             payloadGO = Instantiate(payloadPrefab, spawnPos, spawnRot);
         }
 
-        // --- 2. Spawn Cart (รถพ่วง) ---
+        // --- 2. Spawn Cart (รถ๏ฟฝ๏ฟฝวง) ---
         if (enableCart && cartPrefab != null)
         {
-            // คำนวณจุดเกิดรถพ่วง
+            // ๏ฟฝำนวณ๏ฟฝุด๏ฟฝิดรถ๏ฟฝ๏ฟฝวง
             Vector3 cartPos = spawnPos;
             Quaternion cartRot = spawnRot;
 
             if (cartInstancePOS != null)
             {
-                // ถ้ามีจุดเกิดกำหนดไว้
+                // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝีจุด๏ฟฝิด๏ฟฝ๏ฟฝหน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
                 cartPos = cartInstancePOS.position;
                 cartRot = cartInstancePOS.rotation;
             }
             else
             {
-                // ถ้าไม่มีจุดเกิด ให้เกิดข้างหลัง Payload ประมาณ 2 เมตร
+                // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝีจุด๏ฟฝิด ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝิด๏ฟฝ๏ฟฝาง๏ฟฝ๏ฟฝัง Payload ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาณ 2 ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
                 cartPos = spawnPos - (payloadGO.transform.forward * 2.5f);
             }
 
@@ -103,11 +102,11 @@ public class PayloadSetup : MonoBehaviourPun
             }
         }
 
-        // --- 3. สั่ง Setup และ Connect ผ่าน RPC ---
+        // --- 3. ๏ฟฝ๏ฟฝ๏ฟฝ Setup ๏ฟฝ๏ฟฝ๏ฟฝ Connect ๏ฟฝ๏ฟฝาน RPC ---
         if (PhotonNetwork.InRoom)
         {
             int payloadID = payloadGO.GetComponent<PhotonView>().ViewID;
-            // ถ้าไม่มีรถพ่วง ให้ส่ง ID เป็น -1 หรือ 0 ไปแทน
+            // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝรถ๏ฟฝ๏ฟฝวง ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ ID ๏ฟฝ๏ฟฝ -1 ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ 0 ๏ฟฝแทน
             int cartID = (cartGO != null) ? cartGO.GetComponent<PhotonView>().ViewID : -1;
 
             photonView.RPC(nameof(RPC_SetupPayloadAndCart), RpcTarget.AllBuffered, payloadID, cartID);
@@ -125,11 +124,11 @@ public class PayloadSetup : MonoBehaviourPun
         GameObject payloadGO = null;
         GameObject cartGO = null;
 
-        // หา Payload
+        // ๏ฟฝ๏ฟฝ Payload
         PhotonView pView = PhotonView.Find(payloadViewID);
         if (pView != null) payloadGO = pView.gameObject;
 
-        // หา Cart (ถ้าส่งมา)
+        // ๏ฟฝ๏ฟฝ Cart (๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ)
         if (cartViewID != -1)
         {
             PhotonView cView = PhotonView.Find(cartViewID);
@@ -143,7 +142,7 @@ public class PayloadSetup : MonoBehaviourPun
     }
     private void LocalPayloadSetup(GameObject payloadGO, GameObject cartGO)
     {
-        // 1. Setup ตัว Payload หลัก (เหมือนเดิม)
+        // 1. Setup ๏ฟฝ๏ฟฝ๏ฟฝ Payload ๏ฟฝ๏ฟฝัก (๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอน๏ฟฝ๏ฟฝ๏ฟฝ)
         PayloadScript payloadScript = payloadGO.GetComponent<PayloadScript>();
         if (payloadScript != null)
         {
@@ -155,19 +154,16 @@ public class PayloadSetup : MonoBehaviourPun
             }
         }
 
-        // 2. Setup รถพ่วงและการเชื่อมต่อ
         if (cartGO != null)
         {
-            // หาสคริปต์เชื่อมต่อที่รถพ่วง
             CartConnector connector = cartGO.GetComponent<CartConnector>();
 
-            // หาจุดเชื่อม "RearHitch" ที่ Payload (ต้องตั้งชื่อให้ตรงใน Prefab)
             Transform rearHitch = payloadScript.RearHitch;
             Rigidbody leaderRb = payloadGO.GetComponent<Rigidbody>();
 
             if (connector != null && rearHitch != null && leaderRb != null)
             {
-                // สั่งเชื่อมต่อทันที
+                // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอทัน๏ฟฝ๏ฟฝ
                 connector.ConnectTo(leaderRb, rearHitch);
                 Debug.Log("PayloadSetup: Connected Cart to Payload successfully.");
             }
