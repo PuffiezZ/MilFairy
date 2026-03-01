@@ -151,6 +151,8 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
         if (targetPv != null)
         {
             if(!targetPv.IsMine) return;
+
+            Debug.Log($"RPC_SitOnPayload");
             GameObject playerObj = targetPv.gameObject;
             SitOnPayload(playerObj);
         }
@@ -170,7 +172,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
 
         
         p.OnMountingPayload();
-
+        Debug.Log($"sitPosition {sitPosition}");
         p.transform.SetParent(sitPosition);
         p.transform.localPosition = Vector3.zero;
         p.transform.localRotation = Quaternion.identity;
