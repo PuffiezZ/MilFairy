@@ -851,7 +851,6 @@ MonoBehaviour:
   jumpingForce: 4
   gravity: 28
   _cameraPivot: {fileID: 2675814382783412865}
-  cameraSmoothTime: 0.12
   lookSenseH: 0.2
   lookSenseV: 0.2
   lookLimitV: 70

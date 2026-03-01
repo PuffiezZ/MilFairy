@@ -26,15 +26,15 @@ namespace Sausagecat.PlayerControlSystem
 
         [Header("Camera Sensitivity")]
         [SerializeField] private Transform _cameraPivot;
-        [SerializeField] private float cameraSmoothTime = 0.12f;
+        //[SerializeField] private float cameraSmoothTime = 0.12f;
         public float lookSenseH = 0.1f;
         public float lookSenseV = 0.1f;
         public float lookLimitV = 89f;
 
         private float originTurnsmooth;
         private float _turnSmoothVelocity;
-        private float _targetRotationX; // à¡çº¤èÒ¡éÁ-à§Â
-        private float _targetRotationY; // à¡çº¤èÒ«éÒÂ-¢ÇÒ
+        private float _targetRotationX; // ï¿½çº¤ï¿½Ò¡ï¿½ï¿½-ï¿½ï¿½
+        private float _targetRotationY; // ï¿½çº¤ï¿½Ò«ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½
         private float verticalVelocity = 0f;
 
         private PlayerLocomotion playerLocomotion;
@@ -69,15 +69,15 @@ namespace Sausagecat.PlayerControlSystem
         }
         private void LateUpdate()
         {
-            // 1. ÃÑº Input áÅÐÊÐÊÁ¤èÒ¡ÒÃËÁØ¹
+            // 1. ï¿½Ñº Input ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½Ø¹
             _targetRotationY += playerLocomotion.LookInput.x * lookSenseH;
             _targetRotationX -= playerLocomotion.LookInput.y * lookSenseV;
 
-            // 2. ¨Ó¡Ñ´ÁØÁ¡éÁ-à§Â (Clamp)
+            // 2. ï¿½Ó¡Ñ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ (Clamp)
             _targetRotationX = Mathf.Clamp(_targetRotationX, -lookLimitV, lookLimitV);
 
-            // 3. ÊÑè§ËÁØ¹ CameraPivot (ËÁØ¹ÃÍºµÑÇÅÐ¤Ã)
-            // á¡¹ X ¤×Í¡éÁà§Â, á¡¹ Y ¤×ÍËÁØ¹ÃÍºµÑÇ
+            // 3. ï¿½ï¿½ï¿½ï¿½ï¿½Ø¹ CameraPivot (ï¿½ï¿½Ø¹ï¿½Íºï¿½ï¿½ï¿½ï¿½Ð¤ï¿½)
+            // á¡¹ X ï¿½ï¿½Í¡ï¿½ï¿½ï¿½ï¿½, á¡¹ Y ï¿½ï¿½ï¿½ï¿½ï¿½Ø¹ï¿½Íºï¿½ï¿½ï¿½
             _cameraPivot.rotation = Quaternion.Euler(_targetRotationX, _targetRotationY, 0f);
         }
 
@@ -111,7 +111,7 @@ namespace Sausagecat.PlayerControlSystem
 
         public void SetEnableCharacterMovement(bool getBoolean)
         {
-            characterController.Move(Vector3.zero); // ËÂØ´¡ÒÃà¤Å×èÍ¹·Õè·Ñ¹·Õ
+            characterController.Move(Vector3.zero); // ï¿½ï¿½Ø´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½
             characterController.enabled = getBoolean;
         }
 
@@ -121,19 +121,19 @@ namespace Sausagecat.PlayerControlSystem
 
             if (isGround && verticalVelocity < 0f)
             {
-                // ¤èÒµÔ´ÅºàÅç¡¹éÍÂªèÇÂãËé CharacterController µÃÇ¨ÊÍº isGrounded ä´éàÊ¶ÕÂÃ¢Öé¹
+                // ï¿½ï¿½ÒµÔ´Åºï¿½ï¿½ç¡¹ï¿½ï¿½Âªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CharacterController ï¿½ï¿½Ç¨ï¿½Íº isGrounded ï¿½ï¿½ï¿½Ê¶ï¿½ï¿½Ã¢ï¿½ï¿½
                 verticalVelocity = -2f;
             }
 
-            // ¤Ó¹Ç³áÃ§¡ÃÐâ´´ (¤ÇÃ·ÓàÁ×èÍÍÂÙèº¹¾×é¹à·èÒ¹Ñé¹)
+            // ï¿½Ó¹Ç³ï¿½Ã§ï¿½ï¿½ï¿½â´´ (ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½èº¹ï¿½ï¿½ï¿½ï¿½ï¿½Ò¹ï¿½ï¿½)
             if (isGround && playerLocomotion.OnJumping)
             {
-                // ÊÙµÃáÃ§¡ÃÐâ´´: v = sqrt(h * 2 * g)
+                // ï¿½Ùµï¿½ï¿½Ã§ï¿½ï¿½ï¿½â´´: v = sqrt(h * 2 * g)
                 verticalVelocity = Mathf.Sqrt(jumpingForce * 2f * gravity);
                 playerLocomotion.OnJumping = false;
             }
 
-            // áÃ§â¹éÁ¶èÇ§·Ó§Ò¹µÅÍ´àÇÅÒ
+            // ï¿½Ã§ï¿½ï¿½ï¿½ï¿½ï¿½Ç§ï¿½Ó§Ò¹ï¿½ï¿½Í´ï¿½ï¿½ï¿½ï¿½
             verticalVelocity -= gravity * Time.deltaTime;
         }
 
@@ -190,11 +190,11 @@ namespace Sausagecat.PlayerControlSystem
                 turnSmoothTime = originTurnsmooth;
                 if (movementDirection.sqrMagnitude > 0.01f)
                 {
-                    // Atan2 ¨Ð¤×¹¤èÒÁØÁà»ç¹Í§ÈÒ (0-360) â´Â¤Ó¹Ç³¨Ò¡·Ñé§ x áÅÐ z 
-                    // ËÒ¡ x=1, z=1 (à´Ô¹à©ÕÂ§¢ÇÒº¹) targetAngle ¨Ðä´é 45 Í§ÈÒâ´ÂÍÑµâ¹ÁÑµÔ
+                    // Atan2 ï¿½Ð¤×¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í§ï¿½ï¿½ (0-360) ï¿½Â¤Ó¹Ç³ï¿½Ò¡ï¿½ï¿½ï¿½ x ï¿½ï¿½ï¿½ z 
+                    // ï¿½Ò¡ x=1, z=1 (ï¿½Ô¹ï¿½ï¿½Â§ï¿½ï¿½Òºï¿½) targetAngle ï¿½ï¿½ï¿½ï¿½ 45 Í§ï¿½ï¿½ï¿½ï¿½ï¿½Ñµï¿½ï¿½Ñµï¿½
                     float targetAngle = Mathf.Atan2(movementDirection.x, movementDirection.z) * Mathf.Rad2Deg;
 
-                    // ¤èÍÂæ ËÁØ¹ä»ËÒ·ÔÈ¹Ñé¹´éÇÂ¤ÇÒÁ¹ØèÁ¹ÇÅ
+                    // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ø¹ï¿½ï¿½Ò·ï¿½È¹ï¿½é¹´ï¿½ï¿½Â¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                     float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _turnSmoothVelocity, turnSmoothTime);
 
                     transform.rotation = Quaternion.Euler(0f, angle, 0f);
@@ -204,34 +204,34 @@ namespace Sausagecat.PlayerControlSystem
 
         private void HandleMovement()
         {
-            // 1. ´Ö§·ÔÈ·Ò§ Forward áÅÐ Right ¢Í§¡ÅéÍ§ÁÒ
+            // 1. ï¿½Ö§ï¿½ï¿½È·Ò§ Forward ï¿½ï¿½ï¿½ Right ï¿½Í§ï¿½ï¿½ï¿½Í§ï¿½ï¿½
             Vector3 forward = _playerCamera.transform.forward;
             Vector3 right = _playerCamera.transform.right;
 
-            // 2. ·ÓãËéà»ç¹á¹ÇÃÐ¹Òº (á¡¹ Y à»ç¹ 0) à¾×èÍäÁèãËéµÑÇÅÐ¤Ã¡éÁà§ÂµÍ¹à´Ô¹
+            // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹Òº (á¡¹ Y ï¿½ï¿½ 0) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¤Ã¡ï¿½ï¿½ï¿½ÂµÍ¹ï¿½Ô¹
             forward.y = 0f;
             right.y = 0f;
             forward.Normalize();
             right.Normalize();
 
-            // 3. ¤Ó¹Ç³·ÔÈ·Ò§à¤Å×èÍ¹·Õè (¹Õè¤×Í¨Ø´·Õè·ÓãËéà¡Ô´ÁØÁà©ÕÂ§)
+            // 3. ï¿½Ó¹Ç³ï¿½ï¿½È·Ò§ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½Í¨Ø´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½Â§)
             Vector3 movementDirection = (forward * playerLocomotion.MovementInput.y) + (right * playerLocomotion.MovementInput.x);
 
-            // 4. Êè§ä»ãËé¿Ñ§¡ìªÑ¹ËÁØ¹µÑÇ
+            // 4. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½Ñ¹ï¿½ï¿½Ø¹ï¿½ï¿½ï¿½
             HandleCharacterRotation(movementDirection);
 
             Vector3 movementDelta = movementDirection * runAcceleration * Time.deltaTime;
             Vector3 newVelocity = characterController.velocity + movementDelta;
-            newVelocity.y = 0; // ÅéÒ§¤èÒ Y à¡èÒÍÍ¡¡èÍ¹¤Ó¹Ç³áÃ§à´Ô¹
+            newVelocity.y = 0; // ï¿½ï¿½Ò§ï¿½ï¿½ï¿½ Y ï¿½ï¿½ï¿½ï¿½Í¡ï¿½ï¿½Í¹ï¿½Ó¹Ç³ï¿½Ã§ï¿½Ô¹
             newVelocity += movementDelta;
 
-            //Add Drag Ë¹èÇ§µÍ¹¢ÂÑº
+            //Add Drag Ë¹ï¿½Ç§ï¿½Í¹ï¿½ï¿½Ñº
             Vector3 currentDrag = newVelocity.normalized * drag * Time.deltaTime;
             newVelocity = CheckMove(newVelocity, currentDrag);
             newVelocity = Vector3.ClampMagnitude(newVelocity, currentSpeed);
 
             newVelocity.y = verticalVelocity;
-            //Unity ÍÑ¾à´µ Move 1 frame àÃÕÂ¡ 1 characterController.Move
+            //Unity ï¿½Ñ¾à´µ Move 1 frame ï¿½ï¿½ï¿½Â¡ 1 characterController.Move
             characterController.Move(newVelocity * Time.deltaTime);
         }
 

@@ -47,34 +47,50 @@ public class PlayerEquipment : MonoBehaviourPun
             SetNewHandedWeapon(null);
         }
     }
-    public void OnPlayerEquipped(EquipmentScript tEquipment)
+    public void OnPlayerEquipped(EquipmentScript tEquipment,PhotonView playerPv)
     {
         switch (tEquipment)
         {
             case WeaponScript weapon:
-                HandleEquippedWeapon(weapon);
+                HandleEquippedWeapon(weapon,playerPv);
                 break;
         }
     }
 
-    private void HandleEquippedWeapon(WeaponScript getWeapon)
+    private void HandleEquippedWeapon(WeaponScript getWeapon,PhotonView playerPv)
     {
-        // 1. Check ����Ѻ slot �����ҧ
+        if(PhotonNetwork.InRoom && playerPv.IsMine)
+        {
+            int weaponID = getWeapon.photonView.ViewID;
+            playerPv.RPC(nameof(RPC_HandleEquippedWeapon), RpcTarget.AllBuffered,weaponID);
+        }
+        else
+        {
+            LocalHandleEquippedWeapon(getWeapon);
+        }
+    }
+    [PunRPC]
+    protected void RPC_HandleEquippedWeapon(int weaponID)
+    {
+        PhotonView targetPv = PhotonView.Find(weaponID);
+        WeaponScript weaponScript= targetPv.GetComponent<WeaponScript>();
+        LocalHandleEquippedWeapon(weaponScript);
+    }
+    private void LocalHandleEquippedWeapon(WeaponScript getWeapon)
+    {
         bool slotIsFree = false;
         for (int i = 0; i < currentCarriedWeapons.Length; i++)
         {
             if (currentCarriedWeapons[i] == null)
             {
-                // �� ��� Set
+
                 SetWeaponSlot(i, getWeapon);
                 slotIsFree = true;
                 break;
             }
         }
-        // �� Slot �����ҧ ��� return ��������ͧ�����õ��
-        if (slotIsFree) return;
 
-        // 2. �������� Slot �����ҧ ����� Slot index ��������ظ��������ش
+        if (slotIsFree) return;
         SetWeaponSlot(indexCarriedWeapon, getWeapon);
     }
     public void SetNewHandedWeapon(WeaponScript weapon = null)
@@ -85,7 +101,7 @@ public class PlayerEquipment : MonoBehaviourPun
         }
         else
         {
-            // 1. ��Ǩ�ͺ����� Spawn ���ظ��Ѵ�͡�������ѧ
+
             if (spawnedUnarmed == null)
             {
                 // ����ѧ����� ������ҧ�͡�����١�ͧ����Ф� (transform)
@@ -93,11 +109,10 @@ public class PlayerEquipment : MonoBehaviourPun
                 spawnedUnarmed.name = "Unarmed_Hand";
             }
 
-            // 2. ��駤�ҡ����ҧ�ԧ���١��ͧ
+
             currentWeaponOnHanded = spawnedUnarmed;
             currentWeaponOnHanded.PlayerTransform = transform; // �� Transform ����Ф�����ʤ�Ի�����ظ
 
-            // 3. ��� Register Hitbox
             if (currentWeaponOnHanded.TryGetComponent<MeleeWeapon>(out MeleeWeapon punch))
             {
                 punch.RegisterHitbox();
@@ -136,7 +151,6 @@ public class PlayerEquipment : MonoBehaviourPun
 
     public void SetWeaponSlot(int indexSlot, WeaponScript getWeapon)
     {
-        //��� Slot ��������ظ�������� ���������ظ���������㹽ѡ��͹
         currentCarriedWeapons[indexSlot] = getWeapon;
         currentCarriedWeapons[indexSlot].IndexSlotNumber = indexSlot;
         currentCarriedWeapons[indexSlot].IsShethed = true;

@@ -38,7 +38,7 @@ namespace Sausagecat.PlayerControlSystem
         public void OnMovement(InputAction.CallbackContext context)
         {
             MovementInput = context.ReadValue<Vector2>();
-            print(MovementInput);
+            //print(MovementInput);
         }
 
         public void OnLook(InputAction.CallbackContext context)
@@ -82,7 +82,7 @@ namespace Sausagecat.PlayerControlSystem
 
         public void OnAttack(InputAction.CallbackContext context)
         {
-            // ใช้เฉพาะ context.performed เพื่อให้โค้ดทำงานแค่ 1 ครั้งต่อการกด 1 รอบ
+            // ๏ฟฝ๏ฟฝเฉพ๏ฟฝ๏ฟฝ context.performed ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ้ดทำงาน๏ฟฝ๏ฟฝ 1 ๏ฟฝ๏ฟฝ๏ฟฝ้งต๏ฟฝอก๏ฟฝรก๏ฟฝ 1 ๏ฟฝอบ
             if (context.performed)
             {
                 Debug.Log("On Attack Locomotion Invoke (Performed Only)");
@@ -96,16 +96,16 @@ namespace Sausagecat.PlayerControlSystem
 
         public void OnWeaponToggle(InputAction.CallbackContext context)
         {
-            // ใช้ performed เพื่อให้รันแค่ครั้งเดียวเมื่อกดปุ่มลง
+            // ๏ฟฝ๏ฟฝ performed ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝลง
             if (context.performed)
             {
                 int weaponValue = Mathf.Abs(Mathf.RoundToInt(context.ReadValue<float>()));
                 int finalValue = weaponValue - 1;
 
-                // หยุดการสลับอาวุธครั้งก่อนหน้า (ถ้ามี) เพื่อไม่ให้ Logic ตีกัน
+                // ๏ฟฝ๏ฟฝุด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝับ๏ฟฝ๏ฟฝ๏ฟฝุธ๏ฟฝ๏ฟฝ๏ฟฝ้งก๏ฟฝอนหน๏ฟฝ๏ฟฝ (๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ) ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Logic ๏ฟฝีกัน
                 if (weaponSwapCoroutine != null) StopCoroutine(weaponSwapCoroutine);
 
-                // เริ่มต้นการสลับอาวุธครั้งใหม่
+                // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ้นก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝับ๏ฟฝ๏ฟฝ๏ฟฝุธ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
                 weaponSwapCoroutine = StartCoroutine(PlayerEquipment.SwapWeapon(finalValue));
             }
         }
