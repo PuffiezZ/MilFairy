@@ -150,7 +150,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
 
         if (targetPv != null)
         {
-            if(!targetPv.IsMine) return;
+            //if(!targetPv.IsMine) return;
 
             Debug.Log($"RPC_SitOnPayload");
             GameObject playerObj = targetPv.gameObject;
