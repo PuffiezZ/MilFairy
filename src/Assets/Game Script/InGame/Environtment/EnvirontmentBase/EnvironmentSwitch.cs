@@ -29,33 +29,31 @@ public class EnvironmentSwitch : MonoBehaviourPun, IDamageable, IInteractable
         UpdateVisuals();
     }
 
-    // --- IDamageable Implementation (ถูกตีแล้วทำงาน) ---
+    // --- IDamageable Implementation (๏ฟฝูก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝวทำงาน) ---
     public void TakeDamage(float damage)
     {
         ExecuteToggleLogic();
     }
 
-    // --- IInteractable Implementation (กดปุ่ม E หรือปุ่ม Interact แล้วทำงาน) ---
+    // --- IInteractable Implementation (๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ E ๏ฟฝ๏ฟฝ๏ฟฝอป๏ฟฝ๏ฟฝ๏ฟฝ Interact ๏ฟฝ๏ฟฝ๏ฟฝวทำงาน) ---
     public void OnBeginIntereact(GameObject player, bool getBoolean = false)
     {
         ExecuteToggleLogic();
     }
 
-    public void ShowWorldInterectUI() { /* โชว์ปุ่ม [E] Interact */ }
-    public void HideWorldInterectUI() { /* ปิดปุ่ม [E] Interact */ }
-    public void OnHoldInteract(GameObject player, float progress) { /* ถ้ามีหลอดโหลดให้ใส่ตรงนี้ */ }
+    public void ShowWorldInterectUI() {}
+    public void HideWorldInterectUI() {}
+    public void OnHoldInteract(GameObject player, float progress) {}
     public void OnCancelInteract() { }
 
     // --- Logic Core ---
     private void ExecuteToggleLogic()
     {
-        // เช็ค Cooldown และเงื่อนไขการใช้งานครั้งเดียว
         if (Time.time < _lastToggleTime + cooldown) return;
         if (isOneTimeUse && _isActive) return;
 
         if (PhotonNetwork.InRoom)
         {
-            // ใช้ RPC เพื่อให้สถานะสวิตช์ (Visual & Event) ตรงกันทุกคนในห้อง
             photonView.RPC(nameof(RPC_ToggleSwitch), RpcTarget.All);
         }
         else

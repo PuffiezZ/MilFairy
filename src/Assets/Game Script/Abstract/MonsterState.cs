@@ -51,7 +51,6 @@ public class MonsterState : MonoBehaviourPunCallbacks
     {
         if (fsmBlackboard != null)
         {
-            // ล้างข้อมูลเก่าเพื่อเริ่มรอบใหม่
             fsmBlackboard.SetVariableValue("FirstSeenPlayer", null);
             fsmBlackboard.SetVariableValue("TargetObject", null);
             fsmBlackboard.SetVariableValue("PlayerInVision", null);
@@ -82,17 +81,12 @@ public class MonsterState : MonoBehaviourPunCallbacks
     }
     private void UpdateStateFSM()
     {
-        //currentState = (EnemyState)newStateNumber;
-
-        //behaviorTree.RestartBehavior();
-        //finiteStateMachine.graph.UpdateGraph();
         stateOverheadsUI.UpdateStateText(finiteStateMachine.behaviour.currentStateName);
     }
     public void UpdateFSMVariable<T>(string varName, T value)
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            // Photon RPC รองรับการส่ง object ที่เป็นประเภทพื้นฐานได้เลย
             photonView.RPC(nameof(RPC_SyncFSMVariable), RpcTarget.AllBuffered, name, (object)value);
         }
     }
@@ -100,10 +94,8 @@ public class MonsterState : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_SyncFSMVariable(string varName, object value)
     {
-        // อัปเดตค่าลงใน Blackboard
         fsmBlackboard.SetVariableValue(varName, value);
 
-        // อัปเดต UI เพื่อให้สอดคล้องกับงานวิจัยของคุณ
         stateOverheadsUI.UpdateStateText(((EnemyState)value).ToString());
     }
     #endregion

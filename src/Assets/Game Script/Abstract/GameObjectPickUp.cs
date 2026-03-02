@@ -54,10 +54,8 @@ public abstract class GameObjectPickUp : MonoBehaviourPun,IInteractable
         {
             GameObject player = targetPv.gameObject;
 
-            // 1. ��͹�ѵ��㹷ء����ͧ�ѹ��
             LocalSetGameObjectActive(getBoolean);
 
-            // 2. ��� OnInterected (��觨�����¡ OnPlayerEquipped 㹤����١)
             OnInterected(player, getBoolean);
         }
     }

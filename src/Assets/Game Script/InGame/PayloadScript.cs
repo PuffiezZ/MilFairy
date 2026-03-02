@@ -58,7 +58,6 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
         {
             if (PhotonNetwork.InRoom)
             {
-                // �觤�Ҥ�����������ء���ԧ����
                 photonView.RPC(nameof(RPC_SyncPayloadSpeed), RpcTarget.All, newSpeed);
             }
             else
@@ -70,7 +69,6 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     [PunRPC]
     private void RPC_SyncPayloadSpeed(float speed)
     {
-        // �ء����ͧ�����Ѻ����������ҡѹ ��й���ѹ� PayloadPositionHandler() ����
         currentMoveSpeed = speed;
     }
     public void SetPayloadSpeed(float speed)
@@ -83,28 +81,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
         Collider[] hitPlayers = Physics.OverlapSphere(transform.position, SphereAreaRadius, LayerMask.GetMask("Player"));
         return hitPlayers.Length > 0;
     }
-    private void PayloadPositionHandler()
-    {
-        //// 1. �ӹǳ���зҧ���� (0-1)
-        //distancePercentage += (currentMoveSpeed * Time.deltaTime) / splineLenght;
-        //distancePercentage = Mathf.Clamp01(distancePercentage); // �ѹ����Թ 1
 
-        //Vector3 currentPosition = splineAnimate.Container.EvaluatePosition(distancePercentage);
-        //transform.position = currentPosition;
-
-        //Vector3 forwardDirection = splineAnimate.Container.EvaluateTangent(distancePercentage);
-
-        //Vector3 upDirection = splineAnimate.Container.EvaluateUpVector(distancePercentage);
-
-        //if (forwardDirection != Vector3.zero)
-        //{
-        //    transform.rotation = Quaternion.LookRotation(forwardDirection, upDirection);
-        //}
-        //if (distancePercentage >= 1.0f)
-        //{
-        //    RoomManager.Instance.TriggerWinCondition();
-        //}
-    }
     public void PlayloadSwitchFunction()
     {
         isTurnOn = !isTurnOn;

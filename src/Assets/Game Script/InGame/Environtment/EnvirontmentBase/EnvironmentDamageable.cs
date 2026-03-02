@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Photon.Pun;
 
-// เพิ่มบรรทัดนี้เพื่อให้ Unity ใส่ Component ที่จำเป็นให้อัตโนมัติ
+// ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝรทัด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Unity ๏ฟฝ๏ฟฝ๏ฟฝ Component ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัต๏ฟฝ๏ฟฝัต๏ฟฝ
 [RequireComponent(typeof(PhotonView))]
 [RequireComponent(typeof(PhotonView))]
 public class EnvironmentDamageable : MonoBehaviourPun, IDamageable
@@ -11,7 +11,7 @@ public class EnvironmentDamageable : MonoBehaviourPun, IDamageable
     [SerializeField] private bool enableDamage = true;
 
     [Header("Visual Shake Settings")]
-    [Tooltip("ลาก Model ลูกมาใส่ตรงนี้ หากปล่อยว่างจะสั่นที่ตัวเอง")]
+    [Tooltip("๏ฟฝาก Model ๏ฟฝูก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝรง๏ฟฝ๏ฟฝ๏ฟฝ ๏ฟฝาก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ่นท๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง")]
     [SerializeField] private Transform visualTransform;
     [SerializeField] private float shakeIntensity = 0.15f;
     [SerializeField] private float shakeDuration = 0.12f;
@@ -33,13 +33,10 @@ public class EnvironmentDamageable : MonoBehaviourPun, IDamageable
 
     public bool EnableDamage { get; set; }
 
-
-    // ฟังก์ชันนี้จะทำงานอัตโนมัติเมื่อลาก Script นี้ไปแปะใน Inspector
     private void Reset()
     {
-        // ตั้งค่า PhotonView เบื้องต้นให้ Designer เลย
         PhotonView pv = GetComponent<PhotonView>();
-        pv.Synchronization = ViewSynchronization.Off; // ปิดการส่ง data ต่อเนื่อง (ใช้แค่ RPC)
+        pv.Synchronization = ViewSynchronization.Off;
     }
 
     private void Awake()
@@ -61,8 +58,6 @@ public class EnvironmentDamageable : MonoBehaviourPun, IDamageable
     // --- IDamageable Implementation ---
     public void TakeDamage(float damage)
     {
-        // เช็คว่าอยู่ใน Room และเป็นเจ้าของ Master หรือไม่ (เพื่อป้องกันการตีเบิ้ลในบางกรณี)
-        // แต่สำหรับ Environment ทั่วไป ใช้ RPC Target All ก็เพียงพอแล้ว
         if (PhotonNetwork.InRoom)
         {
             photonView.RPC(nameof(RPC_HandleHit), RpcTarget.All, damage);
@@ -89,7 +84,6 @@ public class EnvironmentDamageable : MonoBehaviourPun, IDamageable
         if (canBeDestroyed && CurrentHealth <= 0)
         {
             OnDestroyed?.Invoke();
-            // Optional: ถ้าจะทำลายทิ้งในระบบ Network
             if (PhotonNetwork.IsMasterClient) PhotonNetwork.Destroy(gameObject);
         }
     }

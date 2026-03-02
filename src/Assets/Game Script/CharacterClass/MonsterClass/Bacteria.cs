@@ -34,12 +34,11 @@ public class Bacteria : MonsterBase
             time += Time.deltaTime;
             yield return null;
         }
-        // �ӹǳ�ش������� (Origin) �ºǡ Offset ᡹ Y
+
         Vector3 origin = transform.position + (Vector3.up * yOffset);
-        // ��ȷҧ�����ԧ Raycast �͡�
+
         Vector3 direction = transform.forward;
 
-        // �� SphereCast �����礡�ûзе����ȷҧ��ҹ˹��
         RaycastHit[] hits = Physics.SphereCastAll(origin, biteRadius, direction, biteDistance, LayerMask.GetMask("Player"));
         foreach (var hit in hits)
         {
@@ -60,24 +59,20 @@ public class Bacteria : MonsterBase
 
         while (Time.time < startTime + duration)
         {
-            // 1. �ӹǳ���з���ͧ��è���������
             float frameDistance = force * Time.deltaTime;
             Vector3 nextPos = transform.position + direction * frameDistance;
 
-            // 2. �� Linecast ��Ǩ�ͺ��鹷ҧ�ҡ�ش�Ѩ�غѹ仨ش�Ѵ�
             RaycastHit hit;
             if (Physics.Linecast(transform.position + Vector3.up, nextPos + Vector3.up, out hit))
             {
                 if (!hit.collider.isTrigger)
                 {
-                    // �ҡ����觡մ��ҧ �������͹������ش���˹����觹�鹾ʹ�
                     transform.position = hit.point - direction * 0.2f;
                     Debug.Log("Dash Blocked by: " + hit.collider.name);
                     break;
                 }
             }
 
-            // 3. �ҡ��������â�ҧ ������ Move �������Դ�ͺ NavMesh
             aiAgent.Move(direction * frameDistance);
             yield return null;
         }
@@ -96,11 +91,9 @@ public class Bacteria : MonsterBase
         Vector3 origin = transform.position + (Vector3.up * yOffset);
         Vector3 targetLocation = origin + (transform.forward * biteDistance);
 
-        // �Ҵ�ç������ش�������Шش��
         Gizmos.DrawWireSphere(origin, biteRadius);
         Gizmos.DrawWireSphere(targetLocation, biteRadius);
 
-        // �Ҵ�������������ҧ�ç�������ͧ
         Gizmos.DrawLine(origin, targetLocation);
     }
 }

@@ -68,7 +68,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
 
     public virtual void TakeDamage(float damage)
     {
-        float finalDamage = damage; // คุณอาจเพิ่มการคำนวณดาเมจที่นี่ เช่น ลดตามเกราะ
+        float finalDamage = damage; 
         if (PhotonNetwork.InRoom)
         {
             photonView.RPC("RPC_TakeDamage", RpcTarget.All, finalDamage);
@@ -97,48 +97,34 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     }
     private void LocalKnockback(Vector3 direction, float force)
     {
-        // 1. หยุดเดินทันทีที่โดนตี
         if (aiAgent.isOnNavMesh)
         {
             aiAgent.isStopped = true;
-            aiAgent.ResetPath(); // ล้างคำสั่งเดินที่ค้างอยู่ทั้งหมด
+            aiAgent.ResetPath(); 
         }
 
         aiAgent.velocity = direction * force;
-        // 2. ใช้ Coroutine จัดการการฟื้นตัวแทนการเขียนใน Update
+
         StopAllCoroutines();
         StartCoroutine(RecoverFromKnockback(direction,force));
     }
     public IEnumerator RecoverFromKnockback(Vector3 direction, float force)
     {
-        //// รอให้แรงส่ง (Impact) ค่อยๆ หายไป
-        //while (aiAgent.velocity.magnitude > 0.2f)
-        //{
-        //    aiAgent.velocity = Vector3.Lerp(aiAgent.velocity, Vector3.zero, 5 * Time.deltaTime);
-        //    yield return null;
-        //}
-
-        //// 3. ปลดล็อกเพื่อให้ Behavior Tree กลับมาสั่งเดินได้อีกครั้ง
-        //aiAgent.isStopped = false;
-        //Debug.Log("AI recovered and ready to move.");
-        float duration = 0.25f; // ระยะเวลาการกระเด็น (ปรับตามความเหมาะสม)
+        float duration = 0.25f;
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
 
-            // คำนวณแรงที่ค่อยๆ เบาลงแบบ Linear Decay
             float strength = Mathf.Lerp(force, 0, elapsed / duration);
 
-            // ใช้ Move แทนการเปลี่ยนตำแหน่งตรงๆ เพื่อความปลอดภัยบน NavMesh
             aiAgent.Move(direction * strength * Time.deltaTime);
 
             yield return null;
         }
 
-        // 3. ปล่อยให้ AI กลับมาทำงานต่อ
-        yield return new WaitForSeconds(0.1f); // รอให้นิ่งสักพักก่อนเดินต่อ
+        yield return new WaitForSeconds(0.1f);
 
         if (aiAgent.isOnNavMesh)
         {
@@ -154,7 +140,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     {
         currentHP -= damage;
         Debug.Log($"{monsterName} took {damage} damage. Current HP: {currentHP}/{MaxHP}");
-        // เล่น Effect เลือดกระเด็น หรือแอนิเมชันโดนตี
+
         if (healthBarUI != null)
         {
             monsterState.hurtSignal?.Invoke(transform,transform,false);
@@ -185,7 +171,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     {
         if (PhotonNetwork.InRoom)
         {
-            // ส่ง RPC เพื่อให้ทุกคนเล่นแอนิเมชันโจมตี
+            // ๏ฟฝ๏ฟฝ RPC ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝุก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
             photonView.RPC(nameof(RPC_AttackHandle), RpcTarget.All);
         }
         else

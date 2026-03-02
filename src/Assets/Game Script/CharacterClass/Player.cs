@@ -131,7 +131,6 @@ public class Player : CharacterBase,IPickupable
     protected override void Die()
     {
         Debug.Log("Player Died! Show GameOver UI");
-        // Logic ����Դ���� ���͡�����Ⱦ
     }
     #region Pick Up Resource Handle
     public void OnPickResourceInvoke(UtilityDev.ResourceType resourceType, float percentage)
