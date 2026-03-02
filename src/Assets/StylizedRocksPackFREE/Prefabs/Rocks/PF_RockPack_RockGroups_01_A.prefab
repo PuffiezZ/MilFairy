@@ -94,7 +94,6 @@ GameObject:
   - component: {fileID: 7345786945278820404}
   - component: {fileID: 2213403790552525194}
   - component: {fileID: 6246430844582803267}
-  - component: {fileID: 4320870337754873549}
   m_Layer: 0
   m_Name: SM_RockPack_RockGroups_01_A_LOD0
   m_TagString: Untagged
@@ -167,28 +166,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4320870337754873549
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 153161879811077847}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4139255490539373448, guid: 4eb57a7a08981674195b9c11d340ead3, type: 3}
 --- !u!1 &4020312957552067743
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,6 +259,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3542181526211151253}
   - component: {fileID: 7404344273113527408}
+  - component: {fileID: 8451452591502053930}
   m_Layer: 0
   m_Name: PF_RockPack_RockGroups_01_A
   m_TagString: Untagged
@@ -334,3 +312,24 @@ LODGroup:
     renderers:
     - renderer: {fileID: 5978206530113701061}
   m_Enabled: 1
+--- !u!65 &8451452591502053930
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5562120981366406150}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5.896966, y: 1.8229097, z: 5.55187}
+  m_Center: {x: 0.24130046, y: 0.17145354, z: 0.14065814}

@@ -93,6 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7534200697675183075}
   - component: {fileID: 7990474776389745906}
+  - component: {fileID: 3521402633956177596}
   m_Layer: 0
   m_Name: PF_RockPack_RockGroups_02_B
   m_TagString: Untagged
@@ -145,6 +146,27 @@ LODGroup:
     renderers:
     - renderer: {fileID: 548486081753009308}
   m_Enabled: 1
+--- !u!65 &3521402633956177596
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3985788450935348801}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.959959, y: 4.2097054, z: 4.4272017}
+  m_Center: {x: 0.31409836, y: 1.6048536, z: 0.13823104}
 --- !u!1 &6278462572398610333
 GameObject:
   m_ObjectHideFlags: 0

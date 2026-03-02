@@ -93,6 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3580637581437175299}
   - component: {fileID: 3065879828445044154}
+  - component: {fileID: -6561768998881149589}
   m_Layer: 0
   m_Name: PF_RockPack_Rock_06
   m_TagString: Untagged
@@ -145,6 +146,27 @@ LODGroup:
     renderers:
     - renderer: {fileID: 1626884710152134962}
   m_Enabled: 1
+--- !u!65 &-6561768998881149589
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6536646777496294739}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.475225, y: 2.8902457, z: 3.717762}
+  m_Center: {x: 0.1807468, y: 0.32198894, z: 0.025179625}
 --- !u!1 &7264687424306778687
 GameObject:
   m_ObjectHideFlags: 0
@@ -156,7 +178,6 @@ GameObject:
   - component: {fileID: 4161627952959337821}
   - component: {fileID: 76761923778138343}
   - component: {fileID: 3348008599004154971}
-  - component: {fileID: 1187672452834639905}
   m_Layer: 0
   m_Name: SM_RockPack_Rock_06_LOD0
   m_TagString: Untagged
@@ -229,28 +250,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &1187672452834639905
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7264687424306778687}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 1983026347601820798, guid: cdbfd6052d3afd14586fe1c72f1f1381, type: 3}
 --- !u!1 &8322012731104708661
 GameObject:
   m_ObjectHideFlags: 0
