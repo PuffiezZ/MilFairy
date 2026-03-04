@@ -18,7 +18,7 @@ public class RoomList : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject roomInstance;
 
     [BoxGroup("Game References")]
-    [SerializeField] private PlayerLobbyList playerLobbyList;
+    [SerializeField] private LobbyHandler playerLobbyHandler;
 
     public void ConnectToPhotonServer()
     {
@@ -53,7 +53,7 @@ public class RoomList : MonoBehaviourPunCallbacks
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        // ÅéÒ§ UI à¡èÒ·Õè¤éÒ§ÍÂÙèã¹ Content
+        // ï¿½ï¿½Ò§ UI ï¿½ï¿½Ò·ï¿½ï¿½ï¿½Ò§ï¿½ï¿½ï¿½ï¿½ï¿½ Content
         foreach (Transform child in roomViewContent)
         {
             Destroy(child.gameObject);
@@ -61,7 +61,7 @@ public class RoomList : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < roomList.Count; i++)
         {
-            // ÊÓ¤Ñ­ÁÒ¡: ¶éÒËéÍ§¶Ù¡Åºä»¨Ò¡ Server áÅéÇ äÁèµéÍ§ÊÃéÒ§»ØèÁ
+            // ï¿½Ó¤Ñ­ï¿½Ò¡: ï¿½ï¿½ï¿½ï¿½ï¿½Í§ï¿½Ù¡Åºä»¨Ò¡ Server ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í§ï¿½ï¿½ï¿½Ò§ï¿½ï¿½ï¿½ï¿½
             if (roomList[i].RemovedFromList) continue;
 
             GameObject newRoomGO = Instantiate(roomInstance, roomViewContent);
@@ -92,22 +92,21 @@ public class RoomList : MonoBehaviourPunCallbacks
         }
         gameObject.SetActive(false);
         lobbyPage.gameObject.SetActive(true);
-        Debug.Log("Client Joined!");
-        playerLobbyList.OnJoinedRoom();
+        playerLobbyHandler.OnJoinedRoom();
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
-        Debug.LogError($"Join Room Failed: {message}"); // ¨ÐºÍ¡ÊÒàËµØªÑ´à¨¹ã¹ Console
+        Debug.LogError($"Join Room Failed: {message}"); // ï¿½ÐºÍ¡ï¿½ï¿½ï¿½ËµØªÑ´à¨¹ï¿½ Console
 
-        joiningRoomText.SetActive(false); // »Ô´µÑÇË¹Ñ§Ê×ÍâËÅ´
+        joiningRoomText.SetActive(false); // ï¿½Ô´ï¿½ï¿½ï¿½Ë¹Ñ§ï¿½ï¿½ï¿½ï¿½ï¿½Å´
 
-        // áÊ´§Ë¹éÒ UI ËÅÑ¡¡ÅÑºÁÒà¾×èÍãËé¼ÙéàÅè¹àÅ×Í¡ãËÁè
+        // ï¿½Ê´ï¿½Ë¹ï¿½ï¿½ UI ï¿½ï¿½Ñ¡ï¿½ï¿½Ñºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¡ï¿½ï¿½ï¿½ï¿½
         for (int i = 0; i < uiPages.Length; i++)
         {
             uiPages[i].gameObject.SetActive(true);
         }
 
-        // á¨é§àµ×Í¹¼ÙéàÅè¹¼èÒ¹ Error Handler ·ÕèàÃÒà¤Â·ÓäÇé
+        // ï¿½ï¿½ï¿½ï¿½Í¹ï¿½ï¿½ï¿½ï¿½ï¿½è¹¼ï¿½Ò¹ Error Handler ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½
     }
 }

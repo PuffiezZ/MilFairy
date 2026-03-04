@@ -18,7 +18,7 @@ public class HostGame : MonoBehaviourPunCallbacks
     [SerializeField] private RectTransform lobbyHostConfig_Rect;
     [SerializeField] private RectTransform lobbyCreatingRoom_Rect;
 
-    [SerializeField] private PlayerLobbyList playerLobbyList;
+    [SerializeField] private LobbyHandler playerLobbyHandler;
     [SerializeField] private MainMenu mainmenu;
 
     private bool isCancellingRoom = false;
@@ -62,7 +62,7 @@ public class HostGame : MonoBehaviourPunCallbacks
 
     public void CancelDuringConnecting()
     {
-        // ตรวจสอบว่ากำลังเชื่อมต่อ หรือเชื่อมต่ออยู่หรือไม่
+        // ๏ฟฝ๏ฟฝวจ๏ฟฝอบ๏ฟฝ๏ฟฝาก๏ฟฝ๏ฟฝัง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
         if (PhotonNetwork.IsConnected || PhotonNetwork.NetworkingClient.State == ClientState.ConnectingToMasterServer)
         {
             PhotonNetwork.Disconnect();
@@ -85,8 +85,8 @@ public class HostGame : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsConnectedAndReady)
         {
             RoomOptions options = new RoomOptions();
-            options.MaxPlayers = 4; // กำหนดจำนวนผู้เล่น
-            options.IsVisible = true; // ให้คนอื่นเห็นใน Lobby
+            options.MaxPlayers = 4; // ๏ฟฝ๏ฟฝหน๏ฟฝ๏ฟฝำนวน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+            options.IsVisible = true; // ๏ฟฝ๏ฟฝ้คน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Lobby
             options.IsOpen = true;
 
             lobbyPage_Rect.gameObject.SetActive(false);
@@ -99,51 +99,51 @@ public class HostGame : MonoBehaviourPunCallbacks
         }
         else
         {
-            Debug.LogWarning("ยังไม่พร้อมเชื่อมต่อ กรุณารอสักครู่");
+            Debug.LogWarning("๏ฟฝัง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ ๏ฟฝ๏ฟฝุณ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ");
         }
     }
 
-    // เมื่อสร้างสำเร็จ Photon จะพาเข้าห้องให้อัตโนมัติ (ไม่ต้องเรียก Join ซ้ำ)
+    // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Photon ๏ฟฝะพ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัต๏ฟฝ๏ฟฝัต๏ฟฝ (๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝยก Join ๏ฟฝ๏ฟฝ๏ฟฝ)
     public override void OnJoinedRoom()
     {
         if (isCancellingRoom)
         {
-            isCancellingRoom = false; // รีเซ็ตสถานะ
-            PhotonNetwork.LeaveRoom(); // สั่งให้ออกจากห้องทันที
+            isCancellingRoom = false; // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝสถาน๏ฟฝ
+            PhotonNetwork.LeaveRoom(); // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอก๏ฟฝาก๏ฟฝ๏ฟฝอง๏ฟฝัน๏ฟฝ๏ฟฝ
             Debug.Log("Room was created but left due to cancellation.");
-            return; // ไม่ต้องรัน Logic แสดงผลหน้า Lobby ต่อ
+            return; // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝัน Logic ๏ฟฝสด๏ฟฝ๏ฟฝ๏ฟฝหน๏ฟฝ๏ฟฝ Lobby ๏ฟฝ๏ฟฝ๏ฟฝ
         }
 
-        // Logic เดิมของคุณ
+        // Logic ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝุณ
         Debug.Log("Host Joined Room: " + PhotonNetwork.CurrentRoom.Name);
         gameObject.SetActive(false);
         lobbyCreatingRoom_Rect.gameObject.SetActive(false);
         lobbyPage_Rect.gameObject.SetActive(true);
 
-        playerLobbyList.OnJoinedRoom();
+        playerLobbyHandler.OnJoinedRoom();
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
         isCancellingRoom = false;
 
-        Debug.LogError("สร้างห้องล้มเหลว: " + message);
+        Debug.LogError("๏ฟฝ๏ฟฝ๏ฟฝาง๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ: " + message);
         lobbyPage_Rect.gameObject.SetActive(false);
         lobbyLoading_Rect.gameObject.SetActive(false);
         lobbyCreatingRoom_Rect.gameObject.SetActive(false);
 
         lobbyFailed_Rect.gameObject.SetActive(true);
-        // เพิ่ม UI แจ้งเตือนผู้เล่นตรงนี้ เช่น "ชื่อห้องนี้มีคนใช้แล้ว"
+        // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ UI ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ่นตรง๏ฟฝ๏ฟฝ๏ฟฝ ๏ฟฝ๏ฟฝ "๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝีค๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ"
     }
 
     public void CreateRoomWithRandomCode()
     {
-        // สุ่มตัวอักษร 6 หลัก
+        // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัก๏ฟฝ๏ฟฝ 6 ๏ฟฝ๏ฟฝัก
         string randomCode = GenerateRandomCode(6);
 
         RoomOptions options = new RoomOptions();
         options.MaxPlayers = 4;
-        options.IsVisible = false; // ถ้าต้องการให้จอยผ่านรหัสเท่านั้น ไม่ต้องโชว์ในรายชื่อห้องสาธารณะ
+        options.IsVisible = false; // ๏ฟฝ๏ฟฝาต๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝยผ๏ฟฝาน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาน๏ฟฝ๏ฟฝ ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝยช๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝาธ๏ฟฝรณ๏ฟฝ
 
         PhotonNetwork.CreateRoom(randomCode, options);
     }

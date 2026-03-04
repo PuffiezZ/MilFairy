@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using NaughtyAttributes;
+using TMPro;
 using UnityEngine;
 
 public class PlayerCharacterInLobby : MonoBehaviour
@@ -8,6 +9,11 @@ public class PlayerCharacterInLobby : MonoBehaviour
     public SelectCharacter selectCharacter;
     [SerializeField] private List<ModifyCharacterMesh> modifyCharacterMeshes = new List<ModifyCharacterMesh>();
     private Dictionary<SelectCharacter,List<SkinnedMeshRenderer>> DictskinnedMeshRenderers = new Dictionary<SelectCharacter,List<SkinnedMeshRenderer>>();
+    
+    [SerializeField] private TextMeshProUGUI textName;
+    public TextMeshProUGUI GetTextName => textName;
+    public Photon.Realtime.Player CurrentPlayerControl { get; set; }
+ 
     
     public enum SelectCharacter
     {
@@ -18,6 +24,9 @@ public class PlayerCharacterInLobby : MonoBehaviour
     {
         foreach (var each in modifyCharacterMeshes)
         {
+            if(DictskinnedMeshRenderers.ContainsKey(each.SetSelectCharacter))
+                return;
+                
             DictskinnedMeshRenderers.Add(each.SetSelectCharacter, each.skinClothes);
         }
     }
