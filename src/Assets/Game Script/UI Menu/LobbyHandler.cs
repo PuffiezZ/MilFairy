@@ -21,79 +21,71 @@ public class LobbyHandler : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.AutomaticallySyncScene = true;
     }
-    
+       public void ConnectToGamePlayScene()
+    {
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            Debug.LogWarning("Only the Host can start the game!");
+            return;
+        }
+
+        Debug.Log("Host is starting the game...");
+
+        PhotonNetwork.LoadLevel(sceneName);
+    }
+    public void ChangeCharacter(PlayerCharacterInLobby.SelectCharacter selectCharacter)
+    {
+        if (localPlayerCharacterInLobby == null) return;
+        
+        localPlayerCharacterInLobby.selectCharacter = selectCharacter;
+        localPlayerCharacterInLobby.ResetSkin();
+    }
+
+    // วิธีที่ 2: รับผ่าน UnityEvent ที่ส่งค่าเป็น int (เช่น TMP_Dropdown.onValueChanged)
+    public void ChangeCharacterInt(int index)
+    {
+        ChangeCharacter((PlayerCharacterInLobby.SelectCharacter)index);
+    }
+
     public override void OnJoinedRoom()
     {
         CameraManager.ChangeCameraByName("Lobby Main Camera");
-        foreach (GameObject entry in playerListEntries.Values) 
-            Destroy(entry);
-            
-        playerListEntries.Clear();
-        Photon.Realtime.Player localPlayer = PhotonNetwork.LocalPlayer;
 
-        Debug.Log($"On Joined Room has Player Amount = {PhotonNetwork.CurrentRoom.Players.Values.Count}");
-        for (int i = 0; i < PhotonNetwork.CurrentRoom.Players.Values.Count; i++)
-        {
-            Transform currentPOS = playerStandPOSs[i];
-            Photon.Realtime.Player player = PhotonNetwork.PlayerList[i];
-            Debug.Log($"Player: {player.NickName} has join at index: {i}");
-            
-            if(player.ActorNumber == localPlayer.ActorNumber)
-            {
-                AddPlayerListing(player, currentPOS,localPlayer);
-            }
-            else
-            {
-                AddPlayerListing(player, currentPOS);
-            }
-        }
-        
-        Debug.Log("Client Joined Room!");
+        // ล้างข้อมูลเก่า
+        playerListEntries.Clear();
+
+        // ทุกคนจะ Spawn แค่ "ตัวเอง" เท่านั้นเมื่อเข้าห้อง
+        // ใช้ ActorNumber ในการกำหนดจุดยืน เพื่อให้ตำแหน่งคงที่และไม่ซ้อนกัน
+        int spawnIndex = (PhotonNetwork.LocalPlayer.ActorNumber - 1) % playerStandPOSs.Length;
+        AddPlayerListing(PhotonNetwork.LocalPlayer, playerStandPOSs[spawnIndex]);
     }
-    public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
-    { 
-        AddPlayerListing(newPlayer,playerStandPOSs[newPlayer.ActorNumber - 1]);
-    }
+
+    // ลบ OnPlayerEnteredRoom ออก เพราะ PhotonNetwork.Instantiate จะจัดการ Sync ตัวละครให้คนอื่นเห็นเองอัตโนมัติ
 
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
+        // ไม่ต้องสั่ง Destroy เอง เพราะ PUN จะลบ Networked Object ของคนที่ออกไปให้เอง
         if (playerListEntries.ContainsKey(otherPlayer))
         {
-            Destroy(playerListEntries[otherPlayer]);
             playerListEntries.Remove(otherPlayer);
         }
     }
-    private void AddPlayerListing(Photon.Realtime.Player player, Transform posStanding,Photon.Realtime.Player localPlayer = null)
+
+    private void AddPlayerListing(Photon.Realtime.Player player, Transform posStanding)
     {
-        GameObject entry = Instantiate(playerEntryPrefab, posStanding);
-        entry.transform.localPosition = Vector3.zero;
-        entry.transform.localRotation = Quaternion.identity;
-        Debug.Log("Player Model Has Instamctaite");
+        // ใช้ PhotonNetwork.Instantiate เสมอ เพื่อให้ Object นี้ Sync ไปยังเครื่องอื่น
+        GameObject entry = PhotonNetwork.Instantiate(playerEntryPrefab.name, posStanding.position, posStanding.rotation);
         
         if (entry != null)
         {
             PlayerCharacterInLobby pc = entry.GetComponent<PlayerCharacterInLobby>();
-            TextMeshProUGUI text = pc.GetTextName;
-            text.text = player.NickName;
-
-            if (string.IsNullOrEmpty(player.NickName))
-                text.text = "Player " + player.ActorNumber;
-
             playerListEntries.Add(player, entry);
-            Debug.Log($"Added Player: {player.NickName}");
             
-            if(localPlayer != null)
+            if(player.IsLocal)
             {
-                pc.CurrentPlayerControl = localPlayer;
                 localPlayerCharacterInLobby = pc;
-                
-                Debug.Log($"Current Local player is {localPlayer.NickName}");
             }
         }
     }
-    
-    public void SetClothesCharacter(PlayerCharacterInLobby.SelectCharacter selectCharacter)
-    {
-        if(localPlayerCharacterInLobby == null) return;
-    }
+
 }
