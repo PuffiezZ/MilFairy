@@ -778,7 +778,7 @@ MonoBehaviour:
   currentHealth: 0
   armor: 0
   enableDamage: 1
-  minThrowForce: 5
+  minThrowForce: 0.1
   maxThrowForce: 25
   maxChargeTime: 2
   throwDirectionOffset: {x: 0, y: 0.5, z: 1}

@@ -1,8 +1,5 @@
-using NodeCanvas.Framework;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class Bacteria : MonsterBase
 {
@@ -12,9 +9,6 @@ public class Bacteria : MonsterBase
 
     public override void AttackHandle()
     {
-        float dashForce = monsterData.GetStatValue("DashForce");
-        float dashDuration = monsterData.GetStatValue("DashDuration");
-
         if (gameObject.activeSelf)
         {
             StartCoroutine(BitingAttack());

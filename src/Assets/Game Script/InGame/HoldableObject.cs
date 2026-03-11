@@ -5,8 +5,13 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PhotonView))]
-public class HoldableObject : MonoBehaviour, IInteractable
+public class HoldableObject : MonoBehaviourPun, IInteractable
 {
+    [Header("Identification")]
+    [Tooltip("ID ที่ไม่ซ้ำกันสำหรับ Prefab นี้ (เช่น 'WoodLog', 'Stone')")]
+    [SerializeField] private string itemID;
+    public string ItemID => itemID;
+
     [Header("Offsets")]
     [SerializeField] private Vector3 positionOffset;
     [SerializeField] private Vector3 rotationOffset;
@@ -127,16 +132,13 @@ public class HoldableObject : MonoBehaviour, IInteractable
         // ����ͧ��� Throw(10f) �ç��� ������Ҩ����ç�ҡ Update
         if (ownerPlayer.photonView.IsMine && PhotonNetwork.InRoom)
         {
-            Player.SetActionLeftClick(ownerPlayer.photonView, () => {});
-
-            ownerPlayer.GetComponent<PlayerAnimation>().SetArmLayerWeight(1f);
+            if(!ownerPlayer.photonView.IsMine) return;
         }
-        else
-        {
-            Player.SetActionLeftClick(ownerPlayer.photonView, () => {});
-
-            ownerPlayer.GetComponent<PlayerAnimation>().SetArmLayerWeight(1f);
-        }
+        
+        Player.SetActionLeftClick(ownerPlayer.photonView, () => {});
+        ownerPlayer.SetHoldableObject(ownerPlayer.photonView, this);
+        ownerPlayer.GetComponent<PlayerAnimation>().SetArmLayerWeight(1f);
+        
         isBeingHeld = true;
         rb.isKinematic = true;
         rb.useGravity = false;

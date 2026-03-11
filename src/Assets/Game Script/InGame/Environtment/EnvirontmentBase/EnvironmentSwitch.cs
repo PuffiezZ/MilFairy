@@ -51,10 +51,20 @@ public class EnvironmentSwitch : MonoBehaviourPun, IDamageable, IInteractable
     {
         if (Time.time < _lastToggleTime + cooldown) return;
         if (isOneTimeUse && _isActive) return;
+        
+        TriggerSwitch();
+    }
 
+    /// <summary>
+    /// สั่งให้ Switch ทำงานโดยข้ามเงื่อนไข Cooldown และ OneTimeUse 
+    /// (เหมาะสำหรับเรียกจาก Script อื่น หรือ Task Success)
+    /// </summary>
+    public void TriggerSwitch()
+    {
         if (PhotonNetwork.InRoom)
         {
-            photonView.RPC(nameof(RPC_ToggleSwitch), RpcTarget.All);
+            // เปลี่ยนเป็น AllBuffered เพื่อให้คนที่ Join ทีหลังเห็นสถานะล่าสุด (เช่น ประตูเปิดค้างไว้)
+            photonView.RPC(nameof(RPC_ToggleSwitch), RpcTarget.AllBuffered);
         }
         else
         {

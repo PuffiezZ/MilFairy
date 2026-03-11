@@ -9,11 +9,17 @@ public abstract class EquipmentScript : GameObjectPickUp
     public override void OnBeginIntereact(GameObject player,bool setActive = false)
     {
         setActive = true;
-        PhotonView photonView = player.GetComponent<PhotonView>();
+        PhotonView playerphotonView = player.GetComponent<PhotonView>();
         if (PhotonNetwork.InRoom)
         {
-            int playerID = photonView.ViewID;
-            photonView.RPC("RPC_EquipToPlayer", RpcTarget.AllBuffered, playerID, setActive);
+            if(playerphotonView== null)
+            {
+                Debug.LogWarning("Equipment Script not found Photonview on player parameter");
+                return;
+            }
+            
+            int playerID = playerphotonView.ViewID;
+            this.photonView.RPC(nameof(RPC_EquipToPlayer), RpcTarget.All, playerID, setActive);
         }
         else
         {

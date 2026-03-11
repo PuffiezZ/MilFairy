@@ -85,6 +85,11 @@ MonoBehaviour:
   - RPC_HandleEquippedWeapon
   - RPC_SetPlayerSkin
   - RPC_ApplieSkin
+  - RPC_UpdateProgress
+  - RPC_ProcessSuccess
+  - RPC_ApplyMaterial
+  - RPC_SetLock
+  - RPC_ReduceProgress
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

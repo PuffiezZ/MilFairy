@@ -35,6 +35,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     public bool EnableDamage { get; set; }
     public NavMeshAgent NavAIMesh { get { return aiAgent; } }
     public MonsterState MonsterState { get { return monsterState; } }
+    
 
     public Action OnStartAttack {get;set;}
     public Action OnFinishAttack { get; set; }
@@ -59,6 +60,12 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
 
     public void OnDefaultSetData()
     {
+        if(monsterData == null)
+        {
+            Debug.LogWarning("Monster Data is null. Fix it!");
+            return;    
+        }
+        
         MaxHP = monsterData.GetStatValue("MaxHP");
         StopDistanceToTarget = monsterData.GetStatValue("StopDistance");
 

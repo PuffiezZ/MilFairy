@@ -11,7 +11,7 @@ public class Player : CharacterBase,IPickupable
 {
 
     [Header("Throw Settings")]
-    public float minThrowForce = 5f;
+    public float minThrowForce = 0.1f;
     public float maxThrowForce = 25f;
     public float maxChargeTime = 2f;
     public Vector3 throwDirectionOffset = new Vector3(0, 0.5f, 1f); // ���ҧ仢�ҧ˹�������§�����硹���
@@ -26,6 +26,8 @@ public class Player : CharacterBase,IPickupable
 
     private PlayerCombat playerCombat;
     private PhotonView pv;
+    
+    public HoldableObject CurrentHoldable {get; private set;}
 
     private void Start()
     {
@@ -52,6 +54,18 @@ public class Player : CharacterBase,IPickupable
         OnMainActionCalled = null;
         OnMainActionCalled = getAction;
     }
+    public void SetHoldableObject(PhotonView view,HoldableObject holdableObject)
+    {
+         // ตรวจสอบว่าเป็น P2P (InRoom) หรือ Offline
+        if (PhotonNetwork.InRoom)
+        {
+            // ตรวจสอบความเป็นเจ้าของในแบบ static โดยใช้ PhotonView ที่ส่งเข้ามา
+            // หากไม่ใช่เจ้าของ (Remote Player) จะไม่สามารถเปลี่ยนค่า Action ของเครื่องนี้ได้
+            if (view != null && !view.IsMine) return;
+        }
+        CurrentHoldable = holdableObject;
+    }
+    
     private void Update()
     {
         if (PhotonNetwork.InRoom && !photonView.IsMine) return;

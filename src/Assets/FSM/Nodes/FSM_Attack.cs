@@ -1,13 +1,15 @@
 using System;
 using UnityEngine;
-using NodeCanvas.Framework; // à¾×èÍãªé BBParameter
+using NodeCanvas.Framework; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ BBParameter
 using UnityEngine.AI;
 
 public class FSM_Attack : ActionTask<MonsterBase>
 {
     protected override void OnExecute()
     {
-        agent.OnFinishAttack += EndAction;
+        if(agent.OnFinishAttack == null)
+            agent.OnFinishAttack += EndAction;
+            
         agent.OnCallAttack();
     }
 }
