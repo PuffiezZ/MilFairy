@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23088a9b2eae4894db819b1c7be4b793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemID: Bread
   positionOffset: {x: 0, y: 0, z: 0}
   rotationOffset: {x: 0, y: 0, z: 0}
 --- !u!54 &4947118032529449476

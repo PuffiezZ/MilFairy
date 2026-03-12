@@ -8,7 +8,7 @@ public class CraftingRecipe : ScriptableObject
     
     [Header("Requirements")]
     // ลิสต์ชื่อไอเทมที่ต้องใช้ (ต้องตรงกับชื่อใน HoldableObject)
-    public List<string> requiredItemNames;
+    public List<GameObject> requiredItemNames;
 
     [Header("Result")]
     // Prefab ของไอเทมที่จะสร้างออกมา (ต้องอยู่ในโฟลเดอร์ Resources สำหรับ Photon)
