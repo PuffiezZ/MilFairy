@@ -11,7 +11,11 @@ public class CameraManager : MonoBehaviour
     {
         foreach (var each in register)
         {
-            camerasDict.Add(each.nameCamera, each.camera);
+            if(!camerasDict.ContainsKey(each.nameCamera))
+            {
+                camerasDict.Add(each.nameCamera, each.camera);
+            }
+
         }
         
         ChangeCameraByName("Main Camera");
