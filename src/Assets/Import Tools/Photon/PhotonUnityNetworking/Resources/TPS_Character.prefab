@@ -668,6 +668,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4581505426903645113}
   - component: {fileID: 7619264141130037842}
+  - component: {fileID: 637053905728135492}
   - component: {fileID: 4914690698565031803}
   - component: {fileID: 5202229221434022749}
   - component: {fileID: 2505050765525561763}
@@ -740,6 +741,23 @@ MonoBehaviour:
     - {fileID: 1697709291747554049}
     - {fileID: 4658238234453017967}
     - {fileID: 3381757267634046610}
+--- !u!114 &637053905728135492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8673411036968960318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b854eecfe50a9438ceb628793f1b2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  footStepVFXPrefab: {fileID: 6813416509558619124, guid: 3b7f2c753d435d647a80f1f047a113e3,
+    type: 3}
+  groundOffset: 0.05
+  leftFootBone: {fileID: 8873452650655257666}
+  rightFootBone: {fileID: 7842463728633938716}
 --- !u!114 &4914690698565031803
 MonoBehaviour:
   m_ObjectHideFlags: 0

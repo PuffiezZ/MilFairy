@@ -15668,7 +15668,7 @@ MonoBehaviour:
   roomViewContent: {fileID: 812357844}
   roomInstance: {fileID: 8541565268924882624, guid: 73b99093cfc444b44a0f2c91543a36eb,
     type: 3}
-  playerLobbyList: {fileID: 1274574332}
+  playerLobbyHandler: {fileID: 0}
 --- !u!114 &1281708853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24001,7 +24001,7 @@ MonoBehaviour:
   lobbyFailed_Rect: {fileID: 933076205}
   lobbyHostConfig_Rect: {fileID: 1643716255}
   lobbyCreatingRoom_Rect: {fileID: 815078930}
-  playerLobbyList: {fileID: 1274574332}
+  playerLobbyHandler: {fileID: 0}
   mainmenu: {fileID: 1861339303}
 --- !u!114 &2037848446
 MonoBehaviour:
