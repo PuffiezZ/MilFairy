@@ -29,6 +29,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     private float verticalVelocity = 0f;
     public float StopDistanceToTarget { get; private set; }
     public float MaxHP { get; private set; }
+    public float CurrentHP { get { return currentHP; } }
     public bool IsAttacking { get; set; }
     public bool Hurt { get; set; }
     public bool IsAttackRotating { get; set; }
@@ -56,6 +57,11 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
         }
 
         EnableDamage = enableDamage;
+        OnMonsterDie += () =>
+        {
+            NavAIMesh.enabled = false;
+            Debug.Log($"{monsterName} has died.");
+        };
     }
 
     public void OnDefaultSetData()
@@ -153,14 +159,16 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
             monsterState.hurtSignal?.Invoke(transform,transform,false);
             healthBarUI.UpdateHealthBar(MaxHP, currentHP);
         }
+        /*
         if (currentHP <= 0)
         {
             NavAIMesh.enabled = false;
             Die();
         }
+        */
     }
 
-    protected virtual void Die()
+    public virtual void Die()
     {
         if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)
         {
