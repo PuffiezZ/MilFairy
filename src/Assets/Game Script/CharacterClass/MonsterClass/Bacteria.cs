@@ -38,7 +38,7 @@ public class Bacteria : MonsterBase
         {
             if (hit.collider.TryGetComponent<IDamageable>(out IDamageable victim) && victim.EnableDamage)
             {
-                victim.TakeDamage(monsterData.GetStatValue("AttackDamage"));
+                victim.TakeDamage(monsterData.GetStatValue("AttackDamage"), gameObject);
                 Debug.Log($"Bite hit: {hit.collider.name}");
             }
         }
@@ -46,32 +46,7 @@ public class Bacteria : MonsterBase
         OnFinishAttack?.Invoke();
         yield break;
     }
-    public IEnumerator DashAttack(Vector3 direction, float force, float duration)
-    {
-        float startTime = Time.time;
-        IsAttacking = true;
 
-        while (Time.time < startTime + duration)
-        {
-            float frameDistance = force * Time.deltaTime;
-            Vector3 nextPos = transform.position + direction * frameDistance;
-
-            RaycastHit hit;
-            if (Physics.Linecast(transform.position + Vector3.up, nextPos + Vector3.up, out hit))
-            {
-                if (!hit.collider.isTrigger)
-                {
-                    transform.position = hit.point - direction * 0.2f;
-                    Debug.Log("Dash Blocked by: " + hit.collider.name);
-                    break;
-                }
-            }
-
-            aiAgent.Move(direction * frameDistance);
-            yield return null;
-        }
-        OnFinishAttack?.Invoke();
-    }
     private void OnDrawGizmosSelected()
     {
         if (IsAttacking)
