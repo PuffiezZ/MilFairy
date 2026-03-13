@@ -1,4 +1,5 @@
 using NaughtyAttributes;
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,7 +39,7 @@ public class MonsterPerception : MonoBehaviour
             {
                 return;
             }
-            // àªç¤ÇèÒà»ç¹¼ÙéàÅè¹ áÅÐÂÑ§äÁèä´éÍÂÙèã¹Êàµ· Chase
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ç¹¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½àµ· Chase
             if (target.GetComponent<Player>())
             {
                 monsterState.FSMblackboard.SetVariableValue("PlayerInVision", target);
@@ -49,28 +50,33 @@ public class MonsterPerception : MonoBehaviour
                     monsterState.FSMblackboard.SetVariableValue("FirstSeenPlayer", currentPlayerInVision);
                     monsterState.FSMblackboard.SetVariableValue("TargetObject", currentPlayerInVision);
                 }
-            }
+            }                                 
         }
         else
         {
             monsterState.FSMblackboard.SetVariableValue("PlayerInVision", null);
         }
     }
+    public void MonsterGetHurt(GameObject player)
+    {
+        monsterState.FSMblackboard.SetVariableValue("PlayerWhoAttacked", player);
+        Debug.Log("Monster got hurt by: " + player);
+    }
     public bool FindVisibleTargets()
     {
-        // 1. µÃÇ¨¨ÑºÃÍºµÑÇ´éÇÂ Sphere ¡èÍ¹
+        // 1. Ç¨ÑºÍºÇ´ Sphere Í¹
         Collider[] targetsInRadius = Physics.OverlapSphere(transform.position + radiusCastOffset, detectRadius, detectMask);
 
         foreach (Collider target in targetsInRadius)
         {
             Vector3 directionToTarget = (target.transform.position - transform.position).normalized;
 
-            // 2. àªç¤ÇèÒÍÂÙèã¹ÁØÁÁÍ§ (FOV) ËÃ×ÍäÁè
+            // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í§ (FOV) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (Vector3.Angle(transform.forward, directionToTarget) < fovAngle / 2)
             {
                 float distanceToTarget = Vector3.Distance(transform.position, target.transform.position);
 
-                // 3. àªç¤ÇèÒäÁèÁÕÍÐäÃºÑ§ (Line of Sight)
+                // 3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÃºÑ§ (Line of Sight)
                 if (!Physics.Raycast(transform.position + radiusCastOffset, directionToTarget, distanceToTarget, obstructionMask))
                 {
                     visibleTargets.Add(target.gameObject);
@@ -82,11 +88,11 @@ public class MonsterPerception : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
-        // ÇÒ´Ç§¡ÅÁÃÐÂÐµÃÇ¨¨Ñº
+        // ï¿½Ò´Ç§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Ç¨ï¿½Ñº
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position + radiusCastOffset, detectRadius);
 
-        // ÇÒ´àÊé¹¢Íºà¢µ FOV
+        // ï¿½Ò´ï¿½ï¿½é¹¢Íºà¢µ FOV
         Vector3 forward = transform.forward;
         Quaternion leftRayRotation = Quaternion.AngleAxis(-fovAngle / 2, Vector3.up);
         Quaternion rightRayRotation = Quaternion.AngleAxis(fovAngle / 2, Vector3.up);

@@ -162,18 +162,14 @@ public class CraftingManager : MonoBehaviourPunCallbacks,IParticleSystemFunction
     
     public void StartParticleEffect()
     {
-        
+        if (successParticleEffect != null)
+        {
+            successParticleEffect.Play();
+        }
     }
     
     public void StopParticleEffect()
     {
         
-    }
-    public void ParticleEffectOnce()
-    {
-        if (successParticleEffect != null)
-        {
-            successParticleEffect.Play();
-        }
     }
 }

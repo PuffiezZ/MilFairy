@@ -149,6 +149,7 @@ MonoBehaviour:
   healthBarUI: {fileID: 7526128847022100440}
   aiAgent: {fileID: 2478754286531164189}
   monsterState: {fileID: 5600197798869459634}
+  enableDamage: 1
   gravity: 9.81
 --- !u!114 &4932006310404976243
 MonoBehaviour:
@@ -206,6 +207,8 @@ MonoBehaviour:
   finiteStateMachine: {fileID: 0}
   fsmBlackboard: {fileID: 0}
   hurtSignal: {fileID: 11400000, guid: 5318047b0a9cdcc47b2164dc2e6b6fc2, type: 2}
+  dieVfxPrefab: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7,
+    type: 3}
 --- !u!114 &4489669055147146674
 MonoBehaviour:
   m_ObjectHideFlags: 0

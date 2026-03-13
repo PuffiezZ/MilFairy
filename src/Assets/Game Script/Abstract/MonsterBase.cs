@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using Sausagecat.PlayerControlSystem;
 using System;
@@ -79,16 +80,18 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
         healthBarUI.UpdateHealthBar(MaxHP, currentHP);
     }
 
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage, GameObject source = null)
     {
+        Debug.Log($"Monster get attack by {source}");
         float finalDamage = damage; 
+        int pvSourceID = source?.GetComponent<PhotonView>()?.ViewID ?? -1;
         if (PhotonNetwork.InRoom)
         {
-            photonView.RPC("RPC_TakeDamage", RpcTarget.All, finalDamage);
+            photonView.RPC("RPC_TakeDamage", RpcTarget.All, finalDamage, pvSourceID);
         }
         else
         {
-            localTakeDamage(finalDamage);
+            localTakeDamage(finalDamage, source);
         }
     }
 
@@ -145,13 +148,24 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
         }
     }
     [PunRPC]
-    public virtual void RPC_TakeDamage(float damage)
+    public virtual void RPC_TakeDamage(float damage, int pvPlayerID)
     {
-        localTakeDamage(damage);
+        PhotonView targetPlayerView = PhotonNetwork.CurrentRoom.GetPlayer(pvPlayerID)?.TagObject as PhotonView;
+        
+        if(targetPlayerView == null) return;
+        
+        if(targetPlayerView.TryGetComponent<GameObject>(out GameObject playerGO))
+        {
+            localTakeDamage(damage, playerGO);
+        }
+
     }
-    private void localTakeDamage(float damage)
+    private void localTakeDamage(float damage, GameObject source)
     {
         currentHP -= damage;
+        MonsterPerception monsterPerception = GetComponent<MonsterPerception>();
+        monsterPerception.MonsterGetHurt(source);
+        
         Debug.Log($"{monsterName} took {damage} damage. Current HP: {currentHP}/{MaxHP}");
 
         if (healthBarUI != null)

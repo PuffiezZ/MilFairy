@@ -15386,7 +15386,7 @@ PrefabInstance:
     - target: {fileID: 6327343881153050568, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.9919415
+      value: 5.094
       objectReference: {fileID: 0}
     - target: {fileID: 6327343881153050568, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}
@@ -15452,7 +15452,8 @@ PrefabInstance:
         UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"TargetPOS":{"_name":"TargetPOS","_id":"1b51a5ab-ff3d-44be-b1da-052cdf6d88e9","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Vector3,
         UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"enemyAnimator":{"_value":1,"_name":"enemyAnimator","_id":"2bc059da-034a-48ea-8da8-7d82fc68ec51","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Animator,
         UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"CurrentHP":{"_propertyPath":"Bacteria.CurrentHP","_name":"CurrentHP","_id":"70d6aa33-11fd-49ee-893f-df695f0491fb","$type":"NodeCanvas.Framework.Variable`1[[System.Single,
-        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}}'
+        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"PlayerWhoAttacked":{"_name":"PlayerWhoAttacked","_id":"01c272cb-a9c4-46b4-8778-b79160da62d1","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+        UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}}}'
       objectReference: {fileID: 0}
     - target: {fileID: 7762022405456314648, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}
@@ -15467,7 +15468,7 @@ PrefabInstance:
     - target: {fileID: 7762022405456314648, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}
       propertyPath: _serializedVariables.Array.size
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7762022405456314648, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}
@@ -15504,6 +15505,12 @@ PrefabInstance:
       propertyPath: _serializedVariables.Array.data[5]._json
       value: '{"_propertyPath":"Bacteria.CurrentHP","_name":"CurrentHP","_id":"70d6aa33-11fd-49ee-893f-df695f0491fb","$type":"NodeCanvas.Framework.Variable`1[[System.Single,
         mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}'
+      objectReference: {fileID: 0}
+    - target: {fileID: 7762022405456314648, guid: cdc057af157553146a46d33ea6bff273,
+        type: 3}
+      propertyPath: _serializedVariables.Array.data[6]._json
+      value: '{"_name":"PlayerWhoAttacked","_id":"01c272cb-a9c4-46b4-8778-b79160da62d1","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.GameObject,
+        UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
       objectReference: {fileID: 0}
     - target: {fileID: 7762022405456314648, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}

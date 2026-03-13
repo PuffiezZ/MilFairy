@@ -100,9 +100,9 @@ public class Player : CharacterBase,IPickupable
         OnMainActionCalled?.Invoke();
     }
 
-    public override void TakeDamage(float damage)
+    public override void TakeDamage(float damage, GameObject source = null)
     {
-        base.TakeDamage(damage); // ���¡�� Logic Ŵ���ʹ�ҡ������
+        base.TakeDamage(damage, source); // ¡ Logic Ŵʹҡ
         CallUpdatePlayerUIHealth();
     }
     private void CallUpdatePlayerUIHealth()

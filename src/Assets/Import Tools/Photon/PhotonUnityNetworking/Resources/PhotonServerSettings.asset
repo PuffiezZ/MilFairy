@@ -91,6 +91,7 @@ MonoBehaviour:
   - RPC_SetLock
   - RPC_ReduceProgress
   - RPC_UpdateMatchState
+  - RPC_PlayParticleSystem
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

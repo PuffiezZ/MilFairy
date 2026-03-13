@@ -5,7 +5,7 @@ using Photon.Pun;
 using UnityEngine;
 using static UtilityDev;
 
-public class MonsterState : MonoBehaviourPunCallbacks
+public class MonsterState : MonoBehaviourPunCallbacks,IParticleSystemFunction
 {
     [SerializeField] private StateControllerType stateControllerType;
     [Header("State Management")]
@@ -20,6 +20,9 @@ public class MonsterState : MonoBehaviourPunCallbacks
     [ShowIf(nameof(stateControllerType), StateControllerType.FSM)]
     [BoxGroup("FSM")]
     [SerializeField] public SignalDefinition hurtSignal;
+    
+    [Header("Particle Effect")]
+    [SerializeField] private GameObject dieVfxPrefab;
 
 
     private EnemyState currentState = EnemyState.ChasePayload;
@@ -61,7 +64,49 @@ public class MonsterState : MonoBehaviourPunCallbacks
         finiteStateMachine.behaviour.onStateEnter += CallUpdateStateFunc_FSM;
         finiteStateMachine.StartBehaviour();
     }
+    public void TargetPlayerGameObject(GameObject playerGO)
+    { 
+        fsmBlackboard.SetVariableValue("FirstSeenPlayer", playerGO);
+        fsmBlackboard.SetVariableValue("TargetObject", playerGO);
+    }
     #region Change State Region
+    
+    public void StartParticleSystem()
+    {
+        if (PhotonNetwork.InRoom)
+        {
+            // ส่ง RPC ให้ทุกคนในห้อง (รวมตัวเอง) เพื่อสร้าง VFX
+            photonView.RPC(nameof(RPC_PlayParticleSystem), RpcTarget.All);
+        }
+        else
+        {
+            StartParticleEffect();
+        }
+    }
+    [PunRPC]
+    private void RPC_PlayParticleSystem()
+    {
+        StartParticleEffect();
+    }
+    public void StartParticleEffect()
+    {
+        if (dieVfxPrefab != null)
+        {
+            // สร้าง VFX ขึ้นมาที่ตำแหน่งปัจจุบันของตัว Monster
+            GameObject psPrefab = Instantiate(dieVfxPrefab, transform.position, Quaternion.identity);
+            
+            ParticleSystem ps = psPrefab.GetComponent<ParticleSystem>();
+            if(ps.isStopped)
+            {
+                Destroy(psPrefab);
+            }
+        }
+    }
+    public void StopParticleEffect()
+    {
+        
+    } 
+
     public void CallUpdateStateFunc_FSM(IState state)
     {
         if (PhotonNetwork.InRoom && PhotonNetwork.IsMasterClient)
@@ -100,4 +145,3 @@ public class MonsterState : MonoBehaviourPunCallbacks
     }
     #endregion
 }
-

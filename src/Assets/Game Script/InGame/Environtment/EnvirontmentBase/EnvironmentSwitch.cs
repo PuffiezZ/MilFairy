@@ -30,7 +30,7 @@ public class EnvironmentSwitch : MonoBehaviourPun, IDamageable, IInteractable
     }
 
     // --- IDamageable Implementation (�١�����Ƿӧҹ) ---
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, GameObject source = null)
     {
         ExecuteToggleLogic();
     }

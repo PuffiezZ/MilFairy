@@ -704,6 +704,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7939131135342456947}
   - {fileID: 6884497702433796737}
   - {fileID: 2675814382783412865}
   - {fileID: 6510197135983364162}
@@ -923,21 +924,14 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8673411036968960318}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 42b181e5faabb2845b4cbaa7b7f3d5b3, type: 3}
+  m_Avatar: {fileID: 9000000, guid: 1c0de77d700881f4890b6d0896a5f1c6, type: 3}
   m_Controller: {fileID: 22100000, guid: 9ec114eed8c12174fae6c0b2064cf119, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
-    are already bound by a Humanoid avatar. These transforms can only be changed
-    by Humanoid clips.\n\tTransform 'thigh.L'\n\tTransform 'hand.L.008'\n\tTransform
-    'thigh.R'\n\tFrom animation clip 'StandC@loop'\n\tFrom animation clip 'HoldingObject'\n\tFrom
-    animation clip 'Bow_Idle'\n\tFrom animation clip 'Bow_Aimming'\n\tFrom animation
-    clip 'Bow_Shoot'\n\tFrom animation clip 'Bow_Charging'\n\tFrom animation clip
-    'Bow_Draw 1'\n\tFrom animation clip 'Bow_Sheathed'\n\tFrom animation clip 'Bow_Draw
-    2'\n\tFrom animation clip 'Bow_Sheathed 2'\n\tand more ..."
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -1236,6 +1230,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: New Model V4
       objectReference: {fileID: 0}
+    - target: {fileID: 6107125682901743141, guid: 63c21b6509a08b549842e0833df1d1fb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6884612807291415711, guid: 63c21b6509a08b549842e0833df1d1fb,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1296,4 +1295,78 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6884612807291415711, guid: 63c21b6509a08b549842e0833df1d1fb,
     type: 3}
   m_PrefabInstance: {fileID: 467225605217822}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8402923718584730483
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4581505426903645113}
+    m_Modifications:
+    - target: {fileID: 1923137292732871424, guid: 4a5527db6c0b3b24487c13144635da49,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1923137292732871424, guid: 4a5527db6c0b3b24487c13144635da49,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1923137292732871424, guid: 4a5527db6c0b3b24487c13144635da49,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1923137292732871424, guid: 4a5527db6c0b3b24487c13144635da49,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1923137292732871424, guid: 4a5527db6c0b3b24487c13144635da49,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1923137292732871424, guid: 4a5527db6c0b3b24487c13144635da49,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1923137292732871424, guid: 4a5527db6c0b3b24487c13144635da49,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1923137292732871424, guid: 4a5527db6c0b3b24487c13144635da49,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1923137292732871424, guid: 4a5527db6c0b3b24487c13144635da49,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1923137292732871424, guid: 4a5527db6c0b3b24487c13144635da49,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2876287822126735031, guid: 4a5527db6c0b3b24487c13144635da49,
+        type: 3}
+      propertyPath: m_Name
+      value: New Fairy Model No Ragdoll
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4a5527db6c0b3b24487c13144635da49, type: 3}
+--- !u!4 &7939131135342456947 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1923137292732871424, guid: 4a5527db6c0b3b24487c13144635da49,
+    type: 3}
+  m_PrefabInstance: {fileID: 8402923718584730483}
   m_PrefabAsset: {fileID: 0}

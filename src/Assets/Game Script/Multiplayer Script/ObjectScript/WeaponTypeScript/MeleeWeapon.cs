@@ -20,10 +20,10 @@ public class MeleeWeapon : WeaponScript
 
     [BoxGroup("Box Collider Hitbox")]
     [ShowIf(nameof(hitboxType), HitboxTriggerType.BoxCollider)]
-    [SerializeField] private Vector3 boxOffset = new Vector3(0, 1f, 1.5f); // ระยะห่างจากตัวละคร (X, Y, Z forward)
+    [SerializeField] private Vector3 boxOffset = new Vector3(0, 1f, 1.5f); // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาง๏ฟฝาก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝะค๏ฟฝ (X, Y, Z forward)
     [BoxGroup("Box Collider Hitbox")]
     [ShowIf(nameof(hitboxType), HitboxTriggerType.BoxCollider)]
-    [SerializeField] private Vector3 boxHalfExtents = new Vector3(1f, 1f, 1f); // ขนาดความกว้าง/สูง/ลึก ของกล่อง
+    [SerializeField] private Vector3 boxHalfExtents = new Vector3(1f, 1f, 1f); // ๏ฟฝ๏ฟฝาด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาง/๏ฟฝูง/๏ฟฝึก ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝอง
 
 
     public bool EnableHitbox { get; private set; } = false;
@@ -93,11 +93,11 @@ public class MeleeWeapon : WeaponScript
             {
                 float damageOut = WeaponData.damage;
                 damagedTargets.Add(damageable);
-                damageable.TakeDamage(WeaponData.damage);
+                damageable.TakeDamage(WeaponData.damage,PlayerTransform.gameObject);
 
                 Vector3 knockbackDir = hit.transform.position - PlayerTransform.position;
 
-                // 2. ปรับค่า Y เป็น 0 เพื่อให้กระเด็นในแนวราบเท่านั้น (กันมอนสเตอร์มุดดินหรือลอยฟ้าแบบแปลกๆ)
+                // 2. ๏ฟฝ๏ฟฝับ๏ฟฝ๏ฟฝ๏ฟฝ Y ๏ฟฝ๏ฟฝ 0 ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาบ๏ฟฝ๏ฟฝาน๏ฟฝ๏ฟฝ (๏ฟฝัน๏ฟฝอน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝุด๏ฟฝิน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝยฟ๏ฟฝ๏ฟฝแบบ๏ฟฝลก๏ฟฝ)
                 knockbackDir.y = 0;
                 knockback.Knockback(knockbackDir.normalized, WeaponData.knockbackForce);
             }
@@ -106,18 +106,18 @@ public class MeleeWeapon : WeaponScript
     }
     private void HitboxColliderTrigger()
     {
-        // 1. คำนวณตำแหน่งกลางกล่องให้อยู่ด้านหน้าตัวละครเสมอ
-        // ใช้ transform.TransformPoint เพื่อให้ตำแหน่งขยับและหมุนตามตัวละครอัตโนมัติ
+        // 1. ๏ฟฝำนวณ๏ฟฝ๏ฟฝ๏ฟฝหน่งก๏ฟฝาง๏ฟฝ๏ฟฝ๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝานหน๏ฟฝาต๏ฟฝ๏ฟฝ๏ฟฝะค๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+        // ๏ฟฝ๏ฟฝ transform.TransformPoint ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝหน่งข๏ฟฝับ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝุน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝะค๏ฟฝ๏ฟฝัต๏ฟฝ๏ฟฝัต๏ฟฝ
         Vector3 centerPosition = PlayerTransform.TransformPoint(boxOffset);
 
-        // 2. ยิง BoxCast
+        // 2. ๏ฟฝิง BoxCast
         RaycastHit[] hits = Physics.BoxCastAll(
             centerPosition,
             boxHalfExtents,
             PlayerTransform.forward,
             PlayerTransform.rotation,
-            0.1f, // ระยะ cast สั้นๆ เพื่อเช็คพื้นที่ ณ จุดนั้น
-            LayerMask.GetMask("Enemy","Damageable") // แนะนำให้ใส่ LayerMask เพื่อ Performance AI 32 ตัว
+            0.1f, // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ cast ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ็คพ๏ฟฝ้นท๏ฟฝ๏ฟฝ ๏ฟฝ ๏ฟฝุด๏ฟฝ๏ฟฝ๏ฟฝ
+            LayerMask.GetMask("Enemy","Damageable") // ๏ฟฝะน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ LayerMask ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Performance AI 32 ๏ฟฝ๏ฟฝ๏ฟฝ
         );
 
         foreach (RaycastHit hitInfo in hits)
@@ -127,17 +127,17 @@ public class MeleeWeapon : WeaponScript
             {
                 if (!damagedTargets.Contains(damageable) && !hit.CompareTag("Player"))
                 {
-                    // ตรวจสอบกำแพงกั้นก่อนทำดาเมจ
+                    // ๏ฟฝ๏ฟฝวจ๏ฟฝอบ๏ฟฝ๏ฟฝแพง๏ฟฝ๏ฟฝ้นก๏ฟฝอน๏ฟฝำด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
                     if (!IsWallBlocking(hit.transform.position))
                     {
                         damagedTargets.Add(damageable);
-                        damageable.TakeDamage(WeaponData.damage);
-                        // ระบบ Knockback
+                        damageable.TakeDamage(WeaponData.damage, PlayerTransform.gameObject);
+                        // ๏ฟฝะบ๏ฟฝ Knockback
                         if (hit.TryGetComponent<IKnockback>(out IKnockback knockback))
                         {
                             Vector3 knockbackDir = hit.transform.position - PlayerTransform.position;
 
-                            // 2. ปรับค่า Y เป็น 0 เพื่อให้กระเด็นในแนวราบเท่านั้น (กันมอนสเตอร์มุดดินหรือลอยฟ้าแบบแปลกๆ)
+                            // 2. ๏ฟฝ๏ฟฝับ๏ฟฝ๏ฟฝ๏ฟฝ Y ๏ฟฝ๏ฟฝ 0 ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาบ๏ฟฝ๏ฟฝาน๏ฟฝ๏ฟฝ (๏ฟฝัน๏ฟฝอน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝุด๏ฟฝิน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝยฟ๏ฟฝ๏ฟฝแบบ๏ฟฝลก๏ฟฝ)
                             knockbackDir.y = 0;
                             knockback.Knockback(knockbackDir.normalized, WeaponData.knockbackForce);
                         }   
@@ -149,28 +149,28 @@ public class MeleeWeapon : WeaponScript
     #endregion
     public bool IsWallBlocking(Vector3 targetPOS)
     {
-        // 1. ตั้งค่าจุดเริ่มต้น (ระดับอก) และคำนวณทิศทาง
+        // 1. ๏ฟฝ๏ฟฝ้งค๏ฟฝาจุด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ (๏ฟฝะดับอก) ๏ฟฝ๏ฟฝะคำนวณ๏ฟฝ๏ฟฝศทาง
         Vector3 start = PlayerTransform.transform.position + Vector3.up;
 
-        // ปรับ target ให้สูงขึ้นเท่ากันเพื่อให้ Ray ยิงขนานพื้น
+        // ๏ฟฝ๏ฟฝับ target ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝูง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝากัน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Ray ๏ฟฝิง๏ฟฝ๏ฟฝาน๏ฟฝ๏ฟฝ๏ฟฝ
         Vector3 adjustedTarget = targetPOS + Vector3.up;
         Vector3 direction = adjustedTarget - start;
         float distance = direction.magnitude;
 
-        // 2. ตั้งค่า LayerMask
+        // 2. ๏ฟฝ๏ฟฝ้งค๏ฟฝ๏ฟฝ LayerMask
         int wallMask = LayerMask.GetMask("Obstacle");
 
-        // 3. ยิง Raycast
+        // 3. ๏ฟฝิง Raycast
         bool isHit = Physics.Raycast(start, direction.normalized, distance, wallMask);
 
-        // --- ส่วนของ DEBUG ---
-        // ถ้าชนกำแพงให้เส้นเป็นสีแดง (Blocked) ถ้าไม่ชนให้เป็นสีเขียว (Clear)
+        // --- ๏ฟฝ๏ฟฝวน๏ฟฝอง DEBUG ---
+        // ๏ฟฝ๏ฟฝาช๏ฟฝ๏ฟฝ๏ฟฝแพง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝแดง (Blocked) ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ่ชน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ (Clear)
         Color debugColor = isHit ? Color.red : Color.green;
         Debug.DrawRay(start, direction.normalized * distance, debugColor, 0.5f);
 
         if (isHit)
         {
-            // ช่วยบอกว่าชนวัตถุชื่ออะไรใน Console เพื่อเช็คว่า Layer ถูกไหม
+            // ๏ฟฝ๏ฟฝ๏ฟฝยบอก๏ฟฝ๏ฟฝาช๏ฟฝ๏ฟฝัต๏ฟฝุช๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Console ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ Layer ๏ฟฝูก๏ฟฝ๏ฟฝ๏ฟฝ
             if (Physics.Raycast(start, direction.normalized, out RaycastHit hit, distance, wallMask))
             {
                 Debug.Log($"<color=red>Blocked by:</color> {hit.collider.name} on Layer: {LayerMask.LayerToName(hit.collider.gameObject.layer)}");
@@ -206,12 +206,12 @@ public class MeleeWeapon : WeaponScript
                 if ((PlayerTransform) == null) return;
                 Gizmos.color = EnableHitbox ? Color.green : Color.red;
 
-                // คำนวณ Matrix ให้ Gizmos วาดตามตำแหน่งและมุมหมุนของตัวละคร
+                // ๏ฟฝำนวณ Matrix ๏ฟฝ๏ฟฝ๏ฟฝ Gizmos ๏ฟฝาด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝหน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝุน๏ฟฝอง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝะค๏ฟฝ
                 Vector3 gizmoCenter = PlayerTransform.TransformPoint(boxOffset);
                 Matrix4x4 cubeMatrix = Matrix4x4.TRS(gizmoCenter, PlayerTransform.rotation, Vector3.one);
                 Gizmos.matrix = cubeMatrix;
 
-                // วาดกล่อง (DrawWireCube ใช้ขนาดเต็ม จึงต้องคูณ 2 จาก halfExtents)
+                // ๏ฟฝาด๏ฟฝ๏ฟฝ๏ฟฝอง (DrawWireCube ๏ฟฝ้ขนาด๏ฟฝ๏ฟฝ๏ฟฝ ๏ฟฝึง๏ฟฝ๏ฟฝอง๏ฟฝูณ 2 ๏ฟฝาก halfExtents)
                 Gizmos.DrawWireCube(Vector3.zero, boxHalfExtents * 2);
                 break;
         }   

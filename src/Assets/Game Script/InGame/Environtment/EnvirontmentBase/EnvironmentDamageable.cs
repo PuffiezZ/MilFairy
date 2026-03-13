@@ -56,7 +56,7 @@ public class EnvironmentDamageable : MonoBehaviourPun, IDamageable
     }
 
     // --- IDamageable Implementation ---
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, GameObject source = null)
     {
         if (PhotonNetwork.InRoom)
         {
