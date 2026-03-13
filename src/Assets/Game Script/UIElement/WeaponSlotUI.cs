@@ -7,10 +7,18 @@ using UnityEngine.UI;
 public class WeaponSlotUI : MonoBehaviour
 {
     [SerializeField] private Image weaponImage;
-    [SerializeField] private TextMeshProUGUI weaponNameText_TMP;
 
-    public void SetWeaponSlotUI(WeaponData weaponData)
+    public void SetWeaponSlotUI(WeaponData weaponData = null)
     {
-        weaponImage.sprite = weaponData.weaponSprite;
+        if(weaponData == null)
+        {
+            weaponImage.color = new Color32(255, 255, 255, 0);
+            weaponImage.sprite = null;
+        }
+        else
+        {
+            weaponImage.color = new Color32(255, 255, 255, 255);
+            weaponImage.sprite = weaponData.weaponSprite;   
+        }        
     }
 }
