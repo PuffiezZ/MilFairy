@@ -24,6 +24,9 @@ public class MonsterState : MonoBehaviourPunCallbacks,IParticleSystemFunction
     [Header("Particle Effect")]
     [SerializeField] private GameObject dieVfxPrefab;
 
+    [Header("Minimap Settings")]
+    [SerializeField] private Sprite monsterMinimapIcon;
+
 
     private EnemyState currentState = EnemyState.ChasePayload;
     private MonsterBase monsterBase;

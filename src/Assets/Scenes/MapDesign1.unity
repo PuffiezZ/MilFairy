@@ -16081,6 +16081,27 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2667774190733616357, guid: ff2d45eaae4e9c44f93314ce4e8f8234,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -1145993459, guid: dda9c99abdc6f2d4382ae0d053e2327f,
+        type: 3}
+    - target: {fileID: 2667774190733616357, guid: ff2d45eaae4e9c44f93314ce4e8f8234,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2667774190733616357, guid: ff2d45eaae4e9c44f93314ce4e8f8234,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2667774190733616357, guid: ff2d45eaae4e9c44f93314ce4e8f8234,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5607875653071936726, guid: ff2d45eaae4e9c44f93314ce4e8f8234,
         type: 3}
       propertyPath: m_Name
@@ -16186,8 +16207,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6077107539727834278, guid: ff2d45eaae4e9c44f93314ce4e8f8234,
+        type: 3}
+      propertyPath: staticMarkers.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8859175724148687595, guid: ff2d45eaae4e9c44f93314ce4e8f8234, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff2d45eaae4e9c44f93314ce4e8f8234, type: 3}

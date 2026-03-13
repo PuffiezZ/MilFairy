@@ -25,6 +25,19 @@ public class PlayerSetup : MonoBehaviourPun
             nameTextTMP.gameObject.SetActive(false);
         }
 
+        // ลงทะเบียนผู้เล่นเข้า Minimap (จัดการทั้งตัวเราและเพื่อนอัตโนมัติผ่าน PhotonView)
+        MinimapMilfairy mm = FindObjectOfType<MinimapMilfairy>();
+        if (mm != null)
+        {
+            string debugName = "Local Player";
+            if (photonView.Owner != null)
+            {
+                debugName = photonView.Owner.NickName;
+            }
+
+            Debug.Log($"PlayerSetup: Registering player {debugName} to Minimap");
+        }
+
         StartCoroutine(WaitAndSetPayload());
     }
     public void IsLocalPlayer()

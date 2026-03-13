@@ -16,6 +16,9 @@ public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
     [SerializeField] private AudioClip hitSfx;
     [SerializeField] private AudioSource audioSource;
 
+    [Header("Minimap Settings")]
+    [SerializeField] private Sprite cartIcon;
+
     public bool EnableDamage 
     { 
         get => _enableDamage; 
@@ -31,6 +34,12 @@ public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
         {
             audioSource = GetComponent<AudioSource>();
         }
+    }
+
+    private void Start()
+    {
+        // ลงทะเบียนรถเข้า Minimap ทันทีที่เริ่มเกม
+        MinimapMilfairy mm = FindObjectOfType<MinimapMilfairy>();
     }
 
     /// <summary>
