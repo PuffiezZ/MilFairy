@@ -317,7 +317,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 319f93db287d423438d93a1f91495c3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  craftingZone: {fileID: 0}
+  craftingZone: {fileID: 8673166314177327602}
   spawnPoint: {fileID: 4758898868617594167}
   recipes: []
   craftingAnimator: {fileID: 8552540204576729910}
