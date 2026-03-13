@@ -9,13 +9,10 @@ public class CameraManager : MonoBehaviour
     private Camera onCurrentCamera;
     void Awake()
     {
+        camerasDict.Clear();
         foreach (var each in register)
         {
-            if(!camerasDict.ContainsKey(each.nameCamera))
-            {
-                camerasDict.Add(each.nameCamera, each.camera);
-            }
-
+            camerasDict[each.nameCamera] = each.camera;
         }
         
         ChangeCameraByName("Main Camera");
@@ -26,7 +23,8 @@ public class CameraManager : MonoBehaviour
         
         foreach (var each in camerasDict)
         {
-            each.Value.gameObject.SetActive(nameCamera == each.Key);
+            if (each.Value != null)
+                each.Value.gameObject.SetActive(nameCamera == each.Key);
         }
     }
 }
