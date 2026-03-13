@@ -22,7 +22,9 @@ public class PlayerCharacterInLobby : MonoBehaviourPun
     public enum SelectCharacter
     {
         Character1,
-        Character2
+        Character2,
+        Character3,
+        Character4
     }
 
     private void Awake()
