@@ -48,18 +48,26 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     }
     private void FixedUpdate()
     {
-        // เฉพาะคนที่เป็นเจ้าของเท่านั้นที่จะเป็นคน "ขยับ" วัตถุจริงผ่านฟิสิกส์
+            // หัวใจหลัก: เฉพาะเจ้าของปัจจุบัน (IsMine) เท่านั้นที่มีสิทธิ์คำนวณแรงฟิสิกส์
         if (PhotonNetwork.InRoom && !photonView.IsMine) return;
 
         if (CurrentPlayerControl != null && reciveLocomotion != null)
         {
             PayloadMoveController();
         }
+        else
+        {
+            // หากไม่มีคนขับแต่รถยังมีความเร็ว (แรงเฉื่อย) 
+            // ให้เจ้าของเป็นคนจัดการให้มันหยุดนิ่ง
+            if (payloadRb.velocity.magnitude > 0.1f)
+            {
+                payloadRb.velocity = Vector3.Lerp(payloadRb.velocity, Vector3.zero, Time.fixedDeltaTime);
+            }
+        }
     }
     private void HandlePayloadLogic()
     {
-            // เฉพาะเจ้าของ (คนที่ควบคุมอยู่) เท่านั้นที่คำนวณความเร็วและส่ง RPC
-        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
+       if (PhotonNetwork.InRoom && !photonView.IsMine) return;
 
         bool hasPlayer = CheckPlayerNearby();
         float target = (hasPlayer && isTurnOn) ? MoveSpeedTarget : 0f;
@@ -67,18 +75,14 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
 
         if (!Mathf.Approximately(currentMoveSpeed, newSpeed))
         {
-            currentMoveSpeed = newSpeed; // อัปเดตเครื่องตัวเองก่อน
+            currentMoveSpeed = newSpeed;
             if (PhotonNetwork.InRoom)
             {
-                photonView.RPC(nameof(RPC_SyncPayloadSpeed), RpcTarget.AllBuffered, newSpeed);
+                photonView.RPC(nameof(RPC_SyncPayloadSpeed), RpcTarget.Others, newSpeed);
             }
         }
         
-        // อย่าลืมเรียก MoveController ที่นี่ถ้าเป็นเจ้าของ
-        if (CurrentPlayerControl != null)
-        {
-            PayloadMoveController();
-        }
+        // ลบ PayloadMoveController(); ออกจากที่นี่ เพราะเราย้ายไป FixedUpdate แล้ว
     }
     [PunRPC]
     private void RPC_SyncPayloadSpeed(float speed)
