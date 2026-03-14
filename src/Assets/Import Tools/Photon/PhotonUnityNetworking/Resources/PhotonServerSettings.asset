@@ -94,6 +94,7 @@ MonoBehaviour:
   - RPC_PlayParticleSystem
   - RPC_SpawnFootstepVFX
   - RPC_SpawnFootstepVFX_Hamter
+  - RPC_SyncPayloadEngine
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
