@@ -1,11 +1,11 @@
 using Photon.Pun;
+using Photon.Realtime;
 using Sausagecat.PlayerControlSystem;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Splines;
 
-[RequireComponent(typeof(PhotonView))]
 public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwnershipCallbacks
 {
     [Header("Payload Setting")]
@@ -50,21 +50,19 @@ public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwner
     {
         if (payloadRb != null && PhotonNetwork.InRoom)
         {
-            // เฉพาะเจ้าของรถเท่านั้นที่ใช้ระบบฟิสิกส์จำลองการเคลื่อนที่ คนอื่นให้ขยับตามข้อมูลตำแหน่งที่ Sync มา (Kinematic)
+            // เฉพาะเจ้าของรถเท่านั้นที่คำนวณฟิสิกส์ เครื่องอื่นให้เป็น Kinematic เพื่อไหลตามตำแหน่งที่ Sync มา
             payloadRb.isKinematic = !photonView.IsMine;
         }
     }
 
     private void Update()
     {
+        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
         HandlePayloadLogic();
     }
 
     private void HandlePayloadLogic()
     {
-        // คำนวณความเร็วเฉพาะในเครื่องที่เป็นเจ้าของรถ (เพื่อความลื่นไหล)
-        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
-
         bool hasPlayer = CheckPlayerNearby();
         float target = (hasPlayer && isTurnOn) ? MoveSpeedTarget : 0f;
         currentMoveSpeed = Mathf.MoveTowards(currentMoveSpeed, target, Time.deltaTime * AccelerationTime);
@@ -85,6 +83,7 @@ public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwner
     {
         if (PhotonNetwork.InRoom)
         {
+            // Sync แค่สถานะ "เปิด/ปิดเครื่อง" ครั้งเดียว ไม่ต้อง Sync ความเร็วทุกเฟรม
             photonView.RPC(nameof(RPC_SyncPayloadEngine), RpcTarget.AllBuffered, !isTurnOn);
         }
         else
@@ -144,12 +143,9 @@ public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwner
             Debug.Log($"RPC_SitOnPayload");
             GameObject playerObj = targetPv.gameObject;
             SitOnPayload(playerObj);
-            
             UpdateKinematicState();
         }
     }
-
-    // --- IPunOwnershipCallbacks Implementation ---
 
     private void SitOnPayload(GameObject player)
     {
@@ -226,8 +222,6 @@ public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwner
     }
     public void PayloadMoveController()
     {
-        // ถ้ามีการเปลี่ยนมือคนขับกลางคัน เครื่องที่ไม่ใช่เจ้าของต้องหยุดประมวลผลทันที
-        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
         if (payloadRb == null) return;
 
         verticalInput = reciveLocomotion.MovementInput.y;
@@ -267,9 +261,18 @@ public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwner
         throw new System.NotImplementedException();
     }
 
-    public void OnOwnershipRequest(PhotonView targetView, Photon.Realtime.Player requestingPlayer) { }
+    public void OnOwnershipRequest(PhotonView targetView, Photon.Realtime.Player requestingPlayer)
+    {
+        throw new System.NotImplementedException();
+    }
 
-    public void OnOwnershipTransfered(PhotonView targetView, Photon.Realtime.Player previousOwner) => UpdateKinematicState();
+    public void OnOwnershipTransfered(PhotonView targetView, Photon.Realtime.Player previousOwner)
+    {
+        UpdateKinematicState();
+    }
 
-    public void OnOwnershipTransferFailed(PhotonView targetView, Photon.Realtime.Player senderOfFailedRequest) { }
+    public void OnOwnershipTransferFailed(PhotonView targetView, Photon.Realtime.Player senderOfFailedRequest)
+    {
+        throw new System.NotImplementedException();
+    }
 }
