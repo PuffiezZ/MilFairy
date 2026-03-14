@@ -1,4 +1,5 @@
 using NaughtyAttributes;
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -47,6 +48,10 @@ public class MeleeWeapon : WeaponScript
     private void Update()
     {
         if (EnableHitbox == false)
+            return;
+
+        // สำคัญ: ป้องกันไม่ให้เครื่องเพื่อนคำนวณ Hitbox ซ้ำซ้อน และป้องกัน Error จาก PlayerTransform เป็น null
+        if (PhotonNetwork.InRoom && !photonView.IsMine)
             return;
 
         hitActionEventUpdate?.Invoke();

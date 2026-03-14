@@ -84,7 +84,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     {
         Debug.Log($"Monster get attack by {source}");
         float finalDamage = damage; 
-        int pvSourceID = source?.GetComponent<PhotonView>()?.ViewID ?? -1;
+        int pvSourceID = source.GetComponent<PhotonView>().ViewID;
         if (PhotonNetwork.InRoom)
         {
             photonView.RPC("RPC_TakeDamage", RpcTarget.All, finalDamage, pvSourceID);
@@ -150,14 +150,16 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     [PunRPC]
     public virtual void RPC_TakeDamage(float damage, int pvPlayerID)
     {
-        PhotonView targetPlayerView = PhotonNetwork.CurrentRoom.GetPlayer(pvPlayerID)?.TagObject as PhotonView;
+        // แก้ไข: ใช้ PhotonView.Find แทน TagObject เพื่อความแม่นยำในระบบ Network
+        PhotonView targetPlayerView = PhotonView.Find(pvPlayerID);
         
-        if(targetPlayerView == null) return;
-        
-        if(targetPlayerView.TryGetComponent<GameObject>(out GameObject playerGO))
+        if(targetPlayerView == null)
         {
-            localTakeDamage(damage, playerGO);
-        }
+            Debug.LogWarning("RPC_TakeDamage not get targetPlayerView");
+            return;
+        } 
+        
+       localTakeDamage(damage, targetPlayerView.gameObject);
 
     }
     private void localTakeDamage(float damage, GameObject source)
