@@ -19511,6 +19511,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Crafting Trapdoor
       objectReference: {fileID: 0}
+    - target: {fileID: 7170774540160868044, guid: f55faac1b025d36488747222f6e22f58,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 39
+      objectReference: {fileID: 0}
     - target: {fileID: 8532627911638214101, guid: f55faac1b025d36488747222f6e22f58,
         type: 3}
       propertyPath: recipes.Array.size
@@ -20549,6 +20554,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Flow Plate (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3544235570796377499, guid: 4cc06484f5634fc42b8ec6f5e88ce09d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 41
       objectReference: {fileID: 0}
     - target: {fileID: 5583162367958597953, guid: 4cc06484f5634fc42b8ec6f5e88ce09d,
         type: 3}
@@ -34198,6 +34208,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Flow Plate (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3544235570796377499, guid: 4cc06484f5634fc42b8ec6f5e88ce09d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 42
+      objectReference: {fileID: 0}
     - target: {fileID: 5583162367958597953, guid: 4cc06484f5634fc42b8ec6f5e88ce09d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -40382,6 +40397,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Flow Plate (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3544235570796377499, guid: 4cc06484f5634fc42b8ec6f5e88ce09d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 43
       objectReference: {fileID: 0}
     - target: {fileID: 5583162367958597953, guid: 4cc06484f5634fc42b8ec6f5e88ce09d,
         type: 3}
@@ -61684,6 +61704,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Flow Plate
+      objectReference: {fileID: 0}
+    - target: {fileID: 3544235570796377499, guid: 4cc06484f5634fc42b8ec6f5e88ce09d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 5583162367958597953, guid: 4cc06484f5634fc42b8ec6f5e88ce09d,
         type: 3}
