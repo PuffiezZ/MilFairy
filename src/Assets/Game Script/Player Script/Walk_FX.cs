@@ -103,5 +103,6 @@ public class Walk_FX : MonoBehaviourPun
         
         // แนะนำ: ให้ตั้งค่าใน Prefab ของ Particle ให้ "Stop Action" เป็น "Destroy" เพื่อให้มันทำลายตัวเองเมื่อเล่นจบ
         // หรือถ้าไม่มี ให้ใช้ Destroy(vfxInstance, 2f); เพื่อทำลายใน 2 วินาที
+        Destroy(vfxInstance, 2f);
     }
 }
