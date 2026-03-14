@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using NaughtyAttributes;
 using Photon.Pun;
 
+[RequireComponent(typeof(PhotonView))]
 public class EnvironmentTaskHandler : MonoBehaviourPun
 {
     [Header("Goal Settings")]
