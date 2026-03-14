@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Splines;
 
-public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwnershipCallbacks
+public class PayloadScript : MonoBehaviourPun,IInteractable
 {
     [Header("Payload Setting")]
     public float SphereAreaRadius = 3f;
@@ -38,36 +38,39 @@ public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwner
     public void PayloadOnSetup()
     {
         pSpawner = GetComponent<PayloadSpawner>();
-        GameObject sp = GameObject.FindGameObjectWithTag("SpawnPoint");
-        if (sp != null) pSpawner.spawnPointParent = sp.transform;
+        pSpawner.spawnPointParent = GameObject.FindGameObjectWithTag("SpawnPoint").transform;
 
         OnPayloadMoveAction += PayloadMoveController;
-
-        UpdateKinematicState();
     }
-
-    private void UpdateKinematicState()
-    {
-        if (payloadRb != null && PhotonNetwork.InRoom)
-        {
-            // เฉพาะเจ้าของรถเท่านั้นที่คำนวณฟิสิกส์ เครื่องอื่นให้เป็น Kinematic เพื่อไหลตามตำแหน่งที่ Sync มา
-            payloadRb.isKinematic = !photonView.IsMine;
-        }
-    }
-
     private void Update()
     {
-        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
         HandlePayloadLogic();
     }
 
     private void HandlePayloadLogic()
     {
         bool hasPlayer = CheckPlayerNearby();
-        float target = (hasPlayer && isTurnOn) ? MoveSpeedTarget : 0f;
-        currentMoveSpeed = Mathf.MoveTowards(currentMoveSpeed, target, Time.deltaTime * AccelerationTime);
-    }
 
+        float target = (hasPlayer && isTurnOn) ? MoveSpeedTarget : 0f;
+        float newSpeed = Mathf.MoveTowards(currentMoveSpeed, target, Time.deltaTime * AccelerationTime);
+
+        if (!Mathf.Approximately(currentMoveSpeed, newSpeed))
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                photonView.RPC(nameof(RPC_SyncPayloadSpeed), RpcTarget.All, newSpeed);
+            }
+            else
+            {
+                currentMoveSpeed = newSpeed;
+            }
+        }
+    }
+    [PunRPC]
+    private void RPC_SyncPayloadSpeed(float speed)
+    {
+        currentMoveSpeed = speed;
+    }
     public void SetPayloadSpeed(float speed)
     {
         currentMoveSpeed = speed;
@@ -81,22 +84,8 @@ public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwner
 
     public void PlayloadSwitchFunction()
     {
-        if (PhotonNetwork.InRoom)
-        {
-            // Sync แค่สถานะ "เปิด/ปิดเครื่อง" ครั้งเดียว ไม่ต้อง Sync ความเร็วทุกเฟรม
-            photonView.RPC(nameof(RPC_SyncPayloadEngine), RpcTarget.AllBuffered, !isTurnOn);
-        }
-        else
-        {
-            isTurnOn = !isTurnOn;
-        }
-    }
-
-    [PunRPC]
-    private void RPC_SyncPayloadEngine(bool state)
-    {
-        isTurnOn = state;
-        Debug.Log($"Payload Engine: {(isTurnOn ? "ON" : "OFF")}");
+        isTurnOn = !isTurnOn;
+        Debug.Log("Payload Engine: " + (isTurnOn ? "ON" : "OFF"));
     }
 
     private void OnDrawGizmos()
@@ -143,7 +132,6 @@ public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwner
             Debug.Log($"RPC_SitOnPayload");
             GameObject playerObj = targetPv.gameObject;
             SitOnPayload(playerObj);
-            UpdateKinematicState();
         }
     }
 
@@ -192,7 +180,6 @@ public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwner
         if (targetPv != null)
         {
             JumpOffPayload(targetPv.gameObject);
-            UpdateKinematicState();
         }
     }
 
@@ -257,21 +244,6 @@ public class PayloadScript : MonoBehaviourPunCallbacks, IInteractable, IPunOwner
     }
 
     public void OnCancelInteract()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnOwnershipRequest(PhotonView targetView, Photon.Realtime.Player requestingPlayer)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void OnOwnershipTransfered(PhotonView targetView, Photon.Realtime.Player previousOwner)
-    {
-        UpdateKinematicState();
-    }
-
-    public void OnOwnershipTransferFailed(PhotonView targetView, Photon.Realtime.Player senderOfFailedRequest)
     {
         throw new System.NotImplementedException();
     }
