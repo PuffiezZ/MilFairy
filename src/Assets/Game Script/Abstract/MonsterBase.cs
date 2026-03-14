@@ -147,26 +147,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
             aiAgent.isStopped = false;
         }
     }
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            // Master Client ส่งค่าเลือดออกไป
-            stream.SendNext(currentHP);
-        }
-        else
-        {
-            // Client คนอื่นรับค่าเลือดมาอัปเดต
-            float networkHP = (float)stream.ReceiveNext();
-            
-            // ถ้าค่าไม่ตรงกัน ค่อยอัปเดต UI
-            if (!Mathf.Approximately(currentHP, networkHP))
-            {
-                currentHP = networkHP;
-                if (healthBarUI != null) healthBarUI.UpdateHealthBar(MaxHP, currentHP);
-            }
-        }
-    }
+
     [PunRPC]
     public virtual void RPC_TakeDamage(float damage, int pvPlayerID)
     {
@@ -186,7 +167,15 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     }
     private void localTakeDamage(float damage, GameObject source)
     {
-        currentHP -= damage;
+        if(PhotonNetwork.InRoom)
+        {
+            photonView.RPC(nameof(RPC_UpdateCurrentHP), RpcTarget.All, damage);
+        }
+        else
+        {
+            currentHP -= damage;
+        }
+
         MonsterPerception monsterPerception = GetComponent<MonsterPerception>();
         monsterPerception.MonsterGetHurt(source);
         
@@ -197,13 +186,11 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
             monsterState.hurtSignal?.Invoke(transform,transform,false);
             healthBarUI.UpdateHealthBar(MaxHP, currentHP);
         }
-        /*
-        if (currentHP <= 0)
-        {
-            NavAIMesh.enabled = false;
-            Die();
-        }
-        */
+    }
+    [PunRPC]
+    public void RPC_UpdateCurrentHP(float damage)
+    {
+        currentHP -= damage;
     }
 
     public virtual void Die()

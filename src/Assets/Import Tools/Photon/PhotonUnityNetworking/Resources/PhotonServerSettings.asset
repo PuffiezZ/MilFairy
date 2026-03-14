@@ -95,6 +95,7 @@ MonoBehaviour:
   - RPC_SpawnFootstepVFX
   - RPC_SpawnFootstepVFX_Hamter
   - RPC_SyncPayloadEngine
+  - RPC_UpdateCurrentHP
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
