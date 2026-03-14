@@ -22,7 +22,7 @@ public class EnvironmentTaskHandler : MonoBehaviourPun
     {
         if (_isCompleted) return;
 
-        if (PhotonNetwork.InRoom && photonView.ViewID != 0)
+        if (PhotonNetwork.InRoom && photonView.ViewID != 0 && PhotonNetwork.IsMasterClient)
         {
             // Online: ส่ง RPC ให้ทุกคน update progress (AllBuffered เพื่อให้คนที่มาทีหลังได้รับค่าด้วย)
             photonView.RPC(nameof(RPC_UpdateProgress), RpcTarget.AllBuffered);
@@ -42,7 +42,7 @@ public class EnvironmentTaskHandler : MonoBehaviourPun
 
      public void ReduceTaskProgress()
     {
-        if (PhotonNetwork.InRoom && photonView.ViewID != 0)
+        if (PhotonNetwork.InRoom && photonView.ViewID != 0 && PhotonNetwork.IsMasterClient)
         {
             photonView.RPC(nameof(RPC_ReduceProgress), RpcTarget.AllBuffered);
         }
