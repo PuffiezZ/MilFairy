@@ -147,11 +147,33 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
             aiAgent.isStopped = false;
         }
     }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // Master Client ส่งค่าเลือดออกไป
+            stream.SendNext(currentHP);
+        }
+        else
+        {
+            // Client คนอื่นรับค่าเลือดมาอัปเดต
+            float networkHP = (float)stream.ReceiveNext();
+            
+            // ถ้าค่าไม่ตรงกัน ค่อยอัปเดต UI
+            if (!Mathf.Approximately(currentHP, networkHP))
+            {
+                currentHP = networkHP;
+                if (healthBarUI != null) healthBarUI.UpdateHealthBar(MaxHP, currentHP);
+            }
+        }
+    }
     [PunRPC]
     public virtual void RPC_TakeDamage(float damage, int pvPlayerID)
     {
         // แก้ไข: ใช้ PhotonView.Find แทน TagObject เพื่อความแม่นยำในระบบ Network
         PhotonView targetPlayerView = PhotonView.Find(pvPlayerID);
+        
+        if (!PhotonNetwork.IsMasterClient) return;
         
         if(targetPlayerView == null)
         {
