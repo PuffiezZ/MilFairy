@@ -126,10 +126,15 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     {
         if (PhotonNetwork.InRoom)
         {
-            // สำคัญ: ขอสิทธิ์เป็นเจ้าของรถเข็นก่อน เพื่อให้ส่ง RPC และควบคุมความเร็วได้
+            // 1. ขอสิทธิ์เป็นเจ้าของ (Owner) รถคันนี้ เพื่อให้เครื่องเรามีอำนาจสั่งการฟิสิกส์ (Rigidbody)
             photonView.RequestOwnership();
 
-            int getViewID = player.GetComponent<PhotonView>().ViewID;
+            // 2. ดึง ViewID ของผู้เล่นมาเพื่อส่งไปกับ RPC
+            PhotonView playerPv = player.GetComponent<PhotonView>();
+            if (playerPv == null) return;
+
+            // 3. เรียก RPC ผ่าน PhotonView ของรถ (this) เพื่อให้ทุกคนรันฟังก์ชันนั่งบนรถคันนี้
+            int getViewID = playerPv.ViewID;
             photonView.RPC(nameof(RPC_SitOnPayload), RpcTarget.AllBuffered, getViewID);
         }
         else
