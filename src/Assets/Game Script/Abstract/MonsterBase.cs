@@ -40,6 +40,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     
 
     public Action OnStartAttack {get;set;}
+    public Action OnMonsterHurt { get; set; }
     public Action OnFinishAttack { get; set; }
     public Action OnMonsterDie { get; set; }
 
@@ -173,13 +174,13 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
             monsterState.hurtSignal?.Invoke(transform,transform,false);
             healthBarUI.UpdateHealthBar(MaxHP, currentHP);
         }
-        /*
+
+        OnMonsterHurt?.Invoke();
+
         if (currentHP <= 0)
         {
-            NavAIMesh.enabled = false;
             Die();
         }
-        */
     }
 
     public virtual void Die()
@@ -216,6 +217,6 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
 
     public virtual void AttackHandle()
     {
-        
+        OnStartAttack?.Invoke();
     }
 }

@@ -1861,6 +1861,10 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 647607137318243779, guid: cdc057af157553146a46d33ea6bff273,
         type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 4661239261640411350}
+    - targetCorrespondingSourceObject: {fileID: 647607137318243779, guid: cdc057af157553146a46d33ea6bff273,
+        type: 3}
       insertIndex: -1
       addedObject: {fileID: 3880104224158309677}
   m_SourcePrefab: {fileID: 100100000, guid: cdc057af157553146a46d33ea6bff273, type: 3}
@@ -1870,6 +1874,22 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1372073402287493377}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4661239261640411350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014892716051602626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70b598051b44d28438dee43a1e56dfe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitEffectPrefab: {fileID: 7516003108749195644, guid: 68795197712a8f74bb11f26ec78032c1,
+    type: 3}
+  effectSpawnPoint: {fileID: 0}
+  destroyDelay: 1
 --- !u!114 &3880104224158309677
 MonoBehaviour:
   m_ObjectHideFlags: 0
