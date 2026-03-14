@@ -1776,7 +1776,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4192305065054141377}
-  - component: {fileID: 6545506102350888206}
   - component: {fileID: 4693500316034116657}
   - component: {fileID: 4339767953473248776}
   - component: {fileID: 4849309406770409527}
@@ -1811,26 +1810,6 @@ Transform:
   - {fileID: 1712688625294102399}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6545506102350888206
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7395786787712819640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4776163fdb932e44fa2b27dd3fa1afa3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  footStepVFXPrefab: {fileID: 6813416509558619124, guid: 3b7f2c753d435d647a80f1f047a113e3,
-    type: 3}
-  groundOffset: 0.05
-  frontLeftFoot: {fileID: 8390989686341257376}
-  frontRightFoot: {fileID: 5401625901938958379}
-  backLeftFoot: {fileID: 7045415474950988866}
-  backRightFoot: {fileID: 3971767613102569212}
-  speedThreshold: 0.1
 --- !u!114 &4693500316034116657
 MonoBehaviour:
   m_ObjectHideFlags: 0
