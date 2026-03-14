@@ -46,24 +46,38 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     {
         HandlePayloadLogic();
     }
+    private void FixedUpdate()
+    {
+        // เฉพาะคนที่เป็นเจ้าของเท่านั้นที่จะเป็นคน "ขยับ" วัตถุจริงผ่านฟิสิกส์
+        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
 
+        if (CurrentPlayerControl != null && reciveLocomotion != null)
+        {
+            PayloadMoveController();
+        }
+    }
     private void HandlePayloadLogic()
     {
-        bool hasPlayer = CheckPlayerNearby();
+            // เฉพาะเจ้าของ (คนที่ควบคุมอยู่) เท่านั้นที่คำนวณความเร็วและส่ง RPC
+        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
 
+        bool hasPlayer = CheckPlayerNearby();
         float target = (hasPlayer && isTurnOn) ? MoveSpeedTarget : 0f;
         float newSpeed = Mathf.MoveTowards(currentMoveSpeed, target, Time.deltaTime * AccelerationTime);
 
         if (!Mathf.Approximately(currentMoveSpeed, newSpeed))
         {
+            currentMoveSpeed = newSpeed; // อัปเดตเครื่องตัวเองก่อน
             if (PhotonNetwork.InRoom)
             {
-                photonView.RPC(nameof(RPC_SyncPayloadSpeed), RpcTarget.All, newSpeed);
+                photonView.RPC(nameof(RPC_SyncPayloadSpeed), RpcTarget.AllBuffered, newSpeed);
             }
-            else
-            {
-                currentMoveSpeed = newSpeed;
-            }
+        }
+        
+        // อย่าลืมเรียก MoveController ที่นี่ถ้าเป็นเจ้าของ
+        if (CurrentPlayerControl != null)
+        {
+            PayloadMoveController();
         }
     }
     [PunRPC]
