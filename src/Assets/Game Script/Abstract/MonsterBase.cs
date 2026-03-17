@@ -174,6 +174,12 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
         else
         {
             currentHP -= damage;
+            
+            if (healthBarUI != null)
+            {
+                monsterState.hurtSignal?.Invoke(transform,transform,false);
+                healthBarUI.UpdateHealthBar(MaxHP, currentHP);
+            }
         }
 
         MonsterPerception monsterPerception = GetComponent<MonsterPerception>();
@@ -181,16 +187,17 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
         
         Debug.Log($"{monsterName} took {damage} damage. Current HP: {currentHP}/{MaxHP}");
 
-        if (healthBarUI != null)
-        {
-            monsterState.hurtSignal?.Invoke(transform,transform,false);
-            healthBarUI.UpdateHealthBar(MaxHP, currentHP);
-        }
     }
     [PunRPC]
     public void RPC_UpdateCurrentHP(float damage)
     {
         currentHP -= damage;
+        
+        if (healthBarUI != null)
+        {
+            monsterState.hurtSignal?.Invoke(transform,transform,false);
+            healthBarUI.UpdateHealthBar(MaxHP, currentHP);
+        }
     }
 
     public virtual void Die()

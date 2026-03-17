@@ -1886,8 +1886,8 @@ MonoBehaviour:
   spawnPointParent: {fileID: 0}
   minSpawnRadius: 25
   maxSpawnRadius: 42
-  spawnInterval: 5
-  maxEnemies: 32
+  spawnInterval: 7
+  maxEnemies: 6
 --- !u!54 &-6423400562861707195
 Rigidbody:
   m_ObjectHideFlags: 0
