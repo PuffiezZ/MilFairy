@@ -47,6 +47,9 @@ public class MeleeWeapon : WeaponScript
 
     private void Update()
     {
+        // ป้องกัน Error หากอาวุธตกอยู่ที่พื้น (ไม่มีคนถือ) หรืออาวุธถูกเก็บอยู่ (ไม่ได้ถูกใช้งาน)
+        if (PlayerTransform == null || IsShethed) return;
+
         if (EnableHitbox == false)
             return;
 
@@ -73,6 +76,9 @@ public class MeleeWeapon : WeaponScript
 
     public override void WeaponTrigger()
     {
+        // ป้องกันการเปิดใช้งาน Hitbox กรณีที่อาวุธชิ้นอื่นถูกเรียก Event โจมตี
+        if (PlayerTransform == null || IsShethed) return;
+
         EnableHitbox = !EnableHitbox;
         if (EnableHitbox == false)
         {
@@ -111,8 +117,6 @@ public class MeleeWeapon : WeaponScript
     }
     private void HitboxColliderTrigger()
     {
-        // 1. �ӹǳ���˹觡�ҧ���ͧ��������ҹ˹�ҵ���Ф�����
-        // �� transform.TransformPoint ���������˹觢�Ѻ�����ع�������Ф��ѵ��ѵ�
         Vector3 centerPosition = PlayerTransform.TransformPoint(boxOffset);
 
         // 2. �ԧ BoxCast

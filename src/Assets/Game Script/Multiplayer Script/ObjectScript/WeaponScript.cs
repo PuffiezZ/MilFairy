@@ -19,18 +19,20 @@ public class WeaponScript : EquipmentScript
 
         if (rb != null)
         {
-            rb.isKinematic = true;    // à»Ô´ Kinematic à¾×èÍãËé¢ÂÑºµÒÁ Parent à·èÒ¹Ñé¹
-            rb.useGravity = false;   // »Ô´áÃ§â¹éÁ¶èÇ§
-            rb.detectCollisions = false; // »Ô´¡ÒÃª¹à¾×èÍäÁèãËé´Òºä»´Õ´¡ÑºµÑÇÅÐ¤Ã
+            rb.isKinematic = true;    // ï¿½Ô´ Kinematic ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñºï¿½ï¿½ï¿½ Parent ï¿½ï¿½Ò¹ï¿½ï¿½
+            rb.useGravity = false;   // ï¿½Ô´ï¿½Ã§ï¿½ï¿½ï¿½ï¿½ï¿½Ç§
+            rb.detectCollisions = false; // ï¿½Ô´ï¿½ï¿½Ãªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òºä»´Õ´ï¿½Ñºï¿½ï¿½ï¿½ï¿½Ð¤ï¿½
         }
 
         if (bc != null)
         {
-            bc.enabled = false; // »Ô´ Collider ¢Í§´Òº (ä»ãªé Raycast ËÃ×Í Trigger áÂ¡á·¹µÍ¹â¨ÁµÕ)
+            bc.enabled = false; // ï¿½Ô´ Collider ï¿½Í§ï¿½Òº (ï¿½ï¿½ï¿½ Raycast ï¿½ï¿½ï¿½ï¿½ Trigger ï¿½Â¡á·¹ï¿½Í¹ï¿½ï¿½ï¿½ï¿½)
         }
     }
     public override void OnBeginIntereact(GameObject player, bool setActive = false)
     {
+        if(PlayerTransform != null) return;
+        
         PlayerTransform = player.transform;
         base.OnBeginIntereact(player, setActive);
     }
