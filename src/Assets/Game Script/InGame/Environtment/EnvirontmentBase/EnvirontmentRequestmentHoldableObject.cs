@@ -40,8 +40,8 @@ public class EnvirontmentRequestmentHoldableObject : MonoBehaviourPun, IInteract
             {
                 // Solo: ทำงานทันที
                 ExecuteSuccessLogic(playerComponent, heldObject);
+                OnTaskSuccess?.Invoke();
             }
-            OnTaskSuccess?.Invoke();
         }
         else
         {
@@ -60,6 +60,7 @@ public class EnvirontmentRequestmentHoldableObject : MonoBehaviourPun, IInteract
             HoldableObject h = hView != null ? hView.GetComponent<HoldableObject>() : null;
             ExecuteSuccessLogic(p, h);
         }
+        OnTaskSuccess?.Invoke();
     }
     private void ExecuteSuccessLogic(Player player, HoldableObject holdable)
     {

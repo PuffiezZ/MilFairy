@@ -22,10 +22,13 @@ public class EnvironmentTaskHandler : MonoBehaviourPun
     {
         if (_isCompleted) return;
 
-        if (PhotonNetwork.InRoom && photonView.ViewID != 0 && PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.InRoom && photonView.ViewID != 0)
         {
+            // ป้องกัน Client ทำงานซ้ำซ้อน: ให้ Master Client เท่านั้นที่มีสิทธิ์สั่งอัปเดตไปให้ทุกคน
             if (PhotonNetwork.IsMasterClient)
+            {
                 photonView.RPC(nameof(RPC_UpdateProgress), RpcTarget.AllBuffered);
+            }
         }
         else
         {
@@ -40,14 +43,14 @@ public class EnvironmentTaskHandler : MonoBehaviourPun
         UpdateProgressInternal();
     }
 
-     public void ReduceTaskProgress()
+    public void ReduceTaskProgress()
     {
-        if (PhotonNetwork.InRoom && photonView.ViewID != 0 && PhotonNetwork.IsMasterClient)
-        if (PhotonNetwork.InRoom && photonView.ViewID > 0)
+        if (PhotonNetwork.InRoom && photonView.ViewID != 0)
         {
-            photonView.RPC(nameof(RPC_ReduceProgress), RpcTarget.AllBuffered);
             if (PhotonNetwork.IsMasterClient)
+            {
                 photonView.RPC(nameof(RPC_ReduceProgress), RpcTarget.AllBuffered);
+            }
         }
         else
         {

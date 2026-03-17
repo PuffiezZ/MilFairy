@@ -14,7 +14,7 @@ public class EnvironmentPlate : MonoBehaviourPunCallbacks
     [SerializeField] private LayerMask detectionLayer;
     [SerializeField] private string playerTag = "Player";
 
-    private HashSet<int> _activeColliders = new HashSet<int>();
+    private HashSet<Collider> _activeColliders = new HashSet<Collider>();
     private bool _isLocked = false;
     private bool _isPressed = false;
 
@@ -47,13 +47,31 @@ public class EnvironmentPlate : MonoBehaviourPunCallbacks
     {
         _isLocked = lockState;
     }
+
+    private void Update()
+    {
+        if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient) return;
+
+        // ป้องกันบัคกรณีที่ Object ถูกทำลายหรือถูก Disable ขณะที่อยู่บนแท่น
+        if (_activeColliders.Count > 0)
+        {
+            if (_activeColliders.RemoveWhere(col => col == null || !col.gameObject.activeInHierarchy) > 0)
+            {
+                EvaluateState();
+            }
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (_isLocked) return;
+        
+        // ให้ Master Client เป็นคนตัดสินใจคำนวณ Physics เพียงคนเดียว เพื่อให้ทุกคน Sync ตรงกัน
+        if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient) return;
 
         if (IsValidObject(other))
         {
-            if (_activeColliders.Add(other.GetInstanceID()))
+            if (_activeColliders.Add(other))
             {
                 EvaluateState();
             }
@@ -63,10 +81,11 @@ public class EnvironmentPlate : MonoBehaviourPunCallbacks
     private void OnTriggerExit(Collider other)
     {
         if (_isLocked) return;
+        if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient) return;
 
         if (IsValidObject(other))
         {
-            if (_activeColliders.Remove(other.GetInstanceID()))
+            if (_activeColliders.Remove(other))
             {
                 EvaluateState();
             }
@@ -91,13 +110,47 @@ public class EnvironmentPlate : MonoBehaviourPunCallbacks
 
         if (shouldBePressed && !_isPressed)
         {
-            _isPressed = true;
-            OnPlateEntered?.Invoke();
-            Debug.Log($"[EnvironmentPlate] {gameObject.name} Pressed");
+            if (PhotonNetwork.InRoom)
+            {
+                photonView.RPC(nameof(RPC_SetPlateState), RpcTarget.AllBuffered, true);
+            }
+            else
+            {
+                LocalSetPlateState(true);
+            }
         }
         else if (!shouldBePressed && _isPressed)
         {
-            _isPressed = false;
+            if (PhotonNetwork.InRoom)
+            {
+                photonView.RPC(nameof(RPC_SetPlateState), RpcTarget.AllBuffered, false);
+            }
+            else
+            {
+                LocalSetPlateState(false);
+            }
+        }
+    }
+
+    [PunRPC]
+    private void RPC_SetPlateState(bool state)
+    {
+        LocalSetPlateState(state);
+    }
+
+    private void LocalSetPlateState(bool state)
+    {
+        if (_isPressed == state) return;
+
+        _isPressed = state;
+
+        if (_isPressed)
+        {
+            OnPlateEntered?.Invoke();
+            Debug.Log($"[EnvironmentPlate] {gameObject.name} Pressed");
+        }
+        else
+        {
             OnPlateExited?.Invoke();
             Debug.Log($"[EnvironmentPlate] {gameObject.name} Released");
         }
