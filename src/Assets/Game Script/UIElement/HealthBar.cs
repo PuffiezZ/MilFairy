@@ -10,5 +10,10 @@ public class HealthBar : MonoBehaviour
     public void UpdateHealthBar(float maxValue, float currentValue)
     {
         sliderBar.value = currentValue / maxValue;
-    }   
+    }  
+    
+    public void SetHealthBarUI(Slider slider)
+    {
+        sliderBar = slider;
+    } 
 }

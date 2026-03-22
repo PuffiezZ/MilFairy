@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System;
 
 [RequireComponent(typeof(PhotonView))]
 public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
@@ -19,10 +20,19 @@ public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
     [Header("Minimap Settings")]
     [SerializeField] private Sprite cartIcon;
 
+    public event Action<float, float> OnPayloadHealthChanged;
     public bool EnableDamage 
     { 
         get => _enableDamage; 
         set => _enableDamage = value; 
+    }
+    public override void OnEnable() 
+    {
+        UIManager uiM = FindObjectOfType<UIManager>();
+        
+        if(uiM == null) return;
+        
+        uiM.RegisterPayloadHealthBar(this);
     }
 
     private void Awake()
@@ -90,6 +100,7 @@ public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
         Debug.Log($"[ToothCart] ถูกโจมตีโดย: {attackerName} เป็นจำนวน {damage} dmg");
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0);
+        OnPayloadHealthChanged?.Invoke(currentHealth, maxHealth);
 
         // เล่น VFX (Instantiate Prefab) ณ ตำแหน่งของรถ
         if (hitVfxPrefab != null)

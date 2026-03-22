@@ -14,6 +14,8 @@ public class PlayerAnimation : MonoBehaviourPun
 
     [Header("IK Rig Settings")]
     [SerializeField] private Rig handRig; // ลาก Rig ของธนูมาใส่ที่นี่
+    [SerializeField] private Rig bodyRig; // ความเร็วในการเปลี่ยนน้ำหนัก IK
+    [SerializeField] private Transform _aimTarget;
 
     private PlayerMovement playerMovement;
     private PlayerState playerState;
@@ -45,7 +47,8 @@ public class PlayerAnimation : MonoBehaviourPun
     
     private static int isChargingHash = Animator.StringToHash("IsCharging");
     private static int isSheathedDrawBowHash = Animator.StringToHash("isSheathedDrawBow");
- 
+    private static int aimAngleHash = Animator.StringToHash("AimAngle");
+    private float syncAimAngle;
 
     Vector3 locomotionMagnitude = Vector3.zero;
     Vector3 currentBlendInput = Vector3.zero;
@@ -72,6 +75,9 @@ public class PlayerAnimation : MonoBehaviourPun
 
         armLayerIndex = animator.GetLayerIndex("Arm Holding");
         armBowIndex = animator.GetLayerIndex("Arm Sheathed - Bow Drawed");
+        
+        RigBuilder rigBuilder = GetComponent<RigBuilder>();
+        rigBuilder.Build();
     }
     private void Update()
     {
@@ -80,8 +86,22 @@ public class PlayerAnimation : MonoBehaviourPun
 
     private void UpdateAnimationState()
     {
-        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
-
+        
+        if (armLayerIndex != -1) // ��Ǩ�ͺ����� Layer ��������ԧ
+        {
+            currentArmWeight = Mathf.Lerp(currentArmWeight, targetArmWeight, weightLerpSpeed * Time.deltaTime);
+            animator.SetLayerWeight(armLayerIndex, currentArmWeight);
+        }
+        if (armBowIndex != -1) // Ǩͺ Layer ԧ
+        {
+            currentArmBowWeight = Mathf.Lerp(currentArmBowWeight, targetArmBowWeight, weightLerpSpeed * Time.deltaTime);
+            animator.SetLayerWeight(armBowIndex, currentArmBowWeight);
+        }
+        
+        if (PhotonNetwork.InRoom)
+        {
+            if(!photonView.IsMine) return;
+        }
         Vector3 velocity = VelocityByComponent();
         velocity.y = 0;
         locomotionMagnitude = Vector3.Lerp(locomotionMagnitude, velocity, simepleBlendSpeed * Time.deltaTime);
@@ -105,23 +125,50 @@ public class PlayerAnimation : MonoBehaviourPun
 
         currentAnimationfloat = Mathf.Lerp(currentAnimationfloat, TargetAnimationfloat, 10f * Time.deltaTime);
         animator.SetFloat(animationFloatStateHash, currentAnimationfloat);
-
-
-        if (armLayerIndex != -1) // ��Ǩ�ͺ����� Layer ��������ԧ
+        if (!photonView.IsMine && bodyRig != null && bodyRig.weight <= 0.01f)
         {
-            currentArmWeight = Mathf.Lerp(currentArmWeight, targetArmWeight, weightLerpSpeed * Time.deltaTime);
-            animator.SetLayerWeight(armLayerIndex, currentArmWeight);
+            // ถ้า Rig ไม่ทำงาน ให้ย้าย Aim Target กลับมาที่หน้าตัวละครตรงๆ (Default Position)
+            // เพื่อป้องกันกระดูกดีดหรือบิดค้าง
+            _aimTarget.localPosition = new Vector3(0, 1.5f, 2f); 
         }
-        if (armBowIndex != -1) // Ǩͺ Layer ԧ
+        /*if (!photonView.IsMine && bodyRig != null && bodyRig.weight > 0.1f)
         {
-            currentArmBowWeight = Mathf.Lerp(currentArmBowWeight, targetArmBowWeight, weightLerpSpeed * Time.deltaTime);
-            animator.SetLayerWeight(armBowIndex, currentArmBowWeight);
-        }
+            UpdateRemoteRigTarget(syncAimAngle);
+        }*/
+    }
+    private void UpdateRemoteRigTarget(float angle)
+    {
+        // อ้างอิงจาก PlayerMovement เพื่อให้ได้จุด Pivot เดียวกัน
+        Vector3 pivotPosition = transform.position + Vector3.up * 1.5f; // ใช้ค่าเดียวกับ _aimHeightOffset
+        
+        // คำนวณทิศทางจากมุม Angle
+        Quaternion rotation = Quaternion.Euler(angle, transform.eulerAngles.y, 0f);
+        Vector3 aimDirection = rotation * Vector3.forward;
 
-        // จัดการ Rig Weight ของ IK Rigging
-        if (handRig != null)
+        Vector3 targetPosition = pivotPosition + (aimDirection * 10f); // ใช้ค่าเดียวกับ _aimDistance
+        
+        // อัปเดตตำแหน่ง AimTarget ในเครื่อง Client อื่นๆ
+        // (หมายเหตุ: _aimTarget ต้องเป็นตัวแปรที่ PlayerAnimation เข้าถึงได้)
+        // หรือให้ PlayerMovement เป็นคนคุม UpdateRigTargetFixed สำหรับ Remote
+    }
+    public void SetAimAngle(float angle)
+    {
+        animator.SetFloat(aimAngleHash, angle);
+    }
+    public void SetBodyRigWeight(float weight)
+    {
+        if (bodyRig != null)
         {
-            handRig.weight = Mathf.Lerp(handRig.weight, targethandRigWeight, 10f* Time.deltaTime);
+            bodyRig.weight = weight;
+            
+            if(bodyRig.weight >= 1f)
+            {
+                playerMovement.LockRotating = true;
+            }
+            else
+            {
+                playerMovement.LockRotating = false;
+            }
         }
     }
     public void SetArmLayerWeight(float weight)
@@ -197,11 +244,36 @@ public class PlayerAnimation : MonoBehaviourPun
 
     public void OnTriggerDrawOrSheathed(UtilityDev.DrawOrSheath drawOrSheath,UtilityDev.WeaponType weaponType)
     {
+        // 1. อัปเดตเครื่องตัวเองทันที (Local)
+        UpdateWeaponVisualState(drawOrSheath, weaponType);
+
+        // 2. ส่ง RPC ไปบอกเครื่องคนอื่น (Multiplayer)
+        if (PhotonNetwork.InRoom)
+        {
+            photonView.RPC(nameof(RPC_SyncWeaponWeight), RpcTarget.Others, drawOrSheath, weaponType);
+        }
+    }
+    // เพิ่มฟังก์ชันนี้เพื่อรับคำสั่งจากเครื่องเจ้าของ
+    [PunRPC]
+    private void RPC_SyncWeaponWeight(UtilityDev.DrawOrSheath state, UtilityDev.WeaponType type)
+    {
+        // ถ้าเป็นเครื่องตัวเอง ไม่ต้องรันซ้ำ (เพราะรันไปแล้วก่อนส่ง RPC)
+        if (photonView.IsMine) return; 
+
+        // รัน Logic เดียวกับเครื่องเจ้าของเพื่อให้เครื่อง Client อื่นเปลี่ยน Weight ตาม
+        UpdateWeaponVisualState(state, type);
+    }
+
+    // แยก Logic ออกมาเป็นฟังก์ชันกลางเพื่อให้เรียกใช้ได้ทั้ง Local และ RPC
+    private void UpdateWeaponVisualState(UtilityDev.DrawOrSheath drawOrSheath, UtilityDev.WeaponType weaponType)
+    {
         switch (weaponType)
         {
             case UtilityDev.WeaponType.OneHandedMelee:
                 if(drawOrSheath == UtilityDev.DrawOrSheath.Draw)
                 {
+                    SetArmBowLayerWeight(0f);
+                    SetBodyRigWeight(0f);
                     animator.SetTrigger(isDrawOneHandedHash);
                     animator.ResetTrigger(isSheathedOneHandedHash);
                     Debug.Log("Draw Animation Triggered");
@@ -217,19 +289,20 @@ public class PlayerAnimation : MonoBehaviourPun
                 if (drawOrSheath == UtilityDev.DrawOrSheath.Draw)
                 {
                     SetArmBowLayerWeight(1f);
+                    SetBodyRigWeight(1f);
                     animator.SetTrigger(isDrawBowHash);
                     animator.ResetTrigger(isSheathedDrawBowHash);
                 } 
                 else
                 {
+                    SetArmBowLayerWeight(0f);
+                    SetBodyRigWeight(0f);
                     animator.SetTrigger(isSheathedDrawBowHash);
                     animator.ResetTrigger(isDrawBowHash);
                 }
                 break;
         }
-        
     }
-
     public void PerformAttackAnimation(ComboNode getComboNode)
     {
         // ��������� Animator �ͧ�س ��ҵ������Ի���� "LightAttack_Base"

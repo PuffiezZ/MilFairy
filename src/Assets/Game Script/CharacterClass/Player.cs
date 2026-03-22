@@ -69,26 +69,6 @@ public class Player : CharacterBase,IPickupable
     private void Update()
     {
         if (PhotonNetwork.InRoom && !photonView.IsMine) return;
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Scrap.ToString(), photonView);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Stick.ToString(), photonView);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Electronic.ToString(), photonView);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Oil.ToString(), photonView);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            NetworkPrefabSpawner.Instance.SpawnResource(ResourceType.Clothes.ToString(), photonView);
-        }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             NetworkPrefabSpawner.Instance.SpawnResource("Sword", photonView);
@@ -107,9 +87,9 @@ public class Player : CharacterBase,IPickupable
     }
     private void CallUpdatePlayerUIHealth()
     {
-        // ����繵���Фâͧ��� ���͡ UI Manager ����
-        if (photonView.IsMine && PhotonNetwork.InRoom)
+        if (PhotonNetwork.InRoom)
         {
+            if(!photonView.IsMine) return; 
             photonView.RPC(nameof(RPC_UpdatePlayerHealthUI), RpcTarget.All, currentHealth, maxHealth);
         }
         else
@@ -135,6 +115,7 @@ public class Player : CharacterBase,IPickupable
     [PunRPC]
     public void RPC_UpdatePlayerHealthUI(float currentHealthValue, float maxHealthValue)
     {
+        if (!photonView.IsMine && PhotonNetwork.InRoom) return;
         LocalUpdatePlayerHealthUI(currentHealthValue, maxHealth);
     }
     private void LocalUpdatePlayerHealthUI(float currentHealthValue, float maxHealthValue)

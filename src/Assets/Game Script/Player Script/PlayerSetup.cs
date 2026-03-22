@@ -12,6 +12,7 @@ public class PlayerSetup : MonoBehaviourPun
     [SerializeField] private PlayerLocomotion locomotion;
     [SerializeField] private TMP_Text nameTextTMP;
     [SerializeField] private GameObject cameraPlayer;
+    [SerializeField] private GameObject minimapCam;
 
     private void Start()
     {
@@ -45,6 +46,7 @@ public class PlayerSetup : MonoBehaviourPun
         playerMovement.enabled = true;
         locomotion.enabled = true;
         cameraPlayer.SetActive(true);
+        minimapCam.SetActive(true);
 
         if (photonView.IsMine)
         {

@@ -12,8 +12,14 @@ namespace Sausagecat.PlayerControlSystem
     {
         [Header("Component")]
         [SerializeField] private CharacterController characterController;
-        [SerializeField] private Camera _playerCamera;
+        [SerializeField] public Camera _playerCamera;
         [SerializeField] private PlayerState _playerState;
+        [SerializeField] private PlayerAnimation _playerAnimation;
+        
+        [Header("Rig Aim Settings")]
+        [SerializeField] private Transform _aimTarget; // ตัว Target ของ Multi-Aim
+        [SerializeField] private float _aimDistance = 10f; // ระยะห่างจากตัวละคร (ยิ่งไกล ยิ่งหันนิ่ง)
+        [SerializeField] private float _aimHeightOffset = 1.5f; // ระดับความสูง (ระดับอก/ไหล่)
 
         [Header("Movement Setting")]
         public float runAcceleration = 0.25f;
@@ -39,7 +45,7 @@ namespace Sausagecat.PlayerControlSystem
 
         private PlayerLocomotion playerLocomotion;
 
-        public bool lockRotating { get; private set; } = false;
+        public bool LockRotating { get; set; } = false;
         public bool IsMovementInput { get; private set; }
         public bool IsMoving { get; private set; }
         public bool IsSprinting { get; private set; }
@@ -60,24 +66,37 @@ namespace Sausagecat.PlayerControlSystem
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Mouse1))
+            if(LockRotating)
             {
-                lockRotating = !lockRotating;
+                UpdateRigTargetFixed();
+                //_playerAnimation.SetAimAngle(_targetRotationX);
             }
             
             MovementImplement?.Invoke();
         }
+        private void UpdateRigTargetFixed()
+        {
+            if (_aimTarget == null || _playerCamera == null) return;
+
+            // 1. หาจุดเริ่มต้น (Pivot) ของการเล็งที่ตัวผู้เล่น
+            Vector3 pivotPosition = transform.position + Vector3.up * _aimHeightOffset;
+
+            // 2. ใช้ทิศทาง Forward ของกล้องตรงๆ (รวมแกน Y ด้วยเพื่อให้ก้ม-เงยได้)
+            Vector3 aimDirection = _playerCamera.transform.forward;
+
+            // 3. คำนวณตำแหน่งปลายทางในระยะที่คงที่
+            Vector3 targetPosition = pivotPosition + (aimDirection * _aimDistance);
+
+            // 4. อัปเดตตำแหน่ง Aim Target (ใช้ Lerp เพื่อความสมูท)
+            _aimTarget.position = Vector3.Lerp(_aimTarget.position, targetPosition, Time.deltaTime * 25f);
+        }
         private void LateUpdate()
         {
-            // 1. �Ѻ Input ���������ҡ����ع
             _targetRotationY += playerLocomotion.LookInput.x * lookSenseH;
             _targetRotationX -= playerLocomotion.LookInput.y * lookSenseV;
 
-            // 2. �ӡѴ������-�� (Clamp)
             _targetRotationX = Mathf.Clamp(_targetRotationX, -lookLimitV, lookLimitV);
 
-            // 3. �����ع CameraPivot (��ع�ͺ����Ф�)
-            // ᡹ X ��͡����, ᡹ Y �����ع�ͺ���
             _cameraPivot.rotation = Quaternion.Euler(_targetRotationX, _targetRotationY, 0f);
         }
 
@@ -177,7 +196,7 @@ namespace Sausagecat.PlayerControlSystem
 
         private void HandleCharacterRotation(Vector3 movementDirection)
         {
-            if (lockRotating)
+            if (LockRotating)
             {
                 turnSmoothTime = 0f;
                 float targetAngle = _playerCamera.transform.eulerAngles.y;

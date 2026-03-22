@@ -97,6 +97,9 @@ MonoBehaviour:
   - RPC_SyncPayloadEngine
   - RPC_UpdateCurrentHP
   - RPC_SetPlateState
+  - RPC_SyncWeaponWeight
+  - RPC_MoveDown
+  - RPC_MoveUp
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

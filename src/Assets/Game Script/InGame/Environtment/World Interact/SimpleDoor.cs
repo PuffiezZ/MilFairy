@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class SimpleDoor : MonoBehaviour
 {
+
     [Header("Visual Settings")]
     [SerializeField] private Animator doorAnimator;
     [SerializeField] private string openBoolName = "isOpen";

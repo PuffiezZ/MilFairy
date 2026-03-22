@@ -199,7 +199,18 @@ public class PlayerEquipment : MonoBehaviourPun
 
         // 2. �Ѵ�������ͧ UI ��������
         WeaponData weaponData = getWeapon.WeaponData;
-        OnSetNewWeapon?.Invoke(indexSlot, weaponData); 
+        
+        if (PhotonNetwork.InRoom)
+        {
+            if(photonView.IsMine)
+            {
+                OnSetNewWeapon?.Invoke(indexSlot, weaponData); 
+            }
+        }
+        else
+        {
+            OnSetNewWeapon?.Invoke(indexSlot, weaponData); 
+        }
 
         // 3. ��駤�ҵ��˹����Դ�Ѻ�ѡ
         instanceWeapon.transform.SetParent(getWeapon.SheathedSocket.SocketTransform, false);

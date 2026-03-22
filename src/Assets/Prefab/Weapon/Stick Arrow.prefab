@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6217371755000958714}
   - component: {fileID: -9167875803039899170}
   - component: {fileID: 7944477058432994222}
+  - component: {fileID: 5215343978508820842}
   m_Layer: 0
   m_Name: Stick Arrow
   m_TagString: Untagged
@@ -123,6 +124,23 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &5215343978508820842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3435313223327934521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6ec4831be6a66246b168211d430a446, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 20
+  lifeTime: 3
+  ignoredLayers:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1001 &658753184431608043
 PrefabInstance:
   m_ObjectHideFlags: 0
