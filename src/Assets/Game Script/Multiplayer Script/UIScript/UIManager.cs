@@ -14,14 +14,21 @@ public class UIManager : MonoBehaviour
 
     [BoxGroup("Weapon Slot")]
     [SerializeField] private WeaponSlotUI[] weaponsSlot;
-
+    [BoxGroup("UI Bars")]
     [SerializeField] private Slider healthSlider;
+    [BoxGroup("UI Bars")]
     [SerializeField] private Slider payloadHealthSlider;
+    [BoxGroup("UI Bars")]
+    [SerializeField] private Image handlePayloadHealhBar;
+    [BoxGroup("UI Bars")]
+    [SerializeField] private Sprite[] handlePayloadSprite;
 
     [BoxGroup("UI Parent")]
     [SerializeField] private RectTransform gameplayUI;
     [BoxGroup("UI Parent")]
-    [SerializeField] private RectTransform resultUI;
+    [SerializeField] private RectTransform winUI;
+    [BoxGroup("UI Parent")]
+    [SerializeField] private RectTransform loseUI;
 
     private Coroutine smoothHealthCoroutine;
 
@@ -34,6 +41,7 @@ public class UIManager : MonoBehaviour
         PlayerEquipment.OnSetNewWeapon += UpdateWeaponSlot;
 
         RoomManager.OnWinTriggered += WinUIHandler;
+        RoomManager.OnLoseTriggered += LoseUIHandler;
     }
 
     private void OnDisable()
@@ -44,16 +52,31 @@ public class UIManager : MonoBehaviour
 
         PlayerEquipment.OnSetNewWeapon -= UpdateWeaponSlot;
         RoomManager.OnWinTriggered -= WinUIHandler;
+        RoomManager.OnLoseTriggered -= LoseUIHandler;
     }
     public void RegisterPayloadHealthBar(ToothCart cart)
     {
         cart.OnPayloadHealthChanged += UpdatePayloadHealthBar;
+    }
+    public void UpdateHandlePayload(float current, float max)
+    {
+        float halfAmountHP = max / 2f;
+        
+        if(current > halfAmountHP)
+        {
+            handlePayloadHealhBar.sprite = handlePayloadSprite[0];
+        }
+        else
+        {
+            handlePayloadHealhBar.sprite = handlePayloadSprite[1];
+        }
     }
     private void UpdatePayloadHealthBar(float current, float max)
     {
         if(healthSlider != null)
         {
             float targetValue = current / max;
+            UpdateHandlePayload(current, max);
             if (smoothHealthCoroutine != null)
             {
                 StopCoroutine(smoothHealthCoroutine);
@@ -132,6 +155,12 @@ public class UIManager : MonoBehaviour
     public void WinUIHandler()
     {
         gameplayUI.gameObject.SetActive(false);
-        resultUI.gameObject.SetActive(true);
+        winUI.gameObject.SetActive(true);
+    }
+    
+    public void LoseUIHandler()
+    {
+        gameplayUI.gameObject.SetActive(false);
+        loseUI.gameObject.SetActive(true);
     }
 }

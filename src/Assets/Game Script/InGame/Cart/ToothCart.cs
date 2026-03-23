@@ -19,6 +19,10 @@ public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
 
     [Header("Minimap Settings")]
     [SerializeField] private Sprite cartIcon;
+    
+    [Header("Tooth Models")]
+    [SerializeField] private GameObject normalTooth;
+    [SerializeField] private GameObject decayTooth;
 
     public event Action<float, float> OnPayloadHealthChanged;
     public bool EnableDamage 
@@ -38,8 +42,7 @@ public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
     private void Awake()
     {
         currentHealth = maxHealth;
-        
-        // ตรวจสอบ AudioSource หากไม่ได้ตั้งค่าไว้ใน Inspector จะพยายามดึงจากเครื่องตัวเอง
+
         if (audioSource == null)
         {
             audioSource = GetComponent<AudioSource>();
@@ -50,11 +53,17 @@ public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
     {
         // ลงทะเบียนรถเข้า Minimap ทันทีที่เริ่มเกม
         MinimapMilfairy mm = FindObjectOfType<MinimapMilfairy>();
+        
+        if(PhotonNetwork.InRoom)
+        {
+            if(PhotonNetwork.IsMasterClient)
+                photonView.RPC(nameof(RPC_ChangeModelByHP), RpcTarget.All, currentHealth);
+        }
+        else
+        {
+            OnLocalChangeModelByHP(currentHealth);
+        }
     }
-
-    /// <summary>
-    /// ฟังก์ชันรับดาเมจตาม Interface IDamageable
-    /// </summary>
     public void TakeDamage(float damage, GameObject source = null)
     {
         if (EnableDamage == false)
@@ -79,13 +88,17 @@ public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
 
         if (PhotonNetwork.InRoom)
         {
-            // ส่ง RPC ให้ทุกเครื่องประมวลผลดาเมจและแสดงผล Effect พร้อมกัน
-            photonView.RPC(nameof(RPC_ApplyDamage), RpcTarget.All, damage, attackerName);
+            if(PhotonNetwork.IsMasterClient)
+            {
+                photonView.RPC(nameof(RPC_ApplyDamage), RpcTarget.All, damage, attackerName);
+                photonView.RPC(nameof(RPC_ChangeModelByHP), RpcTarget.All, currentHealth);
+            }
         }
         else
         {
             // กรณีเล่นคนเดียว (Offline)
             ApplyDamageLogic(damage, attackerName);
+            OnLocalChangeModelByHP(currentHealth);
         }
     }
 
@@ -100,7 +113,7 @@ public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
         Debug.Log($"[ToothCart] ถูกโจมตีโดย: {attackerName} เป็นจำนวน {damage} dmg");
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0);
-        OnPayloadHealthChanged?.Invoke(currentHealth, maxHealth);
+        OnPayloadHealthChanged?.Invoke(currentHealth, maxHealth);     
 
         // เล่น VFX (Instantiate Prefab) ณ ตำแหน่งของรถ
         if (hitVfxPrefab != null)
@@ -118,6 +131,29 @@ public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
         {
             Debug.Log("ToothCart is destroyed!");
             // คุณสามารถเพิ่ม Logic เมื่อรถพังตรงนี้ เช่น เรียก Game Over
+            
+            RoomManager.Instance.TriggerLoseCondition();
         }
+    }
+    
+    private void OnLocalChangeModelByHP(float currentHP)
+    {
+        float halfMaxHP = maxHealth / 2f;
+        if(currentHealth > halfMaxHP)
+        {
+            normalTooth.SetActive(true);
+            decayTooth.SetActive(false);
+        }
+        else
+        {
+            normalTooth.SetActive(false);
+            decayTooth.SetActive(true);
+        }
+    }
+    
+    [PunRPC]
+    public void RPC_ChangeModelByHP(float currentHP)
+    {
+        OnLocalChangeModelByHP(currentHP);
     }
 }

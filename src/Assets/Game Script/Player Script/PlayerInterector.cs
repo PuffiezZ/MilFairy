@@ -24,6 +24,11 @@ public class PlayerInterector : MonoBehaviourPun
 
     void Update()
     {
+        if(PhotonNetwork.InRoom)
+        {
+            if(!photonView.IsMine) return;    
+        }
+        
         FindBestInteractable();
 
         // Debug: �ʴ�������ͺ��Ǽ�����

@@ -127,9 +127,6 @@ public class HoldableObject : MonoBehaviourPun, IInteractable
     private void LocalPickUp(GameObject player)
     {
         ownerPlayer = player.GetComponent<Player>();
-
-        // �Ӥѭ: �� Action ��ҧ����� Override ������ջ���
-        // ����ͧ��� Throw(10f) �ç��� ������Ҩ����ç�ҡ Update
         if (ownerPlayer.photonView.IsMine && PhotonNetwork.InRoom)
         {
             if(!ownerPlayer.photonView.IsMine) return;

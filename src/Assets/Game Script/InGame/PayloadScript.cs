@@ -126,7 +126,11 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     {
         if (PhotonNetwork.InRoom)
         {
-            // 1. ขอสิทธิ์เป็นเจ้าของ (Owner) รถคันนี้ เพื่อให้เครื่องเรามีอำนาจสั่งการฟิสิกส์ (Rigidbody)
+            if(CurrentPlayerControl != null)
+            {
+                Debug.Log("The payload already has a player!");
+                return;
+            }
             photonView.RequestOwnership();
 
             // 2. ดึง ViewID ของผู้เล่นมาเพื่อส่งไปกับ RPC

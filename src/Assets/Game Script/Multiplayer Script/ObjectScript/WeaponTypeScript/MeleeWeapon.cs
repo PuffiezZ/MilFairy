@@ -102,7 +102,6 @@ public class MeleeWeapon : WeaponScript
 
             if (damageable != null && isNotPlayer && isNotDamaged && !isWallBlocking && damageable.EnableDamage)
             {
-                float damageOut = WeaponData.damage;
                 damagedTargets.Add(damageable);
                 damageable.TakeDamage(WeaponData.damage,PlayerTransform.gameObject);
 

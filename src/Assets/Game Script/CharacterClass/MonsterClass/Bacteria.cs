@@ -1,50 +1,49 @@
 using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Bacteria : MonsterBase
 {
-    private const float biteRadius = 0.5f;
-    private const float biteDistance = 1.0f;
-    private const float yOffset = 0.5f;
+    [SerializeField] private float biteRadius = 0.5f;
+    [SerializeField] private float biteDistance = 1.0f;
+    [SerializeField] private float yOffset = 0.5f;
 
+    private List<IDamageable> damagedTargets = new List<IDamageable>();
     public override void AttackHandle()
     {
-        if (gameObject.activeSelf)
+        EnableHitBoxAttack = !EnableHitBoxAttack;
+        if (EnableHitBoxAttack == false)
         {
-            StartCoroutine(BitingAttack());
+            damagedTargets.Clear();
         }
-
     }
-    private void OnDisable()
+    private void  Update() 
     {
-        StopCoroutine(BitingAttack());
+        if (EnableHitBoxAttack == false)
+            return;  
+        BittingAttack(); 
     }
-    private IEnumerator BitingAttack()
+
+    private void BittingAttack()
     {
-        float time = 0f;
-
-        while(time < 1f)
-        {
-            time += Time.deltaTime;
-            yield return null;
-        }
-
         Vector3 origin = transform.position + (Vector3.up * yOffset);
 
         Vector3 direction = transform.forward;
 
-        RaycastHit[] hits = Physics.SphereCastAll(origin, biteRadius, direction, biteDistance, LayerMask.GetMask("Player"));
+        RaycastHit[] hits = Physics.SphereCastAll(origin, biteRadius, direction, biteDistance,LayerMask.GetMask("Player","Damageable"));
         foreach (var hit in hits)
         {
-            if (hit.collider.TryGetComponent<IDamageable>(out IDamageable victim) && victim.EnableDamage)
+            IDamageable idamageableGO = hit.collider.GetComponent<IDamageable>();
+            if (idamageableGO != null && !damagedTargets.Contains(idamageableGO))
             {
-                victim.TakeDamage(monsterData.GetStatValue("AttackDamage"), gameObject);
+                damagedTargets.Add(idamageableGO);
+                idamageableGO.TakeDamage(monsterData.GetStatValue("AttackDamage"), gameObject);
                 Debug.Log($"Bite hit: {hit.collider.name}");
             }
         }
         IsAttacking = false;
         OnFinishAttack?.Invoke();
-        yield break;
     }
 
     private void OnDrawGizmosSelected()

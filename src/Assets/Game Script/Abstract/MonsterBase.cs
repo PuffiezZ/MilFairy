@@ -35,6 +35,7 @@ public class MonsterBase : MonoBehaviourPunCallbacks,IDamageable,IKnockback,IAtt
     public bool Hurt { get; set; }
     public bool IsAttackRotating { get; set; }
     public bool EnableDamage { get; set; }
+    public bool EnableHitBoxAttack { get; set; }
     public NavMeshAgent NavAIMesh { get { return aiAgent; } }
     public MonsterState MonsterState { get { return monsterState; } }
     

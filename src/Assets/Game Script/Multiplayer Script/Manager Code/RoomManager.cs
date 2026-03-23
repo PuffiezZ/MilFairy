@@ -7,16 +7,20 @@ using UnityEngine.SceneManagement;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private GameObject playerObject; // ��ͧ����������� Resources ��ҹ��
-    [SerializeField] private Transform[] spawnPoints; // �� array ���������ش�Դ
+    [SerializeField] private GameObject playerObject; 
+    [SerializeField] private Transform[] spawnPoints; 
+    [SerializeField] private Transform winPosition;
+    [SerializeField] private float winDistanceThreshold = 5f;
+
     private const string mainMenuName = "Mainmenu";
     private PayloadSetup payloadSetup;
     private AIDataSetup aiDataSetup;
     public PayloadScript CurrentPlayingPayload { get; set; }
     public static RoomManager Instance { get; private set; }
     private bool isVictoryTriggered = false;
+    private bool isDefeatTriggered = false;
     public static UnityAction OnWinTriggered;
-
+    public static UnityAction OnLoseTriggered;
 
     private void Awake()
     {
@@ -56,6 +60,20 @@ public class RoomManager : MonoBehaviourPunCallbacks
         SpawnPlayer();
     }
 
+    private void Update()
+    {
+        if (isVictoryTriggered || CurrentPlayingPayload == null || winPosition == null) return;
+
+        // ให้ MasterClient หรือ Offline mode เป็นคนประมวลผล เพื่อไม่ให้ยิง RPC ซ้ำซ้อนกัน
+        if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient) return;
+
+        float distance = Vector3.Distance(CurrentPlayingPayload.transform.position, winPosition.position);
+        if (distance <= winDistanceThreshold)
+        {
+            TriggerWinCondition();
+        }
+    }
+
     private void SpawnPlayer()
     {
         Transform selectedPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
@@ -78,6 +96,35 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             LocalWinHandle();
         }
+    }
+    
+    public void TriggerLoseCondition()
+    {
+        if(isDefeatTriggered) return;
+        isDefeatTriggered = true;
+
+        if(PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom)
+        {
+            photonView.RPC(nameof(RPC_Lose), RpcTarget.All);
+        }
+        else
+        {
+            LocalLoseHandle();
+        }
+    }
+    [PunRPC]
+    private void RPC_Lose()
+    {
+        LocalLoseHandle();
+        Debug.Log("<color=red>!!! DEFEAT !!!</color>");
+    }
+    
+    public void LocalLoseHandle()
+    {
+        CurrentPlayingPayload.SetPayloadSpeed(0);
+        OnLoseTriggered?.Invoke();
+        
+        StartCoroutine(DelayDisconnect(5f));
     }
 
     [PunRPC]
@@ -121,5 +168,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
             PhotonNetwork.Disconnect();
         }
         SceneManager.LoadScene(mainMenuName);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (winPosition != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(winPosition.position, winDistanceThreshold);
+        }
     }
 }

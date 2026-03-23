@@ -15569,6 +15569,9 @@ MonoBehaviour:
   monsterState: {fileID: 7160193527212647313}
   enableDamage: 1
   gravity: 9.81
+  biteRadius: 0.73
+  biteDistance: 1.28
+  yOffset: 0.5
 --- !u!95 &3231881339820448754 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 157637931953052369, guid: cdc057af157553146a46d33ea6bff273,

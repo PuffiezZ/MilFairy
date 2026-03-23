@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-// using NaughtyAttributes; // ถ้าใช้ BoxGroup ให้ uncomment บรรทัดนี้
+// using NaughtyAttributes; // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ BoxGroup ๏ฟฝ๏ฟฝ๏ฟฝ uncomment ๏ฟฝ๏ฟฝรทัด๏ฟฝ๏ฟฝ๏ฟฝ
 
 public class PayloadSpawner : MonoBehaviourPunCallbacks
 {
@@ -12,38 +12,48 @@ public class PayloadSpawner : MonoBehaviourPunCallbacks
     public GameObject enemyPrefab;
 
     [Header("Spawn Location Settings")]
-    public Transform spawnPointParent; // ลากตัวแม่ที่เก็บจุดเกิดทั้งหมดมาใส่
-    [Tooltip("ระยะห่างต่ำสุดจาก Payload (ห้ามเกิดใกล้กว่านี้)")]
+    public Transform spawnPointParent; // ๏ฟฝาก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ็บจุด๏ฟฝิด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
+    [Tooltip("๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝุด๏ฟฝาก Payload (๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝิด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาน๏ฟฝ๏ฟฝ)")]
     public float minSpawnRadius = 10f;
-    [Tooltip("ระยะห่างสูงสุดจาก Payload (ห้ามเกิดไกลกว่านี้)")]
+    [Tooltip("๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาง๏ฟฝูง๏ฟฝุด๏ฟฝาก Payload (๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝิด๏ฟฝลก๏ฟฝ๏ฟฝาน๏ฟฝ๏ฟฝ)")]
     public float maxSpawnRadius = 25f;
 
     [Header("Spawn Logic Timing")]
     public float spawnInterval = 5f;
     public int maxEnemies = 32;
 
+    [Header("Spawn Limits & Toggles")]
+    public bool isSpawningEnabled = true;
+    [Tooltip("เธเธณเธเธงเธเธเธฃเธฑเนเธเธ—เธฑเนเธเธซเธกเธ”เธ—เธตเนเธญเธเธธเธเธฒเธ•เนเธซเน Spawn เนเธ”เน (เธ•เธฑเนเธเน€เธเนเธเธเนเธฒเธ—เธตเนเธ•เนเธญเธเธเธฒเธฃ)")]
+    public int maxTotalSpawns = 10;
+    private int currentTotalSpawned = 0;
+
     private List<Transform> allSpawnPoints = new List<Transform>();
     private float timer;
 
     void Start()
     {
-        // เก็บจุดเกิดทั้งหมดไว้ใน List ตั้งแต่เริ่ม
+        // ๏ฟฝ็บจุด๏ฟฝิด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ List ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
         if (spawnPointParent != null)
         {
-            // ดึงลูกๆ ทั้งหมดที่เป็นจุดเกิดมาเก็บไว้
+            // ๏ฟฝึง๏ฟฝูก๏ฟฝ ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ็นจุด๏ฟฝิด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
             allSpawnPoints = spawnPointParent.GetComponentsInChildren<Transform>().Where(t => t != spawnPointParent.transform).ToList();
         }
     }
 
     void Update()
     {
-        // ทำงานเฉพาะบน Master Client เท่านั้น
+        // ๏ฟฝำงานเฉพ๏ฟฝะบ๏ฟฝ Master Client ๏ฟฝ๏ฟฝาน๏ฟฝ๏ฟฝ
         if (!PhotonNetwork.IsMasterClient) return;
+
+        // เธซเธขเธธเธ”เธ—เธณเธเธฒเธเธซเธฒเธเนเธกเนเนเธ”เนเน€เธเธดเธ”เนเธเนเธเธฒเธ เธซเธฃเธทเธญ Spawn เธเธฃเธเธเธณเธเธงเธเธ—เธตเนเธเธณเธซเธเธ”เนเธฅเนเธง
+        if (!isSpawningEnabled) return;
+        if (currentTotalSpawned >= maxTotalSpawns) return;
 
         timer += Time.deltaTime;
         if (timer >= spawnInterval)
         {
-            // เช็คจำนวน Enemy ทั้งหมดในฉาก (รองรับ Object Pooling ถ้า Enemy ที่ตายแล้วถูก SetActive(false))
+            // ๏ฟฝ็คจำนวน Enemy ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝในฉาก (๏ฟฝอง๏ฟฝับ Object Pooling ๏ฟฝ๏ฟฝ๏ฟฝ Enemy ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝวถูก SetActive(false))
             int currentEnemyCount = GameObject.FindGameObjectsWithTag("Enemy").Count(e => e.activeInHierarchy);
 
             if (currentEnemyCount < maxEnemies)
@@ -56,40 +66,54 @@ public class PayloadSpawner : MonoBehaviourPunCallbacks
 
     void SpawnEnemy()
     {
-        // 1. กรองจุดเกิดที่อยู่ในระยะวงแหวนรอบๆ Payload
+        // 1. ๏ฟฝ๏ฟฝอง๏ฟฝุด๏ฟฝิด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝวง๏ฟฝ๏ฟฝวน๏ฟฝอบ๏ฟฝ Payload
         Vector3 currentPos = transform.position;
         var nearbyPoints = allSpawnPoints.Where(p => {
             float dist = Vector3.Distance(currentPos, p.position);
             return dist >= minSpawnRadius && dist <= maxSpawnRadius;
         }).ToList();
 
-        // 2. ถ้ามีจุดที่เข้าเงื่อนไข ให้สุ่มเกิด
+        // 2. ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝีจุด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอน๏ฟฝ ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝิด
         if (nearbyPoints.Count > 0)
         {
             Transform selectedPoint = nearbyPoints[Random.Range(0, nearbyPoints.Count)];
             NetworkPrefabSpawner.Instance.SpawnEntity(enemyPrefab, selectedPoint.position,selectedPoint.rotation);
+            
+            // เธเธฑเธเธเธณเธเธงเธเธเธฒเธฃ Spawn เธ—เธตเนเธชเธณเน€เธฃเนเธ
+            currentTotalSpawned++;
         }
     }
 
+    public void SetSpawnerActive(bool isActive)
+    {
+        isSpawningEnabled = isActive;
+    }
+
+    public void ResetSpawnCount()
+    {
+        currentTotalSpawned = 0;
+        timer = 0f; // เธฃเธตเน€เธเนเธ•เน€เธงเธฅเธฒเน€เธฃเธดเนเธกเธ•เนเธเธเธฒเธฃ Spawn เนเธซเธกเนเธ”เนเธงเธข
+    }
+
     // ==================================================
-    // ส่วนของ Debug Gizmos (แสดงผลเมื่อคลิกที่ตัว PayloadSpawner)
+    // ๏ฟฝ๏ฟฝวน๏ฟฝอง Debug Gizmos (๏ฟฝสด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอค๏ฟฝิก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ PayloadSpawner)
     // ==================================================
     private void OnDrawGizmosSelected()
     {
         Vector3 center = transform.position;
 
-        // 1. วาด WireSphere แสดงรัศมีต่ำสุด (สีแดง)
-        Gizmos.color = new Color(1f, 0f, 0f, 0.5f); // แดงโปร่งแสง
+        // 1. ๏ฟฝาด WireSphere ๏ฟฝสด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝีต๏ฟฝ๏ฟฝ๏ฟฝุด (๏ฟฝ๏ฟฝแดง)
+        Gizmos.color = new Color(1f, 0f, 0f, 0.5f); // แดง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝสง
         Gizmos.DrawWireSphere(center, minSpawnRadius);
 
-        // 2. วาด WireSphere แสดงรัศมีสูงสุด (สีฟ้า)
-        Gizmos.color = new Color(0f, 1f, 1f, 0.5f); // ฟ้าโปร่งแสง
+        // 2. ๏ฟฝาด WireSphere ๏ฟฝสด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝูง๏ฟฝุด (๏ฟฝีฟ๏ฟฝ๏ฟฝ)
+        Gizmos.color = new Color(0f, 1f, 1f, 0.5f); // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝสง
         Gizmos.DrawWireSphere(center, maxSpawnRadius);
 
-        // 3. วาดเส้นเชื่อมไปยังจุดเกิดทั้งหมด เพื่อดูว่าจุดไหนอยู่ในระยะบ้าง
+        // 3. ๏ฟฝาด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัง๏ฟฝุด๏ฟฝิด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ ๏ฟฝ๏ฟฝ๏ฟฝอด๏ฟฝ๏ฟฝ๏ฟฝาจุด๏ฟฝหน๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝะบ๏ฟฝาง
         if (spawnPointParent != null)
         {
-            // ถ้ายังไม่ได้กด Play ใช้การดึงสดจาก Parent มาโชว์ก่อน
+            // ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝัง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ้กด Play ๏ฟฝ๏ฟฝ๏ฟฝรดึงสด๏ฟฝาก Parent ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอน
             var points  = allSpawnPoints.Count > 0 && Application.isPlaying
                 ? allSpawnPoints
                 : spawnPointParent.GetComponentsInChildren<Transform>().Where(t => t != spawnPointParent.transform).ToList();
@@ -103,16 +127,16 @@ public class PayloadSpawner : MonoBehaviourPunCallbacks
 
                 if (isInRange)
                 {
-                    // จุดที่อยู่ในระยะ (Valid): สีเขียว
+                    // ๏ฟฝุด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ (Valid): ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
                     Gizmos.color = Color.green; Gizmos.DrawLine(center, point.position);
-                    Gizmos.DrawSphere(point.position, 0.5f); // วาดจุดกลมๆ
+                    Gizmos.DrawSphere(point.position, 0.5f); // ๏ฟฝาด๏ฟฝุด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ
                 }
                 else
                 {
-                    // จุดที่อยู่นอกระยะ (Invalid): สีเทาจางๆ
+                    // ๏ฟฝุด๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝอก๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝ (Invalid): ๏ฟฝ๏ฟฝ๏ฟฝาจาง๏ฟฝ
                     Gizmos.color = new Color(0.5f, 0.5f, 0.5f, 0.3f);
                     Gizmos.DrawLine(center, point.position);
-                    Gizmos.DrawWireSphere(point.position, 0.3f); // วาดแค่วงกลมบางๆ
+                    Gizmos.DrawWireSphere(point.position, 0.3f); // ๏ฟฝาด๏ฟฝ๏ฟฝวง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝาง๏ฟฝ
                 }
             }
         }
