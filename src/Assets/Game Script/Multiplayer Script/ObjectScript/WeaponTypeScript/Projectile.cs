@@ -42,31 +42,11 @@ public class Projectile : MonoBehaviour
         if (damageable != null)
         {
             // Apply damage
-            ApplyDamage(other.gameObject, damageable);
+            damageable.TakeDamage(damageAmount, this .gameObject);
 
             // Destroy the projectile after hitting something
             DestroyProjectile();
         }
-    }
-
-    private void ApplyDamage(GameObject targetObj, IDamageable damageable)
-    {
-        // Check if we are in a Photon network game
-        if (PhotonNetwork.InRoom)
-        {
-            PhotonView targetPhotonView = targetObj.GetComponent<PhotonView>();
-            if (targetPhotonView != null)
-            {
-                // If the target is networked, use an RPC to apply damage
-                targetPhotonView.RPC("TakeDamage", RpcTarget.All, damageAmount);
-            }
-            else
-            {
-                damageable.TakeDamage(damageAmount); // Assuming your interface uses TakeDamage(float)
-            }
-        }
-        // If not in a Photon game, just apply damage directly
-        else { damageable.TakeDamage(damageAmount); }
     }
 
     private void DestroyProjectile()
