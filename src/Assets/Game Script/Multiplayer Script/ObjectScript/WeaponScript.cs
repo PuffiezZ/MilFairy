@@ -35,6 +35,7 @@ public class WeaponScript : EquipmentScript
         
         PlayerTransform = player.transform;
         base.OnBeginIntereact(player, setActive);
+        photonView.RequestOwnership();
     }
     public void OnDrawedWeapon()
     {
