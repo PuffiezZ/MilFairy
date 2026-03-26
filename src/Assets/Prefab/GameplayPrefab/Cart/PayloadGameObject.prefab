@@ -1888,6 +1888,8 @@ MonoBehaviour:
   maxSpawnRadius: 42
   spawnInterval: 7
   maxEnemies: 6
+  isSpawningEnabled: 1
+  maxTotalSpawns: 10
 --- !u!54 &-6423400562861707195
 Rigidbody:
   m_ObjectHideFlags: 0
