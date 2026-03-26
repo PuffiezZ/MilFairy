@@ -18,7 +18,17 @@ public class Bacteria : MonsterBase
             damagedTargets.Clear();
         }
     }
-    private void  Update() 
+    public override void TakeDamage(float damage, GameObject source = null)
+    {
+        SoundFXManager.instance.PlayGlobalSound("bac_hurt",this.transform.position);
+        base.TakeDamage(damage, source);
+    }
+    public override void Die()
+    {
+        SoundFXManager.instance.PlayGlobalSound("bac_die",this.transform.position);
+        base.Die();
+    }
+    private void Update() 
     {
         if (EnableHitBoxAttack == false)
             return;  

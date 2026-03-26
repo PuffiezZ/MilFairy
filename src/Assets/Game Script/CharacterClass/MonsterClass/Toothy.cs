@@ -8,4 +8,15 @@ public class Toothy : MonsterBase
     {
         
     }
+    
+    public override void TakeDamage(float damage, GameObject source = null)
+    {
+        SoundFXManager.instance.PlayGlobalSound("tooty_hurt",this.transform.position);
+        base.TakeDamage(damage, source);
+    }
+    public override void Die()
+    {
+        SoundFXManager.instance.PlayGlobalSound("tooty_die",this.transform.position);
+        base.Die();
+    }
 }

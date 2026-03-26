@@ -1183,7 +1183,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soundFXPrefab: {fileID: 7805161060715734316, guid: 5b54f0968eb1b8b4f8d44b8ad3ecde38,
     type: 3}
-  soundLibrary: []
+  soundLibrary:
+  - soundName: bac_die
+    clip: {fileID: 8300000, guid: 0222189fa296a734a81f351c4d7901b3, type: 3}
+  - soundName: bac_hurt
+    clip: {fileID: 8300000, guid: a0e17a3cd81453f4b92461dbdb8da09d, type: 3}
+  - soundName: tooty_hurt
+    clip: {fileID: 8300000, guid: fe99e1cbca7643c4da8b37f7042feeb4, type: 3}
+  - soundName: tooty_die
+    clip: {fileID: 8300000, guid: c36c325c88dbe664fafdc94195254a0c, type: 3}
 --- !u!4 &119622744
 Transform:
   m_ObjectHideFlags: 0

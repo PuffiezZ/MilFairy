@@ -22,7 +22,7 @@ public class EnvironmentTaskHandler : MonoBehaviourPun
     {
         if (_isCompleted) return;
 
-        if (PhotonNetwork.InRoom && photonView.ViewID != 0)
+        if (PhotonNetwork.InRoom)
         {
             // ป้องกัน Client ทำงานซ้ำซ้อน: ให้ Master Client เท่านั้นที่มีสิทธิ์สั่งอัปเดตไปให้ทุกคน
             if (PhotonNetwork.IsMasterClient)
@@ -40,12 +40,13 @@ public class EnvironmentTaskHandler : MonoBehaviourPun
     [PunRPC]
     private void RPC_UpdateProgress()
     {
+        if(!PhotonNetwork.IsMasterClient) return;
         UpdateProgressInternal();
     }
 
     public void ReduceTaskProgress()
     {
-        if (PhotonNetwork.InRoom && photonView.ViewID != 0)
+        if (PhotonNetwork.InRoom)
         {
             if (PhotonNetwork.IsMasterClient)
             {
@@ -58,7 +59,9 @@ public class EnvironmentTaskHandler : MonoBehaviourPun
         }
     }
     [PunRPC]
-    private void RPC_ReduceProgress() {
+    private void RPC_ReduceProgress() 
+    {
+        if(!PhotonNetwork.IsMasterClient) return;
         ReduceProgressInternal();
     }
 

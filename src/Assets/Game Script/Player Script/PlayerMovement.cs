@@ -51,6 +51,7 @@ namespace Sausagecat.PlayerControlSystem
         public bool IsSprinting { get; private set; }
         public bool IsGround {  get; private set; }
         public bool IsMounting { get; set; }
+        public bool EnableToMove {get; set; } = true;
 
         public Vector3 CurrentVelocity => characterController.velocity;
         public UnityAction MovementImplement;
@@ -114,6 +115,8 @@ namespace Sausagecat.PlayerControlSystem
         }
         private void DefaultMovement()
         {
+            if(!EnableToMove) return;
+            
             if (playerLocomotion.OnSprinting && CurrentVelocity.sqrMagnitude > 0.01f)
             {
                 currentSpeed = Mathf.Lerp(currentSpeed, maxSpeed, 10f * Time.deltaTime);
@@ -130,7 +133,7 @@ namespace Sausagecat.PlayerControlSystem
 
         public void SetEnableCharacterMovement(bool getBoolean)
         {
-            characterController.Move(Vector3.zero); // ��ش�������͹���ѹ��
+            characterController.Move(Vector3.zero);
             characterController.enabled = getBoolean;
         }
 
