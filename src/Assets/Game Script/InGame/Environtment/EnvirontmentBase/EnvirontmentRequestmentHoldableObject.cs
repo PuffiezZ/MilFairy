@@ -76,7 +76,8 @@ public class EnvirontmentRequestmentHoldableObject : MonoBehaviourPun, IInteract
         {
             if (PhotonNetwork.InRoom)
             {
-                PhotonNetwork.Destroy(holdable.gameObject);
+                if(holdable.photonView.IsMine)
+                    PhotonNetwork.Destroy(holdable.gameObject);
             }
             else
             {
