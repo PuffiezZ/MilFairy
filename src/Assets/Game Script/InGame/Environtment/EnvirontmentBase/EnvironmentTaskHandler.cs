@@ -40,7 +40,6 @@ public class EnvironmentTaskHandler : MonoBehaviourPun
     [PunRPC]
     private void RPC_UpdateProgress()
     {
-        if(!PhotonNetwork.IsMasterClient) return;
         UpdateProgressInternal();
     }
 
@@ -61,7 +60,6 @@ public class EnvironmentTaskHandler : MonoBehaviourPun
     [PunRPC]
     private void RPC_ReduceProgress() 
     {
-        if(!PhotonNetwork.IsMasterClient) return;
         ReduceProgressInternal();
     }
 

@@ -76,8 +76,7 @@ public class EnvirontmentRequestmentHoldableObject : MonoBehaviourPun, IInteract
         {
             if (PhotonNetwork.InRoom)
             {
-                // เฉพาะเจ้าของไอเทมเท่านั้นที่มีสิทธิ์สั่ง PhotonNetwork.Destroy
-                if (holdable.photonView.IsMine) PhotonNetwork.Destroy(holdable.gameObject);
+                PhotonNetwork.Destroy(holdable.gameObject);
             }
             else
             {
