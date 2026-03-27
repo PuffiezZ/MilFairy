@@ -104,6 +104,7 @@ MonoBehaviour:
   - RPC_Lose
   - RPC_PlaySound
   - RPC_PlayGlobalSound
+  - RPC_ShowLoadingScreen
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

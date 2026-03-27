@@ -32,9 +32,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         aiDataSetup = GetComponent<AIDataSetup>();
         Instance = this;
     }
-    void Start()
+    public void StartRoomManager()
     {
-        // ����������¹ Scene ���·���ѧ�������ͧ (Joined Room ����)
         if (PhotonNetwork.InRoom)
         {
             payloadSetup.OnInstancePayload();

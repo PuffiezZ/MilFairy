@@ -4,8 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using NaughtyAttributes;
-using static UtilityDev.ResourceType;
-using System;
 
 public class UIManager : MonoBehaviour
 {
@@ -29,6 +27,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private RectTransform winUI;
     [BoxGroup("UI Parent")]
     [SerializeField] private RectTransform loseUI;
+    [BoxGroup("UI Parent")]
+    [SerializeField] private Cutscene cutsceneUI;
 
     private Coroutine smoothHealthCoroutine;
 

@@ -210,7 +210,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
             StartCoroutine(DashTowardsTarget());
 
             enableToSheath = false;
-
+            SoundFXManager.instance.PlayGlobalSound("sword_attack",transform.position);
             Debug.Log("Perform Light Attack");
         }
         else if (equipment.CurrentWeaponOnHanded.WeaponData.weaponType == UtilityDev.WeaponType.SlingshotOrBow)
@@ -218,6 +218,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
             if (equipment.CurrentWeaponOnHanded is RangeWeapon rangeWeapon)
             {
                 rangeWeapon.Fire(power);
+                SoundFXManager.instance.PlayGlobalSound("bow_shoot",transform.position);
             }
         }
 

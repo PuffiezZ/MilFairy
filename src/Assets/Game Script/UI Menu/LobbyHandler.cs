@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using NaughtyAttributes;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class LobbyHandler : MonoBehaviourPunCallbacks
 {
@@ -13,15 +14,15 @@ public class LobbyHandler : MonoBehaviourPunCallbacks
     [Header("Player Model Prefab")]
     [SerializeField] private GameObject playerEntryPrefab;
     
-    [Header("Target Scene")]
-    [Scene] public string sceneName;
+    [SerializeField] private RectTransform loadingUI;
+
     private PlayerCharacterInLobby localPlayerCharacterInLobby;
     private Dictionary<Photon.Realtime.Player, GameObject> playerListEntries = new Dictionary<Photon.Realtime.Player, GameObject>();
     private void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
     }
-       public void ConnectToGamePlayScene()
+    public void ConnectToGamePlayScene()
     {
         if (!PhotonNetwork.IsMasterClient)
         {
@@ -31,7 +32,18 @@ public class LobbyHandler : MonoBehaviourPunCallbacks
 
         Debug.Log("Host is starting the game...");
 
-        PhotonNetwork.LoadLevel(sceneName);
+        photonView.RPC(nameof(RPC_ShowLoadingScreen), RpcTarget.All);
+    }
+    
+    [PunRPC]
+    private void RPC_ShowLoadingScreen()
+    {
+        loadingUI.gameObject.SetActive(true);
+    }
+    public void ChangeScene()
+    {
+        //SceneManager.LoadScene(sceneName);
+        loadingUI.gameObject.SetActive(true);
     }
     public void ChangeCharacter(PlayerCharacterInLobby.SelectCharacter selectCharacter)
     {
