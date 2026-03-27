@@ -17,13 +17,21 @@ public class Cutscene : MonoBehaviour
     
     void Awake()
     {
-        Color startColor = image.color;
-        startColor.a = 1f;
-        
-        CinemachineTrackedDolly dolly = cvc.GetCinemachineComponent<CinemachineTrackedDolly>();
-        if (dolly != null)
+        if (image != null)
         {
-            dolly.m_PathPosition = 0f;
+            Color startColor = image.color;
+            startColor.a = 1f;
+            image.color = startColor;
+        }
+
+        if (cvc != null)
+        {
+            // ใช้ชื่อเต็มเพื่อความชัดเจน และป้องกันการตีกับสคริปต์อื่น
+            var dolly = cvc.GetCinemachineComponent<CinemachineTrackedDolly>();
+            if (dolly != null)
+            {
+                dolly.m_PathPosition = 0f;
+            }
         }
     }
     
