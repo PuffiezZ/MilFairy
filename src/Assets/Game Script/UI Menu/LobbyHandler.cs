@@ -15,6 +15,7 @@ public class LobbyHandler : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject playerEntryPrefab;
     
     [SerializeField] private RectTransform loadingUI;
+    [SerializeField] private RectTransform loopingBG;
 
     private PlayerCharacterInLobby localPlayerCharacterInLobby;
     private Dictionary<Photon.Realtime.Player, GameObject> playerListEntries = new Dictionary<Photon.Realtime.Player, GameObject>();
@@ -38,7 +39,8 @@ public class LobbyHandler : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_ShowLoadingScreen()
     {
-        loadingUI.gameObject.SetActive(true);
+        loadingUI?.gameObject.SetActive(true);
+        loopingBG?.gameObject.SetActive(false);
     }
     public void ChangeScene()
     {
@@ -62,6 +64,7 @@ public class LobbyHandler : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         CameraManager.ChangeCameraByName("Lobby Main Camera");
+        loopingBG?.gameObject.SetActive(false);
 
         // ล้างข้อมูลเก่า
         playerListEntries.Clear();

@@ -145,7 +145,7 @@ MonoBehaviour:
     m_Value: 17.5
   focalLength:
     m_OverrideState: 1
-    m_Value: 143
+    m_Value: 107
   bladeCount:
     m_OverrideState: 1
     m_Value: 5
@@ -247,7 +247,7 @@ MonoBehaviour:
   active: 1
   color:
     m_OverrideState: 1
-    m_Value: {r: 0.102136, g: 0.14791356, b: 0.3584906, a: 1}
+    m_Value: {r: 0.33772156, g: 0.38892874, b: 0.6150943, a: 1}
   center:
     m_OverrideState: 0
     m_Value: {x: 0.5, y: 0.5}

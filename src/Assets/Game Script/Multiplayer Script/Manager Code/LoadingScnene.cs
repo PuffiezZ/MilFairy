@@ -17,11 +17,16 @@ public class LoadingScnene : MonoBehaviourPunCallbacks
     [Header("Target Scene")]
     [Scene] public string sceneName;
 
+    [Header("Settings")]
+    [Tooltip("เวลาดีเลย์ (วินาที) หลังจากโหลดเสร็จก่อนที่จะย้ายฉาก")]
+    [SerializeField] private float transitionDelay = 1.5f;
+
     public override void OnEnable()
     {
         // เริ่ม Coroutine สำหรับโหลด Scene แบบ Async
         StartCoroutine(LoadSceneAsync());
     }
+    
     private IEnumerator LoadSceneAsync()
     {
         
@@ -52,13 +57,21 @@ public class LoadingScnene : MonoBehaviourPunCallbacks
             }
             
             if (loadingSlider != null) loadingSlider.value = 1f;
+            
+            // หมายเหตุ: สำหรับโหมด Multiplayer ระบบ PUN2 จะบังคับเปลี่ยนฉากทันทีเมื่อโหลดเสร็จ (ถ้าเปิด AutomaticallySyncScene ไว้)
+            // คำสั่ง delay นี้จะแสดงผลเล็กน้อยก่อนที่ฉากเก่าจะถูกทำลาย
+            yield return new WaitForSeconds(transitionDelay);
         }
         else
         {
             // สำหรับโหมด Offline (Singleplayer)
             AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+            
+            // ป้องกันไม่ให้เปลี่ยนฉากทันทีที่โหลดเสร็จ
+            operation.allowSceneActivation = false;
 
-            while (!operation.isDone)
+            // เมื่อ allowSceneActivation = false ค่า progress จะโหลดไปหยุดสูงสุดแค่ 0.9
+            while (operation.progress < 0.9f)
             {
                 float progressValue = Mathf.Clamp01(operation.progress / 0.9f);
 
@@ -68,6 +81,14 @@ public class LoadingScnene : MonoBehaviourPunCallbacks
                 }
                 yield return null;
             }
+            
+            if (loadingSlider != null) loadingSlider.value = 1f;
+
+            // รอเวลา Delay ก่อนย้ายฉากตามที่กำหนด
+            yield return new WaitForSeconds(transitionDelay);
+
+            // อนุญาตให้ย้ายไปฉากใหม่ได้
+            operation.allowSceneActivation = true;
         }
     }
 }

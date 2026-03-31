@@ -2,6 +2,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using Sausagecat.PlayerControlSystem;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PhotonView))]
@@ -15,6 +16,10 @@ public class HoldableObject : MonoBehaviourPun, IInteractable
     [Header("Offsets")]
     [SerializeField] private Vector3 positionOffset;
     [SerializeField] private Vector3 rotationOffset;
+    
+    [Header("Invoke Event When Holding First time")]
+    [SerializeField] private UnityEvent onFirstTimeHoldEvent;
+    private bool hasBeenHeldBefore = false;
 
     private Rigidbody rb;
     private PhotonView pv;
@@ -144,7 +149,30 @@ public class HoldableObject : MonoBehaviourPun, IInteractable
         transform.SetParent(holdSlot);
         transform.localPosition = positionOffset;
         transform.localRotation = Quaternion.Euler(rotationOffset);
+        
+        if (!hasBeenHeldBefore)
+        {
+            if(PhotonNetwork.InRoom)
+            {
+                photonView.RPC(nameof(RPC_InvokeEventOnFirstHold), RpcTarget.AllBuffered);
+            }
+            else
+            {
+                LocalInvokeEventOnFirstHold();
+            }
+        }
 
+    }
+    
+    [PunRPC]
+    private void RPC_InvokeEventOnFirstHold()
+    {
+        LocalInvokeEventOnFirstHold();
+    }
+    private void LocalInvokeEventOnFirstHold()
+    {
+        onFirstTimeHoldEvent?.Invoke();
+        hasBeenHeldBefore = true;
     }
 
     // �ѧ��ѹ����Ѻ�ҧ�ͧ (Drop)
