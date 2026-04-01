@@ -155,9 +155,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
     
     public void LocalLoseHandle(float finalTime)
     {
-        CurrentPlayingPayload.SetPayloadSpeed(0);
-        
-        float perCentCurrentHP = CurrentPlayingPayload.CurrentPlayingToothCart.CurrentHealth / CurrentPlayingPayload.CurrentPlayingToothCart.MaxHealth;
+        float perCentCurrentHP = 0f;
+        if (CurrentPlayingPayload != null)
+        {
+            CurrentPlayingPayload.SetPayloadSpeed(0);
+            if (CurrentPlayingPayload.CurrentPlayingToothCart != null)
+                perCentCurrentHP = CurrentPlayingPayload.CurrentPlayingToothCart.CurrentHealth / CurrentPlayingPayload.CurrentPlayingToothCart.MaxHealth;
+        }
+
         OnEndTriggered?.Invoke(perCentCurrentHP, false, finalTime);
         
         StartCoroutine(DelayDisconnect(5f));
@@ -172,9 +177,14 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private void LocalWinHandle(float finalTime)
     {
-        CurrentPlayingPayload.SetPayloadSpeed(0);
-        
-        float perCentCurrentHP = CurrentPlayingPayload.CurrentPlayingToothCart.CurrentHealth / CurrentPlayingPayload.CurrentPlayingToothCart.MaxHealth;
+        float perCentCurrentHP = 1f; // Default 100% ถ้าหาไม่เจอในตอนชนะ
+        if (CurrentPlayingPayload != null)
+        {
+            CurrentPlayingPayload.SetPayloadSpeed(0);
+            if (CurrentPlayingPayload.CurrentPlayingToothCart != null)
+                perCentCurrentHP = CurrentPlayingPayload.CurrentPlayingToothCart.CurrentHealth / CurrentPlayingPayload.CurrentPlayingToothCart.MaxHealth;
+        }
+
         OnEndTriggered?.Invoke(perCentCurrentHP, true, finalTime);
 
         StartCoroutine(DelayDisconnect(5f));

@@ -77,11 +77,11 @@ public class Player : CharacterBase,IPickupable
             NetworkPrefabSpawner.Instance.SpawnResource("Sword", photonView);
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             RoomManager.Instance.TriggerWinCondition();
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             RoomManager.Instance.TriggerLoseCondition();
         }
