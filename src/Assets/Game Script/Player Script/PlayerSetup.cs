@@ -54,6 +54,11 @@ public class PlayerSetup : MonoBehaviourPun
         {
             nameTextTMP.gameObject.SetActive(false);
         }
+        
+        if(PhotonNetwork.IsMasterClient)
+        {
+            RoomManager.Instance.StartGameplayTimer();
+        }
         HideCursorOnSpawn();
     }
 

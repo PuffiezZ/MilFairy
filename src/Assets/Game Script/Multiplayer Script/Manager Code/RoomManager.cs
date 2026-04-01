@@ -17,10 +17,12 @@ public class RoomManager : MonoBehaviourPunCallbacks
     private AIDataSetup aiDataSetup;
     public PayloadScript CurrentPlayingPayload { get; set; }
     public static RoomManager Instance { get; private set; }
-    private bool isVictoryTriggered = false;
-    private bool isDefeatTriggered = false;
-    public static UnityAction OnWinTriggered;
-    public static UnityAction OnLoseTriggered;
+    public bool isVictoryTriggered = false;
+    public bool isDefeatTriggered = false;
+    public static UnityAction<float,bool,float> OnEndTriggered;
+
+    private float elapsedTime = 0f;
+    private bool isTimerRunning = false;
 
     private void Awake()
     {
@@ -59,8 +61,20 @@ public class RoomManager : MonoBehaviourPunCallbacks
         SpawnPlayer();
     }
 
+    public void StartGameplayTimer()
+    {
+        // ให้เฉพาะ Host หรือการเล่น Offline เป็นคนนับเวลา
+        if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient) return;
+        isTimerRunning = true;
+    }
+
     private void Update()
     {
+        if (isTimerRunning)
+        {
+            elapsedTime += Time.deltaTime;
+        }
+
         if (isVictoryTriggered || CurrentPlayingPayload == null || winPosition == null) return;
 
         // ให้ MasterClient หรือ Offline mode เป็นคนประมวลผล เพื่อไม่ให้ยิง RPC ซ้ำซ้อนกัน
@@ -82,18 +96,38 @@ public class RoomManager : MonoBehaviourPunCallbacks
         player.GetComponent<PlayerSetup>().IsLocalPlayer();
     }
 
+    public void RespawnPlayer(Player player, float delay = 3f)
+    {
+        StartCoroutine(RespawnCoroutine(player, delay));
+    }
+
+    private IEnumerator RespawnCoroutine(Player player, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (player != null && (!PhotonNetwork.InRoom || player.photonView.IsMine))
+        {
+            Transform selectedPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+            player.transform.position = selectedPoint.position;
+            player.transform.rotation = selectedPoint.rotation;
+            
+            player.Respawn();
+        }
+    }
+
     public void TriggerWinCondition()
     {
         if (isVictoryTriggered) return;
         isVictoryTriggered = true;
+        isTimerRunning = false; // หยุดเวลาเมื่อจบเกม
 
         if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom)
         {
-            photonView.RPC(nameof(RPC_OnPayloadReachedGoal), RpcTarget.All);
+            photonView.RPC(nameof(RPC_OnPayloadReachedGoal), RpcTarget.All, elapsedTime);
         }
         else
         {
-            LocalWinHandle();
+            LocalWinHandle(elapsedTime);
         }
     }
     
@@ -101,42 +135,47 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         if(isDefeatTriggered) return;
         isDefeatTriggered = true;
+        isTimerRunning = false; // หยุดเวลาเมื่อจบเกม
 
         if(PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom)
         {
-            photonView.RPC(nameof(RPC_Lose), RpcTarget.All);
+            photonView.RPC(nameof(RPC_Lose), RpcTarget.All, elapsedTime);
         }
         else
         {
-            LocalLoseHandle();
+            LocalLoseHandle(elapsedTime);
         }
     }
     [PunRPC]
-    private void RPC_Lose()
+    private void RPC_Lose(float finalTime)
     {
-        LocalLoseHandle();
+        LocalLoseHandle(finalTime);
         Debug.Log("<color=red>!!! DEFEAT !!!</color>");
     }
     
-    public void LocalLoseHandle()
+    public void LocalLoseHandle(float finalTime)
     {
         CurrentPlayingPayload.SetPayloadSpeed(0);
-        OnLoseTriggered?.Invoke();
+        
+        float perCentCurrentHP = CurrentPlayingPayload.CurrentPlayingToothCart.CurrentHealth / CurrentPlayingPayload.CurrentPlayingToothCart.MaxHealth;
+        OnEndTriggered?.Invoke(perCentCurrentHP, false, finalTime);
         
         StartCoroutine(DelayDisconnect(5f));
     }
-
+    
     [PunRPC]
-    private void RPC_OnPayloadReachedGoal()
+    private void RPC_OnPayloadReachedGoal(float finalTime)
     {
-        LocalWinHandle();
+        LocalWinHandle(finalTime);
         Debug.Log("<color=green>!!! VICTORY !!! Payload reached 100%</color>");
     }
 
-    private void LocalWinHandle()
+    private void LocalWinHandle(float finalTime)
     {
         CurrentPlayingPayload.SetPayloadSpeed(0);
-        OnWinTriggered?.Invoke();
+        
+        float perCentCurrentHP = CurrentPlayingPayload.CurrentPlayingToothCart.CurrentHealth / CurrentPlayingPayload.CurrentPlayingToothCart.MaxHealth;
+        OnEndTriggered?.Invoke(perCentCurrentHP, true, finalTime);
 
         StartCoroutine(DelayDisconnect(5f));
     }

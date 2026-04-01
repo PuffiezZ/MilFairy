@@ -34,6 +34,7 @@ public class PayloadScript : MonoBehaviourPun,IInteractable
     public UnityAction OnPayloadMoveAction;
 
     public Player CurrentPlayerControl { get; set; }
+    public ToothCart CurrentPlayingToothCart { get; set; }
     private PlayerLocomotion reciveLocomotion;
     public void PayloadOnSetup()
     {

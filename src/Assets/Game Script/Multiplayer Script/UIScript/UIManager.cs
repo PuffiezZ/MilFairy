@@ -24,11 +24,11 @@ public class UIManager : MonoBehaviour
     [BoxGroup("UI Parent")]
     [SerializeField] private RectTransform gameplayUI;
     [BoxGroup("UI Parent")]
-    [SerializeField] private RectTransform winUI;
-    [BoxGroup("UI Parent")]
-    [SerializeField] private RectTransform loseUI;
+    [SerializeField] private ResultScriptUI resultUI;
     [BoxGroup("UI Parent")]
     [SerializeField] private Cutscene cutsceneUI;
+    [BoxGroup("UI Parent")]
+    [SerializeField] private RectTransform DieUI;
 
     private Coroutine smoothHealthCoroutine;
 
@@ -37,11 +37,12 @@ public class UIManager : MonoBehaviour
         // ������Դ��� (Subscribe) �����ʤ�Ի��ӧҹ
         Player.OnPlayerHealthChanged += UpdateHealthBar;
         Player.OnResourceValueChanged += UpdateResource;
+        Player.OnPlayerDie += DiePanelUI;
+        Player.OnPlayerRespawn += RespawnPanelUI;
 
         PlayerEquipment.OnSetNewWeapon += UpdateWeaponSlot;
 
-        RoomManager.OnWinTriggered += WinUIHandler;
-        RoomManager.OnLoseTriggered += LoseUIHandler;
+        RoomManager.OnEndTriggered += ResultUIHandler;
     }
 
     private void OnDisable()
@@ -49,10 +50,11 @@ public class UIManager : MonoBehaviour
         // ¡��ԡ��õԴ��� (Unsubscribe) ����ͻԴʤ�Ի�� ���ͻ�ͧ�ѹ Memory Leak
         Player.OnPlayerHealthChanged -= UpdateHealthBar;
         Player.OnResourceValueChanged -= UpdateResource;
+        Player.OnPlayerDie -= DiePanelUI;
+        Player.OnPlayerRespawn -= RespawnPanelUI;
 
         PlayerEquipment.OnSetNewWeapon -= UpdateWeaponSlot;
-        RoomManager.OnWinTriggered -= WinUIHandler;
-        RoomManager.OnLoseTriggered -= LoseUIHandler;
+        RoomManager.OnEndTriggered -= ResultUIHandler;
     }
     public void RegisterPayloadHealthBar(ToothCart cart)
     {
@@ -152,15 +154,23 @@ public class UIManager : MonoBehaviour
         weaponsSlot[indexSlot].SetWeaponSlotUI(weaponData);
     }
 
-    public void WinUIHandler()
+    public void ResultUIHandler(float hpPercent, bool isWin, float finalTime)
     {
         gameplayUI.gameObject.SetActive(false);
-        winUI.gameObject.SetActive(true);
+        resultUI.gameObject.SetActive(true);
+
+        resultUI.OnInvokeResult(hpPercent, isWin, finalTime);
     }
     
-    public void LoseUIHandler()
+    public void DiePanelUI()
     {
         gameplayUI.gameObject.SetActive(false);
-        loseUI.gameObject.SetActive(true);
+        DieUI.gameObject.SetActive(true);
+    }
+    
+    public void RespawnPanelUI()
+    {
+        DieUI.gameObject.SetActive(false);
+        gameplayUI.gameObject.SetActive(true);
     }
 }

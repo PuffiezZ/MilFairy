@@ -23,6 +23,8 @@ public class ToothCart : MonoBehaviourPunCallbacks, IDamageable
     [Header("Tooth Models")]
     [SerializeField] private GameObject normalTooth;
     [SerializeField] private GameObject decayTooth;
+    public float CurrentHealth => currentHealth;
+    public float MaxHealth => maxHealth;
 
     public event Action<float, float> OnPayloadHealthChanged;
     public bool EnableDamage 

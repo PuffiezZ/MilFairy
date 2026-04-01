@@ -9,7 +9,8 @@ using static UtilityDev.ResourceType;
 
 public class Player : CharacterBase,IPickupable
 {
-
+    [SerializeField] private GameObject playerModel; // ���͹˹�������ѻƹ���
+ 
     [Header("Throw Settings")]
     public float minThrowForce = 0.1f;
     public float maxThrowForce = 25f;
@@ -20,6 +21,8 @@ public class Player : CharacterBase,IPickupable
     public static event Action<float, float> OnPlayerHealthChanged;
     public static event Action<UtilityDev.ResourceType, float, int> OnResourceValueChanged;
     public static event Action OnMainActionCalled;
+    public static event Action OnPlayerDie;
+    public static event Action OnPlayerRespawn;
 
     private float[] percentageProgressResource = new float[6];
     private int[] amountResource = new int[6];
@@ -74,6 +77,18 @@ public class Player : CharacterBase,IPickupable
             NetworkPrefabSpawner.Instance.SpawnResource("Sword", photonView);
         }
 
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            RoomManager.Instance.TriggerWinCondition();
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            RoomManager.Instance.TriggerLoseCondition();
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            TakeDamage(100f);
+        }
     }
     public void InvokeCallOnMainActionCalled()
     {
@@ -126,7 +141,35 @@ public class Player : CharacterBase,IPickupable
     protected override void Die()
     {
         Debug.Log("Player Died! Show GameOver UI");
+                               
+        if(PhotonNetwork.InRoom)
+            if(!photonView.IsMine) return;
+                
+         PlayerMovement pm = GetComponent<PlayerMovement>();
+        pm.SetEnableCharacterMovement(false);
+        playerModel.SetActive(false);    
+        OnPlayerDie?.Invoke();
+
+        // สั่งให้ RoomManager ทำการ Respawn ผู้เล่นคนนี้ (ส่งตัวเองไป และรอ 3 วินาที)
+        RoomManager.Instance.RespawnPlayer(this, 3f);
     }
+
+    public void Respawn()
+    {
+        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
+
+        // Reset เลือดให้เต็ม และอัปเดตไปที่ UI
+        currentHealth = maxHealth;
+        CallUpdatePlayerUIHealth();
+
+        // เปิด Model และเปิดการเคลื่อนไหวให้กลับมาเดินได้ปกติ
+        playerModel.SetActive(true);
+        PlayerMovement pm = GetComponent<PlayerMovement>();
+        pm.SetEnableCharacterMovement(true);
+        
+        OnPlayerRespawn?.Invoke();
+    }
+
     #region Pick Up Resource Handle
     public void OnPickResourceInvoke(UtilityDev.ResourceType resourceType, float percentage)
     {

@@ -100,6 +100,16 @@ public class PayloadSetup : MonoBehaviourPun
             {
                 cartGO = Instantiate(cartPrefab, cartPos, cartRot);
             }
+            
+            if(cartGO != null)
+            {
+                PayloadScript payloadScript = payloadGO.GetComponent<PayloadScript>();
+                if(payloadScript != null)
+                {
+                    payloadScript.CurrentPlayingToothCart = cartGO.GetComponent<ToothCart>();
+                }   
+                
+            }
         }
 
         // --- 3. ��� Setup ��� Connect ��ҹ RPC ---
