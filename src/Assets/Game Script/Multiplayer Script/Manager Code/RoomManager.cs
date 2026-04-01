@@ -12,7 +12,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [SerializeField] private Transform winPosition;
     [SerializeField] private float winDistanceThreshold = 5f;
 
-    private const string mainMenuName = "Mainmenu";
+    private const string mainMenuName = "Mainmenu 1";
     private PayloadSetup payloadSetup;
     private AIDataSetup aiDataSetup;
     public PayloadScript CurrentPlayingPayload { get; set; }
