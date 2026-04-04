@@ -37,7 +37,7 @@ public class SoundFXManager : MonoBehaviourPun
     }
 
     [PunRPC]
-    private void RPC_PlayGlobalSound(string clipName, Vector3 position, float volume)
+    public void RPC_PlayGlobalSound(string clipName, Vector3 position, float volume)
     {
         SpawnSoundObject(clipName, position, volume);
     }

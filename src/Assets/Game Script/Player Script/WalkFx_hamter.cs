@@ -65,7 +65,7 @@ public class WalkFx_hamter : MonoBehaviourPun
     }
 
     [PunRPC]
-    private void RPC_SpawnFootstepVFX_Hamter(int footIndex)
+    public void RPC_SpawnFootstepVFX_Hamter(int footIndex)
     {
         Transform targetFoot = null;
         

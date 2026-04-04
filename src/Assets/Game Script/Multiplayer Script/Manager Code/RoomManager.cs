@@ -147,7 +147,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    private void RPC_Lose(float finalTime)
+    public void RPC_Lose(float finalTime)
     {
         LocalLoseHandle(finalTime);
         Debug.Log("<color=red>!!! DEFEAT !!!</color>");
@@ -169,7 +169,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     }
     
     [PunRPC]
-    private void RPC_OnPayloadReachedGoal(float finalTime)
+    public void RPC_OnPayloadReachedGoal(float finalTime)
     {
         LocalWinHandle(finalTime);
         Debug.Log("<color=green>!!! VICTORY !!! Payload reached 100%</color>");

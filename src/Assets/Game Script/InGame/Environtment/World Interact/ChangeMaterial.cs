@@ -41,7 +41,7 @@ public class ChangeMaterial : MonoBehaviourPun
     }
 
     [PunRPC]
-    private void RPC_ApplyMaterial(int index) => LocalApplyMaterial(index);
+    public void RPC_ApplyMaterial(int index) => LocalApplyMaterial(index);
 
     private void LocalApplyMaterial(int index)
     {

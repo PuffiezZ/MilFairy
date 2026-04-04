@@ -68,28 +68,7 @@ public class Player : CharacterBase,IPickupable
         }
         CurrentHoldable = holdableObject;
     }
-    
-    private void Update()
-    {
-        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            NetworkPrefabSpawner.Instance.SpawnResource("Sword", photonView);
-        }
 
-        if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            RoomManager.Instance.TriggerWinCondition();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            RoomManager.Instance.TriggerLoseCondition();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            TakeDamage(100f);
-        }
-    }
     public void InvokeCallOnMainActionCalled()
     {
         OnMainActionCalled?.Invoke();
@@ -97,7 +76,8 @@ public class Player : CharacterBase,IPickupable
 
     public override void TakeDamage(float damage, GameObject source = null)
     {
-        base.TakeDamage(damage, source); // ¡ Logic Ŵʹҡ
+        SoundFXManager.instance.PlayLocalSound("player_hurt1", transform.position);
+        base.TakeDamage(damage, source);
         CallUpdatePlayerUIHealth();
     }
     private void CallUpdatePlayerUIHealth()

@@ -190,7 +190,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    private void RPC_ExecuteAttack(bool noWeaponOnHanded, float power)
+    public void RPC_ExecuteAttack(bool noWeaponOnHanded, float power)
     {
         LocalExcuteAttack(noWeaponOnHanded, power);
     }
@@ -245,7 +245,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    private void RPC_StartDrawWeapon(int weaponIndex)
+    public void RPC_StartDrawWeapon(int weaponIndex)
     {
         LocalStartDraw(weaponIndex);
     }
@@ -282,7 +282,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    private void RPC_StartSheathWeapon()
+    public void RPC_StartSheathWeapon()
     {
         LocalStartSheath();
     }
@@ -319,7 +319,7 @@ public class PlayerCombat : MonoBehaviourPunCallbacks
         }
     }
     [PunRPC]
-    private void RPC_TriggerHitboxFromWeaponAnimationEvent()
+    public void RPC_TriggerHitboxFromWeaponAnimationEvent()
     {
         LocalTriggerHitboxFromWeaponAnimationEvent();
     }

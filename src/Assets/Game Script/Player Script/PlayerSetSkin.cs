@@ -73,7 +73,7 @@ public class PlayerSetSkin : MonoBehaviourPun
     }
     
     [PunRPC]
-    private void RPC_ApplieSkin(int selectCharacterIndex)
+    public void RPC_ApplieSkin(int selectCharacterIndex)
     {
         ApplieSkin((SelectCharacter)selectCharacterIndex);
     }

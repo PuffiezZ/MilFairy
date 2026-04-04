@@ -69,7 +69,7 @@ public class Walk_FX : MonoBehaviourPun
     }
 
     [PunRPC]
-    private void RPC_SpawnFootstepVFX(int footIndex)
+    public void RPC_SpawnFootstepVFX(int footIndex)
     {
         // เลือกว่าจะใช้กระดูกชิ้นไหนตามที่ส่งมาใน RPC
         Transform targetFoot = (footIndex == 0) ? leftFootBone : rightFootBone;

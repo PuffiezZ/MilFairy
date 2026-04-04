@@ -29,7 +29,7 @@ public class StarCoral : MonoBehaviourPun
     }
 
     [PunRPC]
-    private void RPC_ChangeColor()
+    public void RPC_ChangeColor()
     {
         if (targetRenderer != null)
         {

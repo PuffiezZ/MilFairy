@@ -153,6 +153,7 @@ namespace Sausagecat.PlayerControlSystem
                 // �ٵ��ç���ⴴ: v = sqrt(h * 2 * g)
                 verticalVelocity = Mathf.Sqrt(jumpingForce * 2f * gravity);
                 playerLocomotion.OnJumping = false;
+                SoundFXManager.instance.PlayLocalSound("player_jump",transform.position);
             }
 
             // �ç�����ǧ�ӧҹ��ʹ����

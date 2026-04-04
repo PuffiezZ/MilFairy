@@ -255,7 +255,7 @@ public class PlayerAnimation : MonoBehaviourPun
     }
     // เพิ่มฟังก์ชันนี้เพื่อรับคำสั่งจากเครื่องเจ้าของ
     [PunRPC]
-    private void RPC_SyncWeaponWeight(UtilityDev.DrawOrSheath state, UtilityDev.WeaponType type)
+    public void RPC_SyncWeaponWeight(UtilityDev.DrawOrSheath state, UtilityDev.WeaponType type)
     {
         // ถ้าเป็นเครื่องตัวเอง ไม่ต้องรันซ้ำ (เพราะรันไปแล้วก่อนส่ง RPC)
         if (photonView.IsMine) return; 

@@ -70,7 +70,7 @@ public class PlayerEquipment : MonoBehaviourPun
         }
     }
     [PunRPC]
-    protected void RPC_HandleEquippedWeapon(int weaponID)
+    public void RPC_HandleEquippedWeapon(int weaponID)
     {
         PhotonView targetPv = PhotonView.Find(weaponID);
         WeaponScript weaponScript= targetPv.GetComponent<WeaponScript>();

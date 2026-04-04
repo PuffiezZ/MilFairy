@@ -33,7 +33,7 @@ public class CraftingManager : MonoBehaviourPunCallbacks,IParticleSystemFunction
     }
     
     [PunRPC]
-    private void RPC_RequestCraft()
+    public void RPC_RequestCraft()
     {
         // เฉพาะ Master Client เท่านั้นที่จะเป็นคนคำนวณและสร้าง/ลบไอเทม
         if (PhotonNetwork.IsMasterClient)
@@ -102,7 +102,7 @@ public class CraftingManager : MonoBehaviourPunCallbacks,IParticleSystemFunction
     }
 
     [PunRPC]
-    private void RPC_UpdateMatchState(bool state) => ApplyMatchState(state);
+    public void RPC_UpdateMatchState(bool state) => ApplyMatchState(state);
 
     private void ApplyMatchState(bool state)
     {

@@ -51,7 +51,7 @@ public class Evalator : MonoBehaviourPun
     }
 
     [PunRPC]
-    private void RPC_MoveUp()
+    public void RPC_MoveUp()
     {
         targetPosition = new Vector3(platform.position.x, maxY, platform.position.z);
         isMoving = true;
@@ -70,7 +70,7 @@ public class Evalator : MonoBehaviourPun
     }
 
     [PunRPC]
-    private void RPC_MoveDown()
+    public void RPC_MoveDown()
     {
         targetPosition = new Vector3(platform.position.x, minY, platform.position.z);
         isMoving = true;
