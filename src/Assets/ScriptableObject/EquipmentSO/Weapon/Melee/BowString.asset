@@ -18,8 +18,9 @@ MonoBehaviour:
   attackRange: 20
   attackSpeed: 1
   knockbackForce: 5
-  weaponPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 5388638873089755097, guid: 42f5cebeda4a30046b9c429cba4b176a,
+    type: 3}
   animationSetIndex: 0
-  weaponSprite: {fileID: 0}
+  weaponSprite: {fileID: 342949981, guid: 5a2955bda2980674c94bb760d2d36ece, type: 3}
   weaponType: 3
   ComboList: []

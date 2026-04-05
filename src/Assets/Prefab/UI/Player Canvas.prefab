@@ -5441,6 +5441,9 @@ MonoBehaviour:
   textTitle: {fileID: 1297611504243389439}
   textTime: {fileID: 3418664153446227817}
   textSatisfy: {fileID: 7908406405565021066}
+  fairyImage: {fileID: 4073519876022812445}
+  winFairy: {fileID: -368604869, guid: 5a2955bda2980674c94bb760d2d36ece, type: 3}
+  loseFairy: {fileID: -342831601, guid: 5a2955bda2980674c94bb760d2d36ece, type: 3}
 --- !u!1 &6072265241970544585
 GameObject:
   m_ObjectHideFlags: 0

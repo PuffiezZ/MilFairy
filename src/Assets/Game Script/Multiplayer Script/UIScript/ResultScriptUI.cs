@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ResultScriptUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI textTitle;
     [SerializeField] private TextMeshProUGUI textTime;
     [SerializeField] private TextMeshProUGUI textSatisfy;
+    [SerializeField] private Image fairyImage;
+    [SerializeField] private Sprite winFairy;
+    [SerializeField] private Sprite loseFairy;
+    
+
     public void OnInvokeResult(float currentHPpercent, bool isWin, float finalTime)
     {
             // 1. แปลงเวลาวินาทีเป็น รูปแบบ นาที:วินาที
@@ -31,7 +37,7 @@ public class ResultScriptUI : MonoBehaviour
         // 3. เช็คระดับความพึงพอใจ (Satisfaction) จาก HP Percent
         // (สมมติว่า currentHPpercent ส่งมาเป็นค่า 0.0 - 1.0 หรือ 0 - 100)
         string satisfyMessage = "";
-
+        fairyImage.sprite = isWin ? winFairy : loseFairy; // เปลี่ยนภาพนางฟ้าตามผลแพ้/ชนะ
         if (!isWin || currentHPpercent <= 0)
         {
             satisfyMessage = "Bad!";
